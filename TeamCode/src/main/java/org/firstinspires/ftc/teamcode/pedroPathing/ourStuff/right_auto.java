@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Autonomous(name = "right_auto", group = "AUTO")
 public class right_auto extends OpMode {
-
+// cool
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState, armState, clawState;
