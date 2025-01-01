@@ -63,7 +63,8 @@ public class right_auto extends OpMode {
     private PathChain pushAll, restHangs;
     private DcMotorEx up, out;
     private TouchSensor up_zero;
-    private int up_true_target_pos, up_hanging_position;
+    private int up_true_target_pos;
+    int up_hanging_position = 1300;
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     public void setBackdropGoalPose() {
