@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
-import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -14,8 +12,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is an example auto that showcases movement and control of three servos autonomously.
@@ -54,13 +50,13 @@ public class right_auto extends OpMode {
 
     // Poses and Paths for Purple and Yellow
     private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
-    private Path scoreSpikeMark, initialScoreOnBackdrop, scoreSpikeMarkChosen;
+    private Path scoreSpikeMark, firstHang, scoreSpikeMarkChosen;
 
     // White Stack Cycle Poses + Path Chains
     private Pose TopTruss = new Pose(28, 84, Math.toRadians(270));
     private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
     private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
-    private PathChain cycleStackTo, cycleStackBack, cycleStackToBezier;
+    private PathChain pushAll, restHangs;
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     public void setBackdropGoalPose() {
@@ -73,52 +69,52 @@ public class right_auto extends OpMode {
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
-        scoreSpikeMark = scoreSpikeMarkChosen;
-        scoreSpikeMark.setLinearHeadingInterpolation(startPose.getHeading(), spikeMarkGoalPose.getHeading());
-        scoreSpikeMark.setPathEndTimeoutConstraint(0);
-
         /** There are two major types of paths components: BezierCurves and BezierLines.
          *    * BezierCurves are curved, and require > 3 points. There are the start and end points, and the control points.
          *    - Control points manipulate the curve between the start and end points.
          *    - A good visualizer for this is [this](https://www.desmos.com/calculator/3so1zx0hcd).
          *    * BezierLines are straight, and require 2 points. There are the start and end points. **/
 
-        initialScoreOnBackdrop = new Path(new BezierLine(new Point(spikeMarkGoalPose), new Point(initialBackdropGoalPose)));
-        initialScoreOnBackdrop.setLinearHeadingInterpolation(spikeMarkGoalPose.getHeading(), initialBackdropGoalPose.getHeading());
-        initialScoreOnBackdrop.setPathEndTimeoutConstraint(0);
+        firstHang = new Path(new BezierLine(new Point(9.800, 63.300, Point.CARTESIAN), new Point(39.600, 63.300, Point.CARTESIAN)));
+        firstHang.setConstantHeadingInterpolation(Math.toRadians(0));
+        firstHang.setPathEndTimeoutConstraint(0);
 
         /** This is a path chain, defined on line 66
          * It, well, chains multiple paths together. Here we use a constant heading from the board to the stack.
          * On line 97, we set the Linear Interpolation,
          * which means that Pedro will slowly change the heading of the robot from the startHeading to the endHeading over the course of the entire path */
 
-        cycleStackTo = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(initialBackdropGoalPose), new Point(TopTruss)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .addPath(new BezierLine(new Point(TopTruss), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .addPath(new BezierCurve(new Point(BottomTruss), new Point(12 + 13 + 1, 12, Point.CARTESIAN), new Point(31 + 12 + 1, 36, Point.CARTESIAN), new Point(Stack)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .setPathEndTimeoutConstraint(0)
-                .build();
 
-        cycleStackBack = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(Stack), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierLine(new Point(BottomTruss), new Point(TopTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierLine(new Point(TopTruss), new Point(WhiteBackdrop)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .setPathEndTimeoutConstraint(0)
-                .build();
+        pushAll = follower.pathBuilder()
+            .addPath(new BezierLine(new Point(27.300, 63.300, Point.CARTESIAN), new Point(27.300, 45.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(27.300, 45.000, Point.CARTESIAN), new Point(64.000, 45.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 45.000, Point.CARTESIAN), new Point(64.000, 29.500, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 29.500, Point.CARTESIAN), new Point(16.000, 29.500, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(16.000, 29.500, Point.CARTESIAN), new Point(64.000, 29.500, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 29.500, Point.CARTESIAN), new Point(64.000, 19.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 19.000, Point.CARTESIAN), new Point(16.000, 19.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(16.000, 19.000, Point.CARTESIAN), new Point(64.000, 19.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 19.000, Point.CARTESIAN), new Point(64.000, 9.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .addPath(new BezierLine(new Point(64.000, 9.000, Point.CARTESIAN), new Point(16.000, 9.000, Point.CARTESIAN)))
+            .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+            .build();
 
-        cycleStackToBezier = follower.pathBuilder()
+        /*restHangs = follower.pathBuilder() //can add more later, but is useful as it can stay in the position while waiting to run the next thing.
                 .addPath(new BezierCurve(new Point(initialBackdropGoalPose), new Point(30 + 14, 91.6, Point.CARTESIAN), new Point(13 + 14, 130.8, Point.CARTESIAN), new Point(BottomTruss)))
                 .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
                 .addPath(new BezierCurve(new Point(BottomTruss), new Point(20.5 + 14, 10, Point.CARTESIAN), new Point(42 + 14, 35, Point.CARTESIAN), new Point(Stack)))
                 .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
                 .setPathEndTimeoutConstraint(0)
-                .build();
+                .build();*/
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -126,21 +122,19 @@ public class right_auto extends OpMode {
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 10:
-                follower.followPath(scoreSpikeMark);
-                setPathState(11);
-                break;
             case 11:
-                if (pathTimer.getElapsedTimeSeconds() > 2.6) {
+                if (pathTimer.getElapsedTimeSeconds() > 2.6) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later
                     setPathState(12);
                 }
                 break;
-            case 12:
-                if (follower.getPose().getY() > 120) {
-                    setActionState(1);
-                    follower.followPath(initialScoreOnBackdrop);
-                    setPathState(13);
-                }
+            case 12: //run the firstHang thing
+                setActionState(1); //this does noting now, but will be useful for the arm and claw later.
+                follower.followPath(firstHang);
+                setPathState(13);
+                break;
+            case 13: //push the rest using pushAll
+                follower.followPath(pushAll);
+                setPathState(14);
                 break;
         }
     }
@@ -252,8 +246,8 @@ public class right_auto extends OpMode {
         setBackdropGoalPose();
         buildPaths();
         opmodeTimer.resetTimer();
-        setPathState(10);
-        setActionState(0);
+        setPathState(11); //starting PathState
+        setActionState(0); //starting ActionState
     }
 
     /** We do not use this because everything should automatically disable **/
