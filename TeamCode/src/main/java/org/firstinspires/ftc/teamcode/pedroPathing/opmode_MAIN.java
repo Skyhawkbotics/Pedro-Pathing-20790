@@ -150,7 +150,7 @@ public class opmode_MAIN extends OpMode {
 
         //from rr version
 
-        //arm code
+        //viper slide
         if (gamepad2.left_stick_y < -0.1) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

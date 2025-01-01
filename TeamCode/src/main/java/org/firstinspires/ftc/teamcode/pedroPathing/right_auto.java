@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -28,7 +32,7 @@ public class right_auto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-    private int pathState, actionState, clawState;
+    private int pathState, armState, clawState;
     private String navigation;
 
     /** Create and Define Poses + Paths
@@ -57,6 +61,9 @@ public class right_auto extends OpMode {
     private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
     private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
     private PathChain pushAll, restHangs;
+    private DcMotorEx up, out;
+    private TouchSensor up_zero;
+    private int up_true_target_pos, up_hanging_position;
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     public void setBackdropGoalPose() {
@@ -123,18 +130,28 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 11:
-                if (pathTimer.getElapsedTimeSeconds() > 2.6) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later
+                if (pathTimer.getElapsedTimeSeconds() > 2.6) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later or shorten it
                     setPathState(12);
                 }
                 break;
-            case 12: //run the firstHang thing
-                setActionState(1); //this does noting now, but will be useful for the arm and claw later.
-                follower.followPath(firstHang);
-                setPathState(13);
+            case 12: //arm up, give it time to get up before moving, remember that timer resets when case changes, as stated above
+                setArmState(1); //put arm up
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                    setPathState(13);
+                }
                 break;
-            case 13: //push the rest using pushAll
+            case 13: //drive to firsthang and wait before putting arm back down
+                follower.followPath(firstHang);
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                    setPathState(14);
+                }
+                break;
+            case 14: //arm down
+                setArmState(0);
+                break;
+            case 15: //push the rest using pushAll
                 follower.followPath(pushAll);
-                setPathState(14);
+                setPathState(16);
                 break;
         }
     }
@@ -142,14 +159,32 @@ public class right_auto extends OpMode {
     /** This switch is called continuously and runs the necessary actions, when finished, it will set the state to -1.
      * (Therefore, it will not run the action continuously) **/
     public void autonomousActionUpdate() {
-        switch (actionState) {
-            case 0:
-                setClawState(0);
-                setActionState(-1);
+        switch (armState) { //most of the code stolen from opmode_main
+            case 0: //going to bottom position
+                telemetry.addData("arm up", false);
+                if (!up_zero.isPressed()) {
+                    up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    up.setVelocity(gamepad2.left_stick_y * -1200);
+                    up_true_target_pos = 0;
+                } else if (up_zero.isPressed()) {
+                    up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
                 break;
-            case 1:
-                setClawState(1);
-                setActionState(-1);
+            case 1: //going to hanging position
+                telemetry.addData("arm up", false);
+                if (up.getCurrentPosition() < up_hanging_position) {
+                    up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    up.setVelocity(gamepad2.left_stick_y * -1200);
+                    up_true_target_pos = 0;
+                } else if (up.getCurrentPosition() >= up_hanging_position) {
+                    up.setPower(500);
+                    //use position mode to stay up, as otherwise it would fall down. do some fancy stuff with up_true_target_pos to avoid the issue of it very slightly falling every tick
+                    if (up_true_target_pos == 0) {
+                        up.setTargetPosition(up.getCurrentPosition());
+                        up_true_target_pos = up.getCurrentPosition();
+                    }
+                    up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                }
                 break;
         }
     }
@@ -163,8 +198,8 @@ public class right_auto extends OpMode {
         pathTimer.resetTimer();
     }
 
-    public void setActionState(int aState) {
-        actionState = aState;
+    public void setArmState(int aState) {
+        armState = aState;
         pathTimer.resetTimer();
     }
 
@@ -209,6 +244,21 @@ public class right_auto extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
+        //setup arm variable
+        up = hardwareMap.get(DcMotorEx.class, "up");
+        up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        up.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //example position setup
+        out = hardwareMap.get(DcMotorEx.class, "out");
+        out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        out.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
+
+
 
         //huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
 
@@ -247,7 +297,7 @@ public class right_auto extends OpMode {
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(11); //starting PathState
-        setActionState(0); //starting ActionState
+        setArmState(0); //starting ArmState
     }
 
     /** We do not use this because everything should automatically disable **/

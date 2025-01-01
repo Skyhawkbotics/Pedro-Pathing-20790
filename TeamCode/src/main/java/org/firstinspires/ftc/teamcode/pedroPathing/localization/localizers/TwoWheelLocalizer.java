@@ -43,7 +43,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
  * @version 1.0, 4/2/2024
  */
 @Config
-public class TwoWheelLocalizer extends Localizer { // todo: make two wheel odo work
+public class TwoWheelLocalizer extends Localizer { // done: make two wheel odo work
     private HardwareMap hardwareMap;
     private IMU imu;
     private Pose startPose;
@@ -80,7 +80,7 @@ public class TwoWheelLocalizer extends Localizer { // todo: make two wheel odo w
      * @param setStartPose the Pose to start from
      */
     public TwoWheelLocalizer(HardwareMap map, Pose setStartPose) {
-        // TODO: replace these with your encoder positions
+        // DONE: replace these with your encoder positions
         forwardEncoderPose = new Pose(-4, -3, 0);
         strafeEncoderPose = new Pose(-5, 0.5, Math.toRadians(90));
 
