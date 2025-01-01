@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
@@ -61,7 +63,11 @@ public class right_auto extends OpMode {
     private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
     private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
     private PathChain pushAll, restHangs;
+    // Motors
     private DcMotorEx up, out;
+    private Servo servo_outtake_wrist;
+    private CRServo servo_outtake;
+
     private TouchSensor up_zero;
     private int up_true_target_pos;
     int up_hanging_position = 1300;
@@ -162,7 +168,7 @@ public class right_auto extends OpMode {
     public void autonomousActionUpdate() {
         switch (armState) { //most of the code stolen from opmode_main
             case 0: //going to bottom position
-                telemetry.addData("arm up", false);
+                telemetry.addData("Lowered position", true);
                 if (!up_zero.isPressed()) {
                     up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     up.setVelocity(-1200);
@@ -172,21 +178,20 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 1: //going to hanging position
-                telemetry.addData("arm up", false);
-                if (up.getCurrentPosition() < up_hanging_position) {
-                    up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    up.setVelocity(1200);
-                    up_true_target_pos = 0;
-                } else if (up.getCurrentPosition() >= up_hanging_position) {
-                    up.setPower(500);
-                    //use position mode to stay up, as otherwise it would fall down. do some fancy stuff with up_true_target_pos to avoid the issue of it very slightly falling every tick
-                    if (up_true_target_pos == 0) {
-                        up.setTargetPosition(up.getCurrentPosition());
-                        up_true_target_pos = up.getCurrentPosition();
-                    }
-                    up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                }
+                telemetry.addData("Hang position", true);
+                up.setTargetPosition(up_hanging_position);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
+        }
+        switch (clawState) {
+            case 0:
+                servo_outtake_wrist.setPosition(0.45);
+                telemetry.addData("Hang position 1 ", true);
+                break;
+            case 1:
+                servo_outtake_wrist.setPosition(0.75);
+                telemetry.addData("hang position 2", true);
+
         }
     }
 
@@ -256,6 +261,12 @@ public class right_auto extends OpMode {
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         out.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        servo_outtake = hardwareMap.get(CRServo.class,"outtake");
+
+        servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
+
+
 
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
 
