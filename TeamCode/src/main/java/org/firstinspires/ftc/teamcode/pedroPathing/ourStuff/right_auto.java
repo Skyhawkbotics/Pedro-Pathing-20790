@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -164,7 +164,7 @@ public class right_auto extends OpMode {
                 telemetry.addData("arm up", false);
                 if (!up_zero.isPressed()) {
                     up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    up.setVelocity(gamepad2.left_stick_y * -1200);
+                    up.setVelocity(-1200);
                     up_true_target_pos = 0;
                 } else if (up_zero.isPressed()) {
                     up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -174,7 +174,7 @@ public class right_auto extends OpMode {
                 telemetry.addData("arm up", false);
                 if (up.getCurrentPosition() < up_hanging_position) {
                     up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    up.setVelocity(gamepad2.left_stick_y * -1200);
+                    up.setVelocity(1200);
                     up_true_target_pos = 0;
                 } else if (up.getCurrentPosition() >= up_hanging_position) {
                     up.setPower(500);
