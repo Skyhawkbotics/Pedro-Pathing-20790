@@ -70,7 +70,7 @@ public class right_auto extends OpMode {
 
     private TouchSensor up_zero;
     private int up_true_target_pos;
-    int up_hanging_position = 1300; //TODO: calibrate this value, viper slide position to 
+    int up_hanging_position = 1400; //TODO: calibrate this value, viper slide position to
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     public void setBackdropGoalPose() {
@@ -89,7 +89,7 @@ public class right_auto extends OpMode {
          *    - A good visualizer for this is [this](https://www.desmos.com/calculator/3so1zx0hcd).
          *    * BezierLines are straight, and require 2 points. There are the start and end points. **/
 
-        firstHang = new Path(new BezierLine(new Point(9.800, 63.300, Point.CARTESIAN), new Point(39.600, 63.300, Point.CARTESIAN)));
+        firstHang = new Path(new BezierLine(new Point(9.800, 63.300, Point.CARTESIAN), new Point(49.600, 63.300, Point.CARTESIAN)));
         firstHang.setConstantHeadingInterpolation(Math.toRadians(0));
         firstHang.setPathEndTimeoutConstraint(0);
 
@@ -149,12 +149,15 @@ public class right_auto extends OpMode {
                 break;
             case 13: //drive to firsthang and wait before putting arm back down
                 follower.followPath(firstHang);
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                if (pathTimer.getElapsedTimeSeconds() > 6) {
                     setPathState(14);
                 }
                 break;
             case 14: //arm down
                 setArmState(0);
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
+                    setPathState(15);
+                }
                 break;
             case 15: //push the rest using pushAll
                 follower.followPath(pushAll);
@@ -170,27 +173,30 @@ public class right_auto extends OpMode {
             case 0: //going to bottom position
                 telemetry.addData("Lowered position", true);
                 if (!up_zero.isPressed()) {
-                    up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    up.setVelocity(-1200);
-                    up_true_target_pos = 0;
+                    up.setPower(-1);
                 } else if (up_zero.isPressed()) {
                     up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
             case 1: //going to hanging position
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("Hang position", true);
-                up.setTargetPosition(up_hanging_position);
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                if (up.getCurrentPosition() < up_hanging_position) {
+                    up.setPower(1);
+                    telemetry.addData("arm moving", true);
+                } else if (up.getCurrentPosition() >= up_hanging_position) {
+                    up.setPower(0.01);
+                }
                 break;
         }
         switch (clawState) {
             case 0:
                 servo_outtake_wrist.setPosition(0.45);
-                telemetry.addData("Hang position 1 ", true);
+                telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
                 servo_outtake_wrist.setPosition(0.75);
-                telemetry.addData("hang position 2", true);
+                telemetry.addData("claw position 2", true);
 
         }
     }
@@ -206,7 +212,6 @@ public class right_auto extends OpMode {
 
     public void setArmState(int aState) {
         armState = aState;
-        pathTimer.resetTimer();
     }
 
     public void setClawState(int cState) {
@@ -232,9 +237,15 @@ public class right_auto extends OpMode {
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
+        telemetry.addData("arm state", armState);
+        telemetry.addData("claw state", clawState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("armPOS", up.getCurrentPosition());
+        telemetry.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
+        telemetry.addData("arm power", up.getPower());
+        telemetry.addData("armmode", up.getMode());
         telemetry.update();
     }
 
