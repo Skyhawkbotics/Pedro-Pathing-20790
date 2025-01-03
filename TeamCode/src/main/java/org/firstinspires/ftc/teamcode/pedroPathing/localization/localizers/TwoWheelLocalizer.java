@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.localization.tuning;
+package org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
