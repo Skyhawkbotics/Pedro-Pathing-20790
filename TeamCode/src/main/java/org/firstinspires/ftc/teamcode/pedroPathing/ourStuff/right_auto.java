@@ -56,13 +56,13 @@ public class right_auto extends OpMode {
 
     // Poses and Paths for Purple and Yellow
     private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
-    private Path scoreSpikeMark, firstHang, scoreSpikeMarkChosen;
+    private Path scoreSpikeMark, scoreSpikeMarkChosen;
 
     // White Stack Cycle Poses + Path Chains
     private Pose TopTruss = new Pose(28, 84, Math.toRadians(270));
     private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
     private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
-    private PathChain pushAll, restHangs;
+    private PathChain pushAll, firstHang;
     // Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
@@ -89,9 +89,10 @@ public class right_auto extends OpMode {
          *    - A good visualizer for this is [this](https://www.desmos.com/calculator/3so1zx0hcd).
          *    * BezierLines are straight, and require 2 points. There are the start and end points. **/
 
-        firstHang = new Path(new BezierLine(new Point(9.800, 63.300, Point.CARTESIAN), new Point(49.600, 63.300, Point.CARTESIAN)));
-        firstHang.setConstantHeadingInterpolation(Math.toRadians(0));
-        firstHang.setPathEndTimeoutConstraint(0);
+        firstHang = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(9.800, 63.300, Point.CARTESIAN), new Point(49.600, 63.300, Point.CARTESIAN)))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();
 
         /** This is a path chain, defined on line 66
          * It, well, chains multiple paths together. Here we use a constant heading from the board to the stack.
@@ -148,7 +149,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 13: //drive to firsthang and wait before putting arm back down
-                follower.followPath(firstHang);
+                follower.followPath(firstHang, true);
                 if (pathTimer.getElapsedTimeSeconds() > 6) {
                     setPathState(14);
                 }
