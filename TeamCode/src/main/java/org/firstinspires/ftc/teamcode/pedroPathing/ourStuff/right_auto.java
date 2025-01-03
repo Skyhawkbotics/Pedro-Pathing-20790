@@ -70,7 +70,7 @@ public class right_auto extends OpMode {
 
     private TouchSensor up_zero;
     private int up_true_target_pos;
-    int up_hanging_position = 1300;
+    int up_hanging_position = 1300; //TODO: calibrate this value, viper slide position to 
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     public void setBackdropGoalPose() {
