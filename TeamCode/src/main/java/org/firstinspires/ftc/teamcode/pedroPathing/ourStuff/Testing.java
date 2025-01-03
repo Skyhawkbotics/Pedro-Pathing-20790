@@ -44,12 +44,12 @@ public class Testing extends opmode_MAIN{
     }
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 0;
+            case 0:
                 follower.followPath(straightTest);
                 setPathState(1);
                 break;
 
-            case 1;
+            case 1:
                 if( follower.getPose().getX() > (straightTest.getX() - 1) && follower.getPose().getY() > (straightTest.getY() - 1)) {
                     follower.followPath(curveTest);
                     setPathState(-1);
