@@ -160,7 +160,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 15: //push the rest using pushAll
-                follower.followPath(pushAll);
+                follower.followPath(pushAll, true);
                 setPathState(16);
                 break;
         }
