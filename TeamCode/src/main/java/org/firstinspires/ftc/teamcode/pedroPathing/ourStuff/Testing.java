@@ -29,8 +29,8 @@ public class Testing extends opmode_MAIN{
 
     //Poses
 
-    private Pose startPose = new Pose(8,63,0);
-    private Pose endPose = new Pose(28,83,Math.toRadians(180));
+    private final Pose startPose = new Pose(8,63,0);
+    private final Pose endPose = new Pose(28,83,Math.toRadians(180));
 
     private Path straightTest;
     private Path curveTest;
