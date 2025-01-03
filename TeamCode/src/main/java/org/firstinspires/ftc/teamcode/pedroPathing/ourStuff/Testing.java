@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Localizer;
+import org.firstinspires.ftc.teamcode.pedroPathing.ourStuff.TwoWheelLocalizer;
 
 @Autonomous(name = "Testing", group = "AUTO")
 public class Testing extends opmode_MAIN{
@@ -33,6 +33,7 @@ public class Testing extends opmode_MAIN{
     private Pose endPose = new Pose(28,83,Math.toRadians(180));
 
     private Path straightTest;
+    private Path curveTest;
 
     public void buildPaths() {
         straightTest = new Path(new BezierLine(new Point(startPose),new Point(endPose)));
@@ -49,7 +50,7 @@ public class Testing extends opmode_MAIN{
                 break;
 
             case 1;
-                if follower.getPose().getX() > (straightTest.getX() - 1) && follower.getPose().getY() > (straightTest.getY() - 1) {
+                if( follower.getPose().getX() > (straightTest.getX() - 1) && follower.getPose().getY() > (straightTest.getY() - 1)) {
                     follower.followPath(curveTest);
                     setPathState(-1);
                     break;
@@ -64,7 +65,7 @@ public class Testing extends opmode_MAIN{
     @Override
     public void init() {
         pathTimer = new Timer();
-        Constants.setConstants(FollowerConstants.class, Localizer.class);
+        Constants.setConstants(FollowerConstants.class, TwoWheelLocalizer.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
