@@ -45,7 +45,8 @@ public class opmode_MAIN extends OpMode {
     private DcMotorEx up;
     private DcMotorEx out;
     private TouchSensor up_zero;
-
+    private TouchSensor out_zero;
+    private TouchSensor out_out;
 
     //from rr version of opmode_MAIN
     int arm_upper_lim = 4350;
@@ -126,8 +127,8 @@ public class opmode_MAIN extends OpMode {
 
         //initialize touch sensor
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
-        // TouchSensor out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
-        // TouchSensor out_transfer = hardwareMap.get(TouchSensor.class, "out_transfer");
+        out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
+        out_out = hardwareMap.get(TouchSensor.class, "out_out");
     }
 
     /**
@@ -168,12 +169,12 @@ public class opmode_MAIN extends OpMode {
 
 
         // Misumi Slide
-        if (gamepad2.right_stick_y > 0.1) {
+        if (gamepad2.right_stick_y > 0.1 && !out_out.isPressed()) { //out
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
-        } else if (gamepad2.right_stick_y < -0.1) {
+        } else if (gamepad2.right_stick_y < -0.1 && !out_zero.isPressed()) { //in
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
