@@ -43,7 +43,7 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(8, 63.3, 0);
+    private Pose startPose = new Pose(9.8, 60, 0);
     //Spike mark locations
     private Pose LeftSpikeMark = new Pose(39.6, 63.3, Math.toRadians(270));
     private Pose MiddleSpikeMark = new Pose(59, 94.5, Math.toRadians(270));
@@ -93,9 +93,17 @@ public class right_auto extends OpMode {
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(9.800, 66.000, Point.CARTESIAN),
-                                new Point(20.594, 64.103, Point.CARTESIAN),
-                                new Point(30.000, 66.000, Point.CARTESIAN)
+                                new Point(startPose),
+                                new Point(16.103, 68.748, Point.CARTESIAN),
+                                new Point(19.200, 62.865, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(19.200, 62.865, Point.CARTESIAN),
+                                new Point(30.000, 63.300, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -108,15 +116,53 @@ public class right_auto extends OpMode {
 
 
         pushAll = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(30.000, 63.300, Point.CARTESIAN), new Point(25.394, 55.277, Point.CARTESIAN), new Point(20.903, 34.684, Point.CARTESIAN), new Point(60.000, 35.000, Point.CARTESIAN)))
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(40.000, 63.300, Point.CARTESIAN),
+                                new Point(25.394, 55.277, Point.CARTESIAN),
+                                new Point(15.794, 28.181, Point.CARTESIAN),
+                                new Point(60.000, 35.000, Point.CARTESIAN)
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(new BezierLine(new Point(60.000, 35.000, Point.CARTESIAN), new Point(60.000, 29.000, Point.CARTESIAN)))
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(60.000, 35.000, Point.CARTESIAN),
+                                new Point(60.000, 29.000, Point.CARTESIAN)
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(new BezierCurve(new Point(60.000, 29.000, Point.CARTESIAN), new Point(-22.000, 23.690, Point.CARTESIAN), new Point(30.039, 35.613, Point.CARTESIAN), new Point(66.581, 31.742, Point.CARTESIAN), new Point(60.000, 19.000, Point.CARTESIAN)))
+                .addPath(
+                        // Line 3
+                        new BezierCurve(
+                                new Point(60.000, 29.000, Point.CARTESIAN),
+                                new Point(-22.000, 23.690, Point.CARTESIAN),
+                                new Point(30.039, 35.613, Point.CARTESIAN),
+                                new Point(66.581, 31.742, Point.CARTESIAN),
+                                new Point(60.000, 19.000, Point.CARTESIAN)
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(new BezierCurve(new Point(60.000, 19.000, Point.CARTESIAN), new Point(-22.000, 14.710, Point.CARTESIAN), new Point(28.645, 29.110, Point.CARTESIAN), new Point(66.890, 23.690, Point.CARTESIAN), new Point(60.000, 9.700, Point.CARTESIAN)))
+                .addPath(
+                        // Line 4
+                        new BezierCurve(
+                                new Point(60.000, 19.000, Point.CARTESIAN),
+                                new Point(-22.000, 14.710, Point.CARTESIAN),
+                                new Point(28.645, 29.110, Point.CARTESIAN),
+                                new Point(66.890, 23.690, Point.CARTESIAN),
+                                new Point(60.000, 9.700, Point.CARTESIAN)
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(new BezierLine(new Point(60.000, 9.700, Point.CARTESIAN), new Point(17.000, 9.910, Point.CARTESIAN)))
+                .addPath(
+                        // Line 5
+                        new BezierLine(
+                                new Point(60.000, 9.700, Point.CARTESIAN),
+                                new Point(17.000, 9.910, Point.CARTESIAN)
+                        )
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
             .build();
 
@@ -243,6 +289,7 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousPathUpdate();
         autonomousActionUpdate();
+        follower.setMaxPower(2);
 
         /*//Huskylens Setup
         Deadline rateLimit = new Deadline(1, TimeUnit.SECONDS);
