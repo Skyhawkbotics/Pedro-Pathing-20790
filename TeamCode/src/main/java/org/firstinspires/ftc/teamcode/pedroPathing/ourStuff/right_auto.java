@@ -101,7 +101,7 @@ public class right_auto extends OpMode {
                         // Line 1
                         new BezierLine(
                                 new Point(11, 60.000, Point.CARTESIAN),
-                                new Point(38.500, 60.000, Point.CARTESIAN)
+                                new Point(37.500, 60.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
@@ -166,7 +166,7 @@ public class right_auto extends OpMode {
                 .addPath(
                         // Line 5
                         new BezierLine(
-                                new Point(60.000, 9.700, Point.CARTESIAN),
+                                new Point(60.000, 35, Point.CARTESIAN),
                                 new Point(17.000, 9.910, Point.CARTESIAN)
                         )
                 )
@@ -199,21 +199,21 @@ public class right_auto extends OpMode {
             case 15: //arm down
                 setClawState(0);
                 setArmState(0);
-                if (pathTimer.getElapsedTimeSeconds() > 1) {
+                if (pathTimer.getElapsedTimeSeconds() > 0.25) {
                     setPathState(16);
                 }
-                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
+                if (pathTimer.getElapsedTimeSeconds() > 0.03) {
                     setGrabState(1); //release
                 }
                 break;
             case 16: //push the rest using pushAll
                 setGrabState(0);
-                follower.followPath(pushAll1, true);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setPathState(17);
+                follower.followPath(pushAll5, true);
+                if (pathTimer.getElapsedTimeSeconds() > 20) {
+                    setPathState(20);
                 }
                 break;
-            case 17:
+            /*case 17:
                 follower.followPath(pushAll2, true);
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(18);
@@ -236,6 +236,8 @@ public class right_auto extends OpMode {
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(21);
                 }
+                break;
+             */
         }
     }
 
