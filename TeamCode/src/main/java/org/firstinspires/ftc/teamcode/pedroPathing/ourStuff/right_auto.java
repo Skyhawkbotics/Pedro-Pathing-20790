@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -43,7 +46,7 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(9.8, 60, Math.toRadians(180));
+    private Pose startPose = new Pose(9.8, 60, Math.toRadians(0));
     //Spike mark locations
     private Pose LeftSpikeMark = new Pose(39.6, 63.3, Math.toRadians(270));
     private Pose MiddleSpikeMark = new Pose(59, 94.5, Math.toRadians(270));
@@ -56,13 +59,8 @@ public class right_auto extends OpMode {
 
     // Poses and Paths for Purple and Yellow
     private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
-    private Path scoreSpikeMark, scoreSpikeMarkChosen;
-
-    // White Stack Cycle Poses + Path Chains
-    private Pose TopTruss = new Pose(28, 84, Math.toRadians(270));
-    private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
-    private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
-    private PathChain pushAll, firstHang, firstHang2;
+    private Path testFirstHang;
+    private PathChain pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, firstHang, sillyPath;
     // Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
@@ -70,15 +68,15 @@ public class right_auto extends OpMode {
 
     private TouchSensor up_zero;
     private int up_true_target_pos;
-    int up_hanging_position = 1400; //TODO: calibrate this value, viper slide position to
+    int up_hanging_position = 1750; //TODO: calibrate this value, viper slide position to
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
-    public void setBackdropGoalPose() {
+    /*public void setBackdropGoalPose() {
         spikeMarkGoalPose = new Pose(LeftSpikeMark.getX(), LeftSpikeMark.getY(), Math.toRadians(270));
         initialBackdropGoalPose = new Pose(LeftBackdrop.getX(), LeftBackdrop.getY(), Math.toRadians(270));
         firstCycleBackdropGoalPose = new Pose(WhiteBackdrop.getX(), WhiteBackdrop.getY(), Math.toRadians(270));
         scoreSpikeMarkChosen = new Path(new BezierCurve(new Point(startPose), new Point(8.5, 80.5, Point.CARTESIAN), new Point(48, 135, Point.CARTESIAN), new Point(LeftSpikeMark)));
-    }
+    }*/
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -88,30 +86,27 @@ public class right_auto extends OpMode {
          *    - Control points manipulate the curve between the start and end points.
          *    - A good visualizer for this is [this](https://www.desmos.com/calculator/3so1zx0hcd).
          *    * BezierLines are straight, and require 2 points. There are the start and end points. **/
+        sillyPath = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(9.8, 60, Point.CARTESIAN),
+                                new Point(11, 60, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(0, 0)
+                .build();
 
         firstHang = follower.pathBuilder()
                 .addPath(
                         // Line 1
-                        new BezierCurve(
-                                new Point(9.800, 60.000, Point.CARTESIAN),
-                                new Point(24.310, 28.800, Point.CARTESIAN),
-                                new Point(40.000, 66.000, Point.CARTESIAN)
+                        new BezierLine(
+                                new Point(11, 60.000, Point.CARTESIAN),
+                                new Point(38.500, 60.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
-        firstHang2 = follower.pathBuilder()
-                .addPath(
-                        // Line 1
-                        new BezierCurve(
-                                new Point(9.800, 60.000, Point.CARTESIAN),
-                                new Point(24.310, 28.800, Point.CARTESIAN),
-                                new Point(40.000, 66.000, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
-                .build();
 
         /** This is a path chain, defined on line 66
          * It, well, chains multiple paths together. Here we use a constant heading from the board to the stack.
@@ -119,17 +114,19 @@ public class right_auto extends OpMode {
          * which means that Pedro will slowly change the heading of the robot from the startHeading to the endHeading over the course of the entire path */
 
 
-        pushAll = follower.pathBuilder()
+        pushAll1 = follower.pathBuilder()
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(40.000, 63.300, Point.CARTESIAN),
+                                new Point(40.000, 60.000, Point.CARTESIAN),
                                 new Point(25.394, 55.277, Point.CARTESIAN),
                                 new Point(15.794, 28.181, Point.CARTESIAN),
                                 new Point(60.000, 35.000, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+        pushAll2 = follower.pathBuilder()
                 .addPath(
                         // Line 2
                         new BezierLine(
@@ -138,6 +135,8 @@ public class right_auto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+        pushAll3 = follower.pathBuilder()
                 .addPath(
                         // Line 3
                         new BezierCurve(
@@ -149,6 +148,8 @@ public class right_auto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+        pushAll4 = follower.pathBuilder()
                 .addPath(
                         // Line 4
                         new BezierCurve(
@@ -160,6 +161,8 @@ public class right_auto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+        pushAll5 = follower.pathBuilder()
                 .addPath(
                         // Line 5
                         new BezierLine(
@@ -169,14 +172,6 @@ public class right_auto extends OpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
             .build();
-
-        /*restHangs = follower.pathBuilder() //can add more later, but is useful as it can stay in the position while waiting to run the next thing.
-                .addPath(new BezierCurve(new Point(initialBackdropGoalPose), new Point(30 + 14, 91.6, Point.CARTESIAN), new Point(13 + 14, 130.8, Point.CARTESIAN), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierCurve(new Point(BottomTruss), new Point(20.5 + 14, 10, Point.CARTESIAN), new Point(42 + 14, 35, Point.CARTESIAN), new Point(Stack)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .setPathEndTimeoutConstraint(0)
-                .build();*/
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -185,31 +180,25 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 11:
-                if (pathTimer.getElapsedTimeSeconds() > 1) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later or shorten it
+                follower.followPath(sillyPath); //seems to fix wierd pid issue if we run this first, this just goes forward one inch, but it doesn't actually move because of stupid pid issue
+                if (pathTimer.getElapsedTimeSeconds() > 0.2) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later or shorten it
                     setPathState(12);
                 }
                 break;
-            case 12: //arm up, give it time to get up before moving, remember that timer resets when case changes, as stated above
-                //setArmState(1); //put arm up
-                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    setPathState(13);
-                }
+            case 12: //arm up
+                setArmState(1); //put arm up
+                setPathState(13);
                 break;
             case 13: //drive to firsthang and wait before putting arm back down
-                follower.followPath(firstHang, true);
-                if (pathTimer.getElapsedTimeSeconds() > 1) {
-                    setPathState(14);
-                }
-                break;
-            case 14:
-                follower.followPath(firstHang2, true);
-                if (pathTimer.getElapsedTimeSeconds() > 4) {
+                follower.followPath(firstHang);
+                if (pathTimer.getElapsedTimeSeconds() > 2.5) {
                     setPathState(15);
                 }
                 break;
+                //SKIP CASE 14!!!!
             case 15: //arm down
-                //setClawState(0);
-                //setArmState(0);
+                setClawState(0);
+                setArmState(0);
                 if (pathTimer.getElapsedTimeSeconds() > 1) {
                     setPathState(16);
                 }
@@ -218,10 +207,35 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 16: //push the rest using pushAll
-                //setGrabState(0);
-                follower.followPath(pushAll, true);
-                setPathState(17);
+                setGrabState(0);
+                follower.followPath(pushAll1, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setPathState(17);
+                }
                 break;
+            case 17:
+                follower.followPath(pushAll2, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setPathState(18);
+                }
+                break;
+            case 18:
+                follower.followPath(pushAll3, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setPathState(19);
+                }
+                break;
+            case 19:
+                follower.followPath(pushAll4, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setPathState(20);
+                }
+                break;
+            case 20:
+                follower.followPath(pushAll5, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setPathState(21);
+                }
         }
     }
 
@@ -250,7 +264,7 @@ public class right_auto extends OpMode {
         }
         switch (clawState) {
             case 0:
-                //servo_outtake_wrist.setPosition(0.45);
+                servo_outtake_wrist.setPosition(0.3);
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
@@ -296,9 +310,10 @@ public class right_auto extends OpMode {
     public void loop() {
 
         // These loop the actions and movement of the robot
-        follower.update();
         autonomousPathUpdate();
+        follower.update();
         autonomousActionUpdate();
+
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
@@ -348,6 +363,7 @@ public class right_auto extends OpMode {
 
 
 
+
         //huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
 
     }
@@ -381,7 +397,7 @@ public class right_auto extends OpMode {
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
-        setBackdropGoalPose();
+        //setBackdropGoalPose();
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(11); //starting PathState
