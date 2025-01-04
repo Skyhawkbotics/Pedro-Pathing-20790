@@ -92,17 +92,8 @@ public class right_auto extends OpMode {
         firstHang = follower.pathBuilder()
                 .addPath(
                         // Line 1
-                        new BezierCurve(
-                                new Point(startPose),
-                                new Point(16.103, 68.748, Point.CARTESIAN),
-                                new Point(19.200, 62.865, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(
-                        // Line 2
                         new BezierLine(
-                                new Point(19.200, 62.865, Point.CARTESIAN),
+                                new Point(12., 60, Point.CARTESIAN),
                                 new Point(30.000, 63.300, Point.CARTESIAN)
                         )
                 )
@@ -289,15 +280,7 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousPathUpdate();
         autonomousActionUpdate();
-        follower.setMaxPower(2);
-
-        /*//Huskylens Setup
-        Deadline rateLimit = new Deadline(1, TimeUnit.SECONDS);
-        rateLimit.expire();
-        if (!huskyLens.knock()) {
-            telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
-        }
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);*/
+        follower.setMaxPower(0.3);
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
