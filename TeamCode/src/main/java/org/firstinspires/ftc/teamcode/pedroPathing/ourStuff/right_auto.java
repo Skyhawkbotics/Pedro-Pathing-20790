@@ -43,7 +43,7 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(9.8, 60, 0);
+    private Pose startPose = new Pose(9.8, 60, Math.toRadians(180));
     //Spike mark locations
     private Pose LeftSpikeMark = new Pose(39.6, 63.3, Math.toRadians(270));
     private Pose MiddleSpikeMark = new Pose(59, 94.5, Math.toRadians(270));
@@ -62,7 +62,7 @@ public class right_auto extends OpMode {
     private Pose TopTruss = new Pose(28, 84, Math.toRadians(270));
     private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
     private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
-    private PathChain pushAll, firstHang;
+    private PathChain pushAll, firstHang, firstHang2;
     // Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
@@ -92,12 +92,25 @@ public class right_auto extends OpMode {
         firstHang = follower.pathBuilder()
                 .addPath(
                         // Line 1
-                        new BezierLine(
-                                new Point(12., 60, Point.CARTESIAN),
-                                new Point(30.000, 63.300, Point.CARTESIAN)
+                        new BezierCurve(
+                                new Point(9.800, 60.000, Point.CARTESIAN),
+                                new Point(24.310, 28.800, Point.CARTESIAN),
+                                new Point(40.000, 66.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+                .build();
+
+        firstHang2 = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(9.800, 60.000, Point.CARTESIAN),
+                                new Point(24.310, 28.800, Point.CARTESIAN),
+                                new Point(40.000, 66.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
                 .build();
 
         /** This is a path chain, defined on line 66
@@ -177,31 +190,37 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 12: //arm up, give it time to get up before moving, remember that timer resets when case changes, as stated above
-                setArmState(1); //put arm up
+                //setArmState(1); //put arm up
                 if (pathTimer.getElapsedTimeSeconds() > 0.1) {
                     setPathState(13);
                 }
                 break;
             case 13: //drive to firsthang and wait before putting arm back down
                 follower.followPath(firstHang, true);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                if (pathTimer.getElapsedTimeSeconds() > 1) {
                     setPathState(14);
                 }
                 break;
-            case 14: //arm down
-                setClawState(0);
-                setArmState(0);
-                if (pathTimer.getElapsedTimeSeconds() > 1) {
+            case 14:
+                follower.followPath(firstHang2, true);
+                if (pathTimer.getElapsedTimeSeconds() > 4) {
                     setPathState(15);
+                }
+                break;
+            case 15: //arm down
+                //setClawState(0);
+                //setArmState(0);
+                if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    setPathState(16);
                 }
                 if (pathTimer.getElapsedTimeSeconds() > 0.1) {
                     setGrabState(1); //release
                 }
                 break;
-            case 15: //push the rest using pushAll
-                setGrabState(0);
+            case 16: //push the rest using pushAll
+                //setGrabState(0);
                 follower.followPath(pushAll, true);
-                setPathState(16);
+                setPathState(17);
                 break;
         }
     }
@@ -231,7 +250,7 @@ public class right_auto extends OpMode {
         }
         switch (clawState) {
             case 0:
-                servo_outtake_wrist.setPosition(0.45);
+                //servo_outtake_wrist.setPosition(0.45);
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
@@ -280,7 +299,6 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousPathUpdate();
         autonomousActionUpdate();
-        follower.setMaxPower(0.3);
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
