@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  * @version 2.0, 9/8/2024
  */
 
+@Config
 @Autonomous(name = "right_auto", group = "AUTO")
 public class right_auto extends OpMode {
 // cool
@@ -67,8 +69,10 @@ public class right_auto extends OpMode {
     private CRServo servo_outtake;
 
     private TouchSensor up_zero;
+    private Telemetry telemetryA;
     private int up_true_target_pos;
-    int up_hanging_position = 1750; //TODO: calibrate this value, viper slide position to
+    int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
+    int up_hanging_position_done = 1400; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
 
     /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
     /*public void setBackdropGoalPose() {
@@ -284,7 +288,7 @@ public class right_auto extends OpMode {
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("Hang position", true);
                 if (up.getCurrentPosition() < up_hanging_position) {
-                    up.setPower(0.7);
+                    up.setPower(0.5);
                     telemetry.addData("arm moving", true);
                 } else if (up.getCurrentPosition() >= up_hanging_position) {
                     up.setPower(0.01);
@@ -293,10 +297,10 @@ public class right_auto extends OpMode {
             case 2: //going to hanging position
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("hang position 2", true);
-                if (up.getCurrentPosition() < up_hanging_position) {
+                if (up.getCurrentPosition() < up_hanging_position_done) {
                     up.setPower(0.5);
                     telemetry.addData("arm moving", true);
-                } else if (up.getCurrentPosition() >= up_hanging_position) {
+                } else if (up.getCurrentPosition() >= up_hanging_position_done) {
                     up.setPower(-0.5);
                 }
                 break;
@@ -353,19 +357,21 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousActionUpdate();
 
+        follower.telemetryDebug(telemetryA);
+
 
         // Feedback to Driver Hub
-        telemetry.addData("path state", pathState);
-        telemetry.addData("arm state", armState);
-        telemetry.addData("claw state", clawState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("armPOS", up.getCurrentPosition());
-        telemetry.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
-        telemetry.addData("arm power", up.getPower());
-        telemetry.addData("armmode", up.getMode());
-        telemetry.update();
+        telemetryA.addData("path state", pathState);
+        telemetryA.addData("arm state", armState);
+        telemetryA.addData("claw state", clawState);
+        telemetryA.addData("x", follower.getPose().getX());
+        telemetryA.addData("y", follower.getPose().getY());
+        telemetryA.addData("heading", follower.getPose().getHeading());
+        telemetryA.addData("armPOS", up.getCurrentPosition());
+        telemetryA.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
+        telemetryA.addData("arm power", up.getPower());
+        telemetryA.addData("armmode", up.getMode());
+        telemetryA.update();
     }
 
     /** This method is called once at the init of the OpMode. **/
@@ -379,6 +385,9 @@ public class right_auto extends OpMode {
 
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
+
+        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetryA.update();
 
         //setup arm variable
         up = hardwareMap.get(DcMotorEx.class, "up");
@@ -427,7 +436,7 @@ public class right_auto extends OpMode {
 
         // After 4 Seconds, Robot Initialization is complete
         if (opmodeTimer.getElapsedTimeSeconds() > 4) {
-            telemetry.addData("Init", "Finished");
+            telemetryA.addData("Init", "Finished");
         }
     }
 

@@ -62,6 +62,7 @@ public class opmode_MAIN extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int out_pos_transfer = 0;//TODO: edit this for calibration!
+    int out_max_pos = 1200; //TODO: calibrate this
 
     int up_specimen_hang = 1907; // Viper
 
@@ -168,7 +169,7 @@ public class opmode_MAIN extends OpMode {
 
 
         // Misumi Slide
-        if (gamepad2.right_stick_y > 0.1 && !out_out.isPressed()) { //out
+        if (gamepad2.right_stick_y > 0.1 && out.getCurrentPosition() < out_max_pos) { //out
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
