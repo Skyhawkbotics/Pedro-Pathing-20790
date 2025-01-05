@@ -110,7 +110,6 @@ public class opmode_MAIN extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        out.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //example velocity setup
         //up = hardwareMap.get(DcMotorEx.class, "up");
@@ -184,8 +183,9 @@ public class opmode_MAIN extends OpMode {
             if (out_true_target_pos == 0) {
                 out.setTargetPosition(out.getCurrentPosition());
                 out_true_target_pos = out.getCurrentPosition();
+                out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
-            out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
 
@@ -266,7 +266,7 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.y) { //goto hanging position
             up.setTargetPosition(up_specimen_hang);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            servo_outtake_wrist_location = outtake_specimen_hang;
+            servo_outtake_wrist_location = 0.3;
         }
     }
 }

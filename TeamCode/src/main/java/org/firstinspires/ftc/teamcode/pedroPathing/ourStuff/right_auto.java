@@ -60,7 +60,7 @@ public class right_auto extends OpMode {
     // Poses and Paths for Purple and Yellow
     private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
     private Path testFirstHang;
-    private PathChain pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, firstHang, sillyPath;
+    private PathChain pushAll, pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, firstHang, sillyPath;
     // Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
@@ -118,7 +118,7 @@ public class right_auto extends OpMode {
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(40.000, 60.000, Point.CARTESIAN),
+                                new Point(37.500, 60.000, Point.CARTESIAN),
                                 new Point(25.394, 55.277, Point.CARTESIAN),
                                 new Point(15.794, 28.181, Point.CARTESIAN),
                                 new Point(60.000, 35.000, Point.CARTESIAN)
@@ -166,12 +166,63 @@ public class right_auto extends OpMode {
                 .addPath(
                         // Line 5
                         new BezierLine(
-                                new Point(60.000, 35, Point.CARTESIAN),
-                                new Point(17.000, 9.910, Point.CARTESIAN)
+                                new Point(37.5, 60, Point.CARTESIAN),
+                                new Point(22.000, 9.910, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
             .build();
+
+        pushAll = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(37.500, 60.000, Point.CARTESIAN),
+                                new Point(25.394, 55.277, Point.CARTESIAN),
+                                new Point(15.794, 28.181, Point.CARTESIAN),
+                                new Point(60.000, 35.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(60.000, 35.000, Point.CARTESIAN),
+                                new Point(60.000, 29.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 3
+                        new BezierCurve(
+                                new Point(60.000, 29.000, Point.CARTESIAN),
+                                new Point(-22.000, 23.690, Point.CARTESIAN),
+                                new Point(30.039, 35.613, Point.CARTESIAN),
+                                new Point(66.581, 31.742, Point.CARTESIAN),
+                                new Point(60.000, 19.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 4
+                        new BezierCurve(
+                                new Point(60.000, 19.000, Point.CARTESIAN),
+                                new Point(-22.000, 14.710, Point.CARTESIAN),
+                                new Point(28.645, 29.110, Point.CARTESIAN),
+                                new Point(66.890, 23.690, Point.CARTESIAN),
+                                new Point(60.000, 9.700, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 5
+                        new BezierLine(
+                                new Point(37.5, 60, Point.CARTESIAN),
+                                new Point(22.000, 9.910, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -198,7 +249,7 @@ public class right_auto extends OpMode {
                 //SKIP CASE 14!!!!
             case 15: //arm down
                 setClawState(0);
-                setArmState(0);
+                setArmState(2);
                 if (pathTimer.getElapsedTimeSeconds() > 0.25) {
                     setPathState(16);
                 }
@@ -208,36 +259,12 @@ public class right_auto extends OpMode {
                 break;
             case 16: //push the rest using pushAll
                 setGrabState(0);
-                follower.followPath(pushAll5, true);
-                if (pathTimer.getElapsedTimeSeconds() > 20) {
-                    setPathState(20);
-                }
-                break;
-            /*case 17:
-                follower.followPath(pushAll2, true);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setPathState(18);
-                }
-                break;
-            case 18:
-                follower.followPath(pushAll3, true);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setPathState(19);
-                }
-                break;
-            case 19:
-                follower.followPath(pushAll4, true);
+                setArmState(0);
+                follower.followPath(pushAll, true);
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(20);
                 }
                 break;
-            case 20:
-                follower.followPath(pushAll5, true);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setPathState(21);
-                }
-                break;
-             */
         }
     }
 
@@ -257,10 +284,20 @@ public class right_auto extends OpMode {
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("Hang position", true);
                 if (up.getCurrentPosition() < up_hanging_position) {
-                    up.setPower(1);
+                    up.setPower(0.7);
                     telemetry.addData("arm moving", true);
                 } else if (up.getCurrentPosition() >= up_hanging_position) {
                     up.setPower(0.01);
+                }
+                break;
+            case 2: //going to hanging position
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                telemetry.addData("hang position 2", true);
+                if (up.getCurrentPosition() < up_hanging_position) {
+                    up.setPower(0.5);
+                    telemetry.addData("arm moving", true);
+                } else if (up.getCurrentPosition() >= up_hanging_position) {
+                    up.setPower(-0.5);
                 }
                 break;
         }
@@ -353,7 +390,6 @@ public class right_auto extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        out.setDirection(DcMotorSimple.Direction.REVERSE);
 
         servo_outtake = hardwareMap.get(CRServo.class,"outtake");
 
