@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -104,7 +104,7 @@ public class right_auto extends OpMode {
                 .addPath(
                         // Line 1
                         new BezierLine(
-                                new Point(11, 60.000, Point.CARTESIAN),
+                                new Point(9.8, 60.000, Point.CARTESIAN),
                                 new Point(37.500, 60.000, Point.CARTESIAN)
                         )
                 )
@@ -128,7 +128,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 35.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         pushAll2 = follower.pathBuilder()
                 .addPath(
@@ -138,7 +138,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 29.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         pushAll3 = follower.pathBuilder()
                 .addPath(
@@ -151,7 +151,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 19.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         pushAll4 = follower.pathBuilder()
                 .addPath(
@@ -164,7 +164,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 9.700, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         pushAll5 = follower.pathBuilder()
                 .addPath(
@@ -174,7 +174,7 @@ public class right_auto extends OpMode {
                                 new Point(22.000, 9.910, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
             .build();
 
         pushAll = follower.pathBuilder()
@@ -187,7 +187,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 35.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
                         // Line 2
                         new BezierLine(
@@ -195,7 +195,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 29.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
                         // Line 3
                         new BezierCurve(
@@ -206,7 +206,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 19.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
                         // Line 4
                         new BezierCurve(
@@ -217,7 +217,7 @@ public class right_auto extends OpMode {
                                 new Point(60.000, 9.700, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
                         // Line 5
                         new BezierLine(
@@ -225,7 +225,7 @@ public class right_auto extends OpMode {
                                 new Point(22.000, 9.910, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
     }
 
@@ -235,7 +235,7 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 11:
-                follower.followPath(sillyPath); //seems to fix wierd pid issue if we run this first, this just goes forward one inch, but it doesn't actually move because of stupid pid issue
+                //follower.followPath(sillyPath); //seems to fix wierd pid issue if we run this first, this just goes forward one inch, but it doesn't actually move because of stupid pid issue
                 if (pathTimer.getElapsedTimeSeconds() > 0.2) { //just wait for a bit, idk why it was in the example... TODO: maybe remove this later or shorten it
                     setPathState(12);
                 }
@@ -357,7 +357,7 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousActionUpdate();
 
-        follower.telemetryDebug(telemetryA);
+        //follower.telemetryDebug(telemetryA);
 
 
         // Feedback to Driver Hub
