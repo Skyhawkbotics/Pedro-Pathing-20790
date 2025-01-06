@@ -62,7 +62,7 @@ public class right_auto extends OpMode {
     // Poses and Paths for Purple and Yellow
     private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
     private Path testFirstHang;
-    private PathChain pushAll, pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, firstHang, sillyPath;
+    private PathChain pushAll, pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, firstHang, sillyPath, pushAllLines;
     // Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
@@ -227,6 +227,73 @@ public class right_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
+        pushAllLines = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierLine(
+                                new Point(10.219, 60.852, Point.CARTESIAN),
+                                new Point(33.445, 61.006, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(33.445, 61.006, Point.CARTESIAN),
+                                new Point(33.755, 35.148, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 3
+                        new BezierLine(
+                                new Point(33.755, 35.148, Point.CARTESIAN),
+                                new Point(60.077, 35.768, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 4
+                        new BezierLine(
+                                new Point(60.077, 35.768, Point.CARTESIAN),
+                                new Point(59.923, 25.703, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 5
+                        new BezierLine(
+                                new Point(59.923, 25.703, Point.CARTESIAN),
+                                new Point(13.781, 26.013, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 6
+                        new BezierLine(
+                                new Point(13.781, 26.013, Point.CARTESIAN),
+                                new Point(60.387, 26.013, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 7
+                        new BezierLine(
+                                new Point(60.387, 26.013, Point.CARTESIAN),
+                                new Point(59.768, 14.245, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .addPath(
+                        // Line 8
+                        new BezierLine(
+                                new Point(59.768, 14.245, Point.CARTESIAN),
+                                new Point(12.077, 14.090, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -241,12 +308,12 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 12: //arm up
-                setArmState(1); //put arm up
+                // setArmState(1); //put arm up
                 setPathState(13);
                 break;
             case 13: //drive to firsthang and wait before putting arm back down
-                follower.followPath(firstHang);
-                if (pathTimer.getElapsedTimeSeconds() > 2.5) {
+                follower.followPath(pushAllLines, true);
+                if (pathTimer.getElapsedTimeSeconds() > 30) {
                     setPathState(15);
                 }
                 break;
@@ -264,7 +331,7 @@ public class right_auto extends OpMode {
             case 16: //push the rest using pushAll
                 setGrabState(0);
                 setArmState(0);
-                follower.followPath(pushAll, true);
+                follower.followPath(pushAllLines, true);
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(20);
                 }
