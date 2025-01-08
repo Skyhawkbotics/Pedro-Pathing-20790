@@ -16,10 +16,8 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
@@ -53,7 +51,7 @@ public class tuning_test extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(9.8, 60, Math.toRadians(0));
 
-    private Pose preloadPose = new Pose(37.5, 60, Math.toRadians(0));
+    private Pose hangPose = new Pose(37.5, 60, Math.toRadians(0));
 
     private Pose back_Pose = new Pose(30,60, Math.toRadians(0));
 
@@ -107,10 +105,10 @@ public class tuning_test extends OpMode {
         // Constant maintains the fixed heading
         // Tangential Aligns the heading with path direction
         // This is the preload path
-         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(preloadPose)));
+         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(hangPose)));
         scorePreload.setConstantHeadingInterpolation(Math.toRadians(0));
         /*
-        back = new Path(new BezierLine(new Point(preloadPose), new Point(back_Pose)));
+        back = new Path(new BezierLine(new Point(hangPose), new Point(back_Pose)));
         back.setConstantHeadingInterpolation(Math.toRadians(0));
         park = new Path(new BezierLine(new Point(back_Pose), new Point(parkPose)));
         park.setConstantHeadingInterpolation(Math.toRadians(0));
@@ -134,36 +132,39 @@ public class tuning_test extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
-        specimen_hang = follower.pathBuilder()
+        specimen_hang = follower.pathBuilder() // Hangs, then picks up a specimen and drives forward again
+                // purpose of this is to test tuning
                 .addPath(
                         // Line 1
                         new BezierLine(
-                                new Point(10.121, 68.005, Point.CARTESIAN),
-                                new Point(39.951, 68.360, Point.CARTESIAN)
+                                // new Point(startPose),
+                                // new Point(hangPose),
+                                new Point(10.121, 68.0, Point.CARTESIAN), // Start Pose
+                                new Point(39.951, 68.0, Point.CARTESIAN)   // hang pose
                         )
                 )
-                .setTangentHeadingInterpolation()
+                .setTangentHeadingInterpolation() // heading
                 .addPath(
                         // Line 2
                         new BezierLine(
-                                new Point(39.951, 68.360, Point.CARTESIAN),
-                                new Point(10.298, 39.063, Point.CARTESIAN)
+                                new Point(39.951, 68.0, Point.CARTESIAN), // hang pose
+                                new Point(10.298, 39.063, Point.CARTESIAN) // observation zone pick up point
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180)) // Turning
                 .addPath(
                         // Line 3
                         new BezierLine(
-                                new Point(10.298, 39.063, Point.CARTESIAN),
-                                new Point(66.762, 39.596, Point.CARTESIAN)
+                                new Point(10.298, 39.063, Point.CARTESIAN), // observation zone
+                                new Point(66.762, 39.596, Point.CARTESIAN) // forward straight
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0)) // turning
                 .build();
 
         // Now I'm adding a Path chain of actions that will go back and strafe and turn to park (for tuning)
         /*back = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(preloadPose), new Point(back_Pose)))
+                .addPath(new BezierLine(new Point(hangPose), new Point(back_Pose)))
                 .build();
         park = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(back_Pose), new Point(parkPose)))
