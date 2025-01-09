@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 public class tuning_test extends OpMode {
     // cool
     private Follower follower; // THe drivetrain with the calculations needed for path following
-    private Timer pathTimer, actionTimer, opmodeTimer; // Timers for progression of states
+    private Timer pathTimer, actionTimer, opmodeTimer, outtimer; // Timers for progression of states
 
 
     private int pathState, armState, outclawState, outgrabState, inclawState, ingrabState; // Different cases and states of the different parts of the robot
@@ -49,19 +49,20 @@ public class tuning_test extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(9.8, 60, Math.toRadians(0));
+    private Pose startPose = new Pose(10.121, 68.0, Math.toRadians(0));
 
-    private Pose hangPose = new Pose(37.5, 60, Math.toRadians(0));
+    private Pose hangPose = new Pose(35.951, 68.0, Math.toRadians(0));
 
     private Pose back_Pose = new Pose(30,60, Math.toRadians(0));
 
-    private Pose parkPose = new Pose(122,132, Math.toRadians(0));
+    private Pose pickupPose = new Pose(10.298, 39.063, Math.toRadians(180));
+
 
     // Paths
 
-    private Path scorePreload, back, park;
+    private Path scorePreload;
 
-    private PathChain back_park, specimen_hang;
+    private PathChain back_park, specimen_hang, back, park;
 
 
 
@@ -105,8 +106,6 @@ public class tuning_test extends OpMode {
         // Constant maintains the fixed heading
         // Tangential Aligns the heading with path direction
         // This is the preload path
-         scorePreload = new Path(new BezierLine(new Point(startPose), new Point(hangPose)));
-        scorePreload.setConstantHeadingInterpolation(Math.toRadians(0));
         /*
         back = new Path(new BezierLine(new Point(hangPose), new Point(back_Pose)));
         back.setConstantHeadingInterpolation(Math.toRadians(0));
@@ -114,24 +113,7 @@ public class tuning_test extends OpMode {
         park.setConstantHeadingInterpolation(Math.toRadians(0));
 
          */
-        back_park = follower.pathBuilder()
-                .addPath(
-                        // Line 1
-                        new BezierLine(
-                                new Point(startPose),
-                                new Point(59.660, 84.873, Point.CARTESIAN)
-                        )
-                )
-                .setTangentHeadingInterpolation()
-                .addPath(
-                        // Line 2
-                        new BezierLine(
-                                new Point(59.660, 84.873, Point.CARTESIAN),
-                                new Point(10.121, 85.051, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+
         specimen_hang = follower.pathBuilder() // Hangs, then picks up a specimen and drives forward again
                 // purpose of this is to test tuning
                 .addPath(
@@ -139,19 +121,27 @@ public class tuning_test extends OpMode {
                         new BezierLine(
                                 // new Point(startPose),
                                 // new Point(hangPose),
-                                new Point(10.121, 68.0, Point.CARTESIAN), // Start Pose
-                                new Point(39.951, 68.0, Point.CARTESIAN)   // hang pose
+                                new Point(startPose), // Start Pose
+                                new Point(hangPose)   // hang pose
                         )
                 )
                 .setTangentHeadingInterpolation() // heading
+                .build();
+        back = follower.pathBuilder()
                 .addPath(
                         // Line 2
                         new BezierLine(
-                                new Point(39.951, 68.0, Point.CARTESIAN), // hang pose
-                                new Point(10.298, 39.063, Point.CARTESIAN) // observation zone pick up point
+                                new Point(hangPose), // hang pose
+                                new Point(pickupPose) // observation zone pick up point
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180)) // Turning
+                .setLinearHeadingInterpolation(hangPose.getHeading(),pickupPose.getHeading())
+
+                //.setConstantHeadingInterpolation(Math.toRadians(0))
+                //.setConstantHeadingInterpolation(Math.toRadians(180))
+                //.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180)) // Turning
+                .build();
+        /*park = follower.pathBuilder()
                 .addPath(
                         // Line 3
                         new BezierLine(
@@ -161,6 +151,8 @@ public class tuning_test extends OpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0)) // turning
                 .build();
+
+         */
 
         // Now I'm adding a Path chain of actions that will go back and strafe and turn to park (for tuning)
         /*back = follower.pathBuilder()
@@ -180,27 +172,53 @@ public class tuning_test extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(specimen_hang);
-                telemetry.addData("Specimen hang traj", true);
-
-                /* if (pathTimer.getElapsedTimeSeconds() > 5) {
+                follower.followPath(specimen_hang, true);
+                setArmState(1);
+                setoutClawState(1);
+                if(pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(1);
                 }
-
-                 */
                 break;
             case 1:
-                follower.followPath(back);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setoutGrabState(3);
+                    setArmState(2);
                     setPathState(2);
-                }
+                    outtimer.resetTimer();
+
+                break;
             case 2:
-                follower.followPath(park);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    break;
+                if(outtimer.getElapsedTimeSeconds() > 2) {
+                    setoutGrabState(1);
                 }
+                follower.followPath(park);
+                if (pathTimer.getElapsedTimeSeconds() > 10) {
+
+                }
+                break;
+            case 3:
+
         }
     }
+    /* back_park = follower.pathBuilder()
+            .addPath(
+            // Line 1
+                        new BezierLine(
+                    new Point(startPose),
+                                new Point(59.660, 84.873, Point.CARTESIAN)
+                        )
+                                )
+                                .setTangentHeadingInterpolation()
+                .addPath(
+            // Line 2
+                        new BezierLine(
+                    new Point(59.660, 84.873, Point.CARTESIAN),
+                                new Point(10.121, 85.051, Point.CARTESIAN)
+                        )
+                                )
+                                .setConstantHeadingInterpolation(Math.toRadians(0))
+            .build();
+
+     */
 
     /** This switch is called continuously and runs the necessary actions, when finished, it will set the state to -1.
      * (Therefore, it will not run the action continuously) **/
@@ -227,17 +245,17 @@ public class tuning_test extends OpMode {
             case 2: //going to hanging position
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("hang position 2", true);
-                if (up.getCurrentPosition() < up_hanging_position_done) {
-                    up.setPower(0.5);
+                if (up.getCurrentPosition() > up_hanging_position_done) {
+                    up.setPower(-0.6);
                     telemetry.addData("arm moving", true);
-                } else if (up.getCurrentPosition() >= up_hanging_position_done) {
-                    up.setPower(-0.5);
+                } else if (up.getCurrentPosition() <= up_hanging_position_done) {
+                    up.setPower(0.01);
                 }
                 break;
         }
         switch (outclawState) {
             case 0:
-                servo_outtake_wrist.setPosition(0.3);
+                servo_outtake_wrist.setPosition(0);
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
@@ -255,6 +273,10 @@ public class tuning_test extends OpMode {
             case 2: //grab
                 servo_outtake.setPower(-1);
                 break;
+            case 3: // hang release?
+                if (up.getCurrentPosition() < 1500) {
+                   servo_outtake.setPower(1);
+                }
         }
         switch (inclawState) {
             case 0:
@@ -324,10 +346,12 @@ public class tuning_test extends OpMode {
         telemetryA.addData("arm state", armState);
         telemetryA.addData("claw state", outclawState);
         telemetryA.addData("out grab state", outgrabState);
+
         telemetryA.addData("x", follower.getPose().getX());
         telemetryA.addData("y", follower.getPose().getY());
         telemetryA.addData("heading", follower.getPose().getHeading());
         telemetryA.addData("armPOS", up.getCurrentPosition());
+        telemetryA.addData("out servo", servo_outtake_wrist.getPosition());
         telemetryA.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
         telemetryA.addData("arm power", up.getPower());
         telemetryA.addData("armmode", up.getMode());
