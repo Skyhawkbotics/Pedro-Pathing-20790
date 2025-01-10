@@ -93,13 +93,13 @@ public class left_auto extends OpMode {
                                     new Point(11.487, 132.347, Point.CARTESIAN)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(145));
+                    .setConstantHeadingInterpolation(Math.toRadians(145))
                     .build();
         }
         public void autonomousPathUpdate() {
             switch(pathState){
                 case 1:
-                    follower = follower.followPath(pushAll,true);
+                    follower.followPath(pushAll,true);
                     setPathState(-1);
                     break;
             }
