@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -18,13 +23,21 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
-public class left_auto {
-    public class GeneratedPath {
+@Config
+@Autonomous(name = "left_auto_trajectory_only", group = "Auto")
+public class left_auto extends OpMode {
+    private Follower follower;
+    private Timer pathTimer, actionTimer, opmodeTimer;
+    private String navigation;
+    private int pathState;
 
-        public GeneratedPath() {
-            PathBuilder builder = new PathBuilder();
+    //start pose
+    private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
+    private PathChain pushAll;
 
-            builder
+    public void buildPaths() {
+
+        pushAll = follower.pathBuilder()
                     .addPath(
                             // Line 1
                             new BezierLine(
@@ -81,6 +94,38 @@ public class left_auto {
                             )
                     )
                     .setConstantHeadingInterpolation(Math.toRadians(145));
+                    .build();
         }
+        public void autonomousPathUpdate() {
+            switch(pathState){
+                case 1:
+                    follower = follower.followPath(pushAll,true);
+                    setPathState(-1);
+                    break;
+            }
+
+    }
+
+    public void setPathState(int pState) {
+        pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    @Override
+    public void init() {
+        pathTimer = new Timer();
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
+        buildPaths();
+    }
+
+    @Override
+    public void loop() {
+        follower.update();
+        autonomousPathUpdate();
+        telemetry.addData("Path State",pathState);
+        telemetry.addData("Position",follower.getPose().toString());
+        telemetry.update();
     }
 }
+
