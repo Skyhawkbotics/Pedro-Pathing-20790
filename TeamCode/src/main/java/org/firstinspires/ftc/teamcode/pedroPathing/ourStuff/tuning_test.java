@@ -62,7 +62,7 @@ public class tuning_test extends OpMode {
 
     private Path scorePreload;
 
-    private PathChain back_park, specimen_hang, back, park;
+    private PathChain back_park, specimen_hang, back, park, hang2;
 
 
 
@@ -141,6 +141,15 @@ public class tuning_test extends OpMode {
                 //.setConstantHeadingInterpolation(Math.toRadians(180))
                 //.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180)) // Turning
                 .build();
+        hang2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(pickupPose),
+                                new Point(hangPose)
+                        )
+                )
+                .setLinearHeadingInterpolation(pickupPose.getHeading(), hangPose.getHeading())
+                .build();
         /*park = follower.pathBuilder()
                 .addPath(
                         // Line 3
@@ -182,20 +191,38 @@ public class tuning_test extends OpMode {
             case 1:
                     setoutGrabState(3);
                     setArmState(2);
-                    setPathState(2);
-                    outtimer.resetTimer();
-
-                break;
+                    if(pathTimer.getElapsedTimeSeconds() > 5) {
+                        setPathState(2);
+                        setArmState(0);
+                    }
+                    break;
             case 2:
-                if(outtimer.getElapsedTimeSeconds() > 2) {
-                    setoutGrabState(1);
-                }
-                follower.followPath(park);
-                if (pathTimer.getElapsedTimeSeconds() > 10) {
+                follower.followPath(back);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    setoutGrabState(2);
+                    if(pathTimer.getElapsedTimeSeconds() > 15) {
+                        setArmState(1);
+                        setoutGrabState(0);
+                        setPathState(3);
 
+
+                    }
                 }
                 break;
             case 3:
+                follower.followPath(hang2);
+                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                    setArmState(2);
+                    setoutGrabState(3);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                follower.followPath(back);
+                setArmState(0);
+                break;
+
+
 
         }
     }
