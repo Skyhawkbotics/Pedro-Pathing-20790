@@ -170,12 +170,12 @@ public class opmode_MAIN extends OpMode {
 
 
         // Misumi Slide
-        if (gamepad2.right_stick_y > 0.1 && !out_zero.isPressed()) { //in
+        if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
-        } else if (gamepad2.right_stick_y < -0.1 && out.getCurrentPosition() > out_max_pos) { //out
+        } else if (gamepad2.dpad_left/* && out.getCurrentPosition() > out_max_pos */) { //out
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
@@ -236,10 +236,10 @@ public class opmode_MAIN extends OpMode {
         servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
 
         // manual intake wrist location
-        if (gamepad2.dpad_left) {
+        if (gamepad2.right_stick_y > 0.1) {
             servo_intake_wrist_location += 0.05;
         }
-        if (gamepad2.dpad_right) {
+        if (gamepad2.right_stick_y < -0.1) {
             servo_intake_wrist_location -= 0.05;
         }
         // limits

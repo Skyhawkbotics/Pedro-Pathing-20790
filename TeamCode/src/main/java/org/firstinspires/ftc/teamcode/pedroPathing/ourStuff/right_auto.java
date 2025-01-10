@@ -290,7 +290,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 12: //arm up
-                // setArmState(1); //put arm up
+                setArmState(1); //put arm up
                 setPathState(13);
                 break;
             case 13: //drive to firsthang and wait before putting arm back down

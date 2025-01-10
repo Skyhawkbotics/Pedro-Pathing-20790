@@ -183,13 +183,13 @@ public class tuning_test extends OpMode {
             case 0:
                 follower.followPath(specimen_hang, true);
                 setArmState(1);
-                setoutClawState(1);
+                setoutClawState(1); // set pos to hanging pos
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
                     setPathState(1);
                 }
                 break;
             case 1:
-                    setoutGrabState(3);
+                    setoutGrabState(3); //
                     setArmState(2);
                     if(pathTimer.getElapsedTimeSeconds() > 5) {
                         setPathState(2);
@@ -199,10 +199,10 @@ public class tuning_test extends OpMode {
             case 2:
                 follower.followPath(back);
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setoutGrabState(2);
-                    if(pathTimer.getElapsedTimeSeconds() > 15) {
-                        setArmState(1);
-                        setoutGrabState(0);
+                    setoutGrabState(2); // 10 sec grab
+                    if(pathTimer.getElapsedTimeSeconds() > 8) {
+                        setArmState(1); // hang pos
+                        setoutGrabState(0);  // stop grab
                         setPathState(3);
 
 
