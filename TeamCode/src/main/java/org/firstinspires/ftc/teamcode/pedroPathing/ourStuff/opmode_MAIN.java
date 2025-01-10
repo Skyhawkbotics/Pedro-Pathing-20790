@@ -45,7 +45,8 @@ public class opmode_MAIN extends OpMode {
     private DcMotorEx up;
     private DcMotorEx out;
     private TouchSensor up_zero;
-
+    private TouchSensor out_zero;
+    private TouchSensor out_out;
 
     //from rr version of opmode_MAIN
     int arm_upper_lim = 4350;
@@ -61,6 +62,7 @@ public class opmode_MAIN extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int out_pos_transfer = 0;//TODO: edit this for calibration!
+    int out_max_pos = -1300;
 
     int up_specimen_hang = 1907; // Viper
 
@@ -109,7 +111,7 @@ public class opmode_MAIN extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        out.setDirection(DcMotorSimple.Direction.REVERSE);
+        up.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //example velocity setup
         //up = hardwareMap.get(DcMotorEx.class, "up");
@@ -126,8 +128,8 @@ public class opmode_MAIN extends OpMode {
 
         //initialize touch sensor
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
-        // TouchSensor out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
-        // TouchSensor out_transfer = hardwareMap.get(TouchSensor.class, "out_transfer");
+        out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
+        out_out = hardwareMap.get(TouchSensor.class, "out_out");
     }
 
     /**
@@ -137,7 +139,7 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.7, -gamepad1.right_stick_x * 0.7);
         follower.update();
 
 
@@ -168,12 +170,12 @@ public class opmode_MAIN extends OpMode {
 
 
         // Misumi Slide
-        if (gamepad2.right_stick_y > 0.1) {
+        if (gamepad2.right_stick_y > 0.1 && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
-        } else if (gamepad2.right_stick_y < -0.1) {
+        } else if (gamepad2.right_stick_y < -0.1 && out.getCurrentPosition() > out_max_pos) { //out
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             out.setVelocity(gamepad2.right_stick_y * 1000);
             out_true_target_pos = 0;
@@ -183,8 +185,9 @@ public class opmode_MAIN extends OpMode {
             if (out_true_target_pos == 0) {
                 out.setTargetPosition(out.getCurrentPosition());
                 out_true_target_pos = out.getCurrentPosition();
+                out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             }
-            out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
 
@@ -265,7 +268,14 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.y) { //goto hanging position
             up.setTargetPosition(up_specimen_hang);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            servo_outtake_wrist_location = outtake_specimen_hang;
+            servo_outtake_wrist_location = 0.3;
         }
+
+
+        telemetry.addData("gamepad2.rightstickx", gamepad2.right_stick_x);
+        telemetry.addData("gamepad2.rightsticky", gamepad2.right_stick_y);
+        telemetry.addData("out.getCurrentpos", out.getCurrentPosition());
+
+        telemetry.update();
     }
 }
