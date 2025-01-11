@@ -51,15 +51,15 @@ public class tuning_test extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(10.121, 68.0, Math.toRadians(0));
+    private Pose startPose = new Pose(10.121, 63.0, Math.toRadians(0)); //TODO
 
-    private Pose hangPose = new Pose(35.951, 68.0, Math.toRadians(0)); // TODO
+    private Pose hangPose = new Pose(35.951, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose hangPose1 = new Pose(36.2, 65.0, Math.toRadians(0)); // TODO
+    private Pose hangPose1 = new Pose(36.0, 60.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(14.298, 39.063, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPose = new Pose(16, 43, Math.toRadians(180)); // TODO : THISx value
 
-    private Pose curve1_done = new Pose(63.388409371146736, 24.6806411837238, Math.toRadians(0));
+    private Pose firstpoint = new Pose(36.577, 41.371, Math.toRadians(0));
 
     private Pose control_p1 = new Pose(15.625154130702835, 22.905055487053016, Math.toRadians(0));
 
@@ -68,7 +68,7 @@ public class tuning_test extends OpMode {
 
     // Paths
 
-    private PathChain back_park, specimen_hang, back, park, hang2, hang3, curve;
+    private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_pos;
 
 
 
@@ -166,16 +166,32 @@ public class tuning_test extends OpMode {
                 .setLinearHeadingInterpolation(pickupPose.getHeading(),hangPose1.getHeading())
                 .build();
         push_pos = follower.pathBuilder()
+        .addPath(
+                // Line 1
+                new BezierLine(
+                        new Point(hangPose1),
+                        new Point(36.577, 41.371, Point.CARTESIAN)
+                )
+        )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
+                        // Line 2
                         new BezierLine(
-                                new Point(hangPose1),
-                                new Point(control_p1),
-                                new Point(control_p2),
-                                new Point(curve1_done)
+                                new Point(36.577, 41.371, Point.CARTESIAN),
+                                new Point(63.033, 41.194, Point.CARTESIAN)
+                        )
                 )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(
+                        // Line 3
+                        new BezierLine(
+                                new Point(63.033, 41.194, Point.CARTESIAN),
+                                new Point(62.856, 22.905, Point.CARTESIAN)
+                        )
                 )
-                .setLinearHeadingInterpolation(hangPose1.getHeading(),curve1_done.getHeading())
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
+
 
         /*park = follower.pathBuilder()
                 .addPath(
@@ -227,37 +243,40 @@ public class tuning_test extends OpMode {
             case 2: // Pickup Position
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
                         follower.followPath(back);
-                        if (pathTimer.getElapsedTimeSeconds() > 3) {
-                            setArmState(0); // up pickup pos// intake pos
+                        setArmState(0);
+                        setoutGrabState(2); // in
+
+                        //if (pathTimer.getElapsedTimeSeconds() > 3) {
                             if ((follower.getPose().getX() - pickupPose.getX()) < 1) { // prox sensor TODO : shorten?
-                                setoutGrabState(2); // in
                                 setPathState(3);
                             }
-                        }
+                        //}
                     }
                 break;
             case 3:
                 if(pathTimer.getElapsedTimeSeconds() > 2) {
-                    setArmState(1);
+                    setArmState(1); // raise
                     setoutGrabState(0);
-                    follower.followPath(hang2, true); // drive to hang pos
-                    if (pathTimer.getElapsedTimeSeconds() > 6) { // waiting for it to reach pos // todo SHORTEN?
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                    follower.followPath(hang2); // drive to hang pos
+                    if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
                         setArmState(2); // hang
                         if (up.getPower() == 0.01) {
                             setoutGrabState(1); // release
                             setPathState(4); // move on
                         }
                     }
-                }
                 break;
-            case 4:
-                /*if (pathTimer.getElapsedTimeSeconds() > 1) {
-                    follower.followPath(curve);
-                    setArmState(0);
-                }
-                break;
-
-                 */
+            case 5:
+               // if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    //follower.followPath(push_pos);
+                  //  setoutGrabState(0);
+                 //   setArmState(0);
+                //}
+               // break;
 
 
 
