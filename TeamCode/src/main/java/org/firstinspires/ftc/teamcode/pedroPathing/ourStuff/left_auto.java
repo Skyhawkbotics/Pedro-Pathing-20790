@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
@@ -22,7 +24,7 @@ public class left_auto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private String navigation;
-    private int pathState, viperState, misumiState, viperClawState,misumiClawState;
+    private int pathState, viperState, misumiState, viperWristState,misumiWristState, viperClawState, misumiClawState;
 
     //Actuators in use!
     private DcMotorEx up, out;
@@ -30,6 +32,9 @@ public class left_auto extends OpMode {
     private CRServo servo_outtake;
     private Servo servo_intake;
     private CRServo servo_intake_wrist;
+
+    //Sensors in use!
+    private TouchSensor up_zero;
 
     //start pose
     private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
@@ -104,13 +109,76 @@ public class left_auto extends OpMode {
                 setPathState(-1);
                 break;
         }
+        switch(misumiState){
+            case 0:
+                //going to closed position
 
+            case 1:
+                //extended length for picking up samples
+        }
+
+        switch(viperState){
+            case 0:
+                //position of the arm is at 0 ticks
+                break;
+            case 1:
+                //position of the viper slide is at transfer position
+                break;
+            case 2:
+                //position of the viper slide is at sample-dropping length (max)
+                break;
+        }
+        switch(viperWristState){
+            case 0:
+                //transfer position
+                break;
+            case 1:
+                //specimen hang position
+                break;
+            case 2:
+                //sample-dropping position
+                break;
+        }
+        switch(misumiWristState){
+            case 0:
+                //out of the way
+                break;
+            case 1:
+                //sample collection position
+                break;
+            case 2:
+                //transfer position
+                break;
+        }
+        switch(viperClawState){
+            case 0:
+                //servos are set to power 0
+                break;
+            case 1:
+                //servos are set to power -1
+                break;
+            case 2:
+                //servos are set to power 1
+                break;
+        }
+        switch(misumiClawState){
+            case 0:
+                //servos are set to power 0
+                break;
+            case 1:
+                //servos are set to power -1
+                break;
+            case 2:
+                //servos are set to power 1
+                break;
+        }
     }
 
     public void setPathState(int pState) {
         pathState = pState;
         pathTimer.resetTimer();
     }
+
 
     @Override
     public void init() {
