@@ -103,12 +103,15 @@ public class left_auto extends OpMode {
                 .build();
     }
     public void autonomousPathUpdate() {
-        switch(pathState){
+        switch (pathState) {
             case 1:
-                follower.followPath(pushAll,true);
+                follower.followPath(pushAll, true);
                 setPathState(-1);
                 break;
         }
+    }
+
+    public void autonomousActionUpdate() {
         switch(misumiState){
             case 0:
                 //going to closed position
@@ -192,6 +195,7 @@ public class left_auto extends OpMode {
     public void loop() {
         follower.update();
         autonomousPathUpdate();
+        autonomousActionUpdate();
         telemetry.addData("Path State",pathState);
         telemetry.addData("Position",follower.getPose().toString());
         telemetry.update();
