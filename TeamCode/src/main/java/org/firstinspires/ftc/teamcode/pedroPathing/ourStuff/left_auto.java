@@ -35,17 +35,19 @@ public class left_auto extends OpMode {
 
     //Sensors in use!
     private TouchSensor up_zero;
-    private
+    private TouchSensor out_zero;
 
     //Position variables for robot!
     int up_hanging_position = 1750; //TODO: Check pushes in tuning test to see if value has been changed
-    int up_hanging_posiion_done = 1400; //TODO: Check pushes in tuning test to see if value has been changed
+    int up_hanging_position_done = 1400; //TODO: Check pushes in tuning test to see if value has been changed
     int up_basket_position = 3650;
     double viper_wrist_position_basket = 1;
     double viper_wrist_position_transfer = 0;
     double misumi_wrist_position_transfer = 0;
     double misumi_wrist_position_grab = 1;
-    double viper_position_transfer = 150;
+    int viper_position_transfer = 150;
+    double viper_wrist_position_hang = 0.5;
+    int misumi_position_grab = 100; //TODO: Calibrate values!!!
 
     //start pose
     private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
@@ -127,11 +129,25 @@ public class left_auto extends OpMode {
         switch(misumiState){
             case 0:
                 //going to closed position
-
+                if (!out_zero.isPressed()) {
+                    out.setPower(-0.5);
+                } else if (out_zero.isPressed()) {
+                    out.setPower(0);
+                    out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
                 break;
             case 1:
                 //extended length for picking up samples
-
+                out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (out.getCurrentPosition() < misumi_position_grab) {
+                    out.setPower(0.5);
+                }
+                else if (out.getCurrentPosition() > misumi_position_grab) {
+                    out.setPower(-0.5);
+                }
+                else if (out.getCurrentPosition() == misumi_position_grab) {
+                    out.setPower(0);
+                }
                 break;
         }
         switch(misumiWristState){
@@ -216,7 +232,7 @@ public class left_auto extends OpMode {
                 break;
             case 1:
                 //specimen hang position
-
+                servo_outtake_wrist.setPosition(viper_wrist_position_hang);
                 break;
             case 2:
                 //sample-dropping position
@@ -252,6 +268,7 @@ public class left_auto extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         buildPaths();
+        //Initialize all states here!
     }
 
     @Override
