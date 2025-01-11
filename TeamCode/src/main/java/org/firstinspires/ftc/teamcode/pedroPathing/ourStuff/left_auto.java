@@ -243,7 +243,7 @@ public class left_auto extends OpMode {
                     setMisumiState(1);
                 }
                 if (misumiState == 1) {
-                    setMisumiClawState(); //TODO: Figure out if bumper or trigger is intake
+                    setMisumiClawState(1); //TODO: Figure out if bumper or trigger is intake
                     setMisumiWristState(1);
                 }
                 if (pathTimer.getElapsedTime() > 5) { //TODO: Change time value because it could damage servo!!!
@@ -268,7 +268,7 @@ public class left_auto extends OpMode {
                 }
 
                 if (follower.getPose().getX() > (basket.getX()) && follower.getPose().getY() > (basket.getY()) && up.getCurrentPosition() >= up_basket_position) {
-                    setViperClawState(); //TODO: What is the value for spitting out?
+                    setViperClawState(1); //TODO: What is the value for spitting out?
                 }
                 if (pathTimer.getElapsedTime() >= 10) {
                     setPathState(-1); //TODO: For now until the rest of the path is added

@@ -71,7 +71,7 @@ public class right_auto extends OpMode {
 
     private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
 
-    private Pose curve_curve = new Pose(78, 37, Math.toRadians(0));
+    private Pose curve_curve = new Pose(75, 37, Math.toRadians(0));
 
     // Paths
 
@@ -245,7 +245,7 @@ public class right_auto extends OpMode {
      * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() function on line 193)
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
-        switch (pathState) {
+        switch (pathState) { // 4 seconds ?
             case 0: // Drive and hang pos
                 follower.followPath(specimen_hang);
 
@@ -257,27 +257,27 @@ public class right_auto extends OpMode {
                     setPathState(1); // move on
                 }
                 break;
-            case 1: // Hang and release
+            case 1: // Hang and release 2
                 if(pathTimer.getElapsedTimeSeconds() > 0.75) {
                     setoutGrabState(1); // release
                     setPathState(2);
                 }
                     break;
-            case 2: // Pickup Position
+            case 2: // Pickup Position 5
                     if (pathTimer.getElapsedTimeSeconds() > 1) {
                         follower.followPath(back);
                         setArmState(0);
                         setoutGrabState(2); // in
 
                         //if (pathTimer.getElapsedTimeSeconds() > 3) {
-                            if ((follower.getPose().getX() - pickupPose.getX()) < 0.5) { // prox sensor TODO : shorten?
+                            if ((follower.getPose().getX() - pickupPose.getX()) < 0.5) { // prox sensor TODO : shorten? 3
                                 setPathState(3);
                             }
                         //}
                     }
                 break;
             case 3:
-                if(pathTimer.getElapsedTimeSeconds() > 2) {
+                if(pathTimer.getElapsedTimeSeconds() > 3) {
                     setArmState(1); // raise
                     setoutGrabState(0);
                     setPathState(4);
@@ -300,21 +300,27 @@ public class right_auto extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
                   setArmState(0);
                   setoutGrabState(0);
-                  follower.followPath(back2);
+                  follower.followPath(back);
                   if (follower.getPose().getX() - pushPose.getX() < 2)
                       setPathState(6);
               }
               break;
             case 6:
-                follower.followPath(push_back);
+               /* follower.followPath(push_back);
                 if (pathTimer.getElapsedTimeSeconds() > 3) {
                     setPathState(7);
                 }
             case 7:
+                follower.setMaxPower(0.8);
                 follower.followPath(push_side);
+                if(pathTimer.getElapsedTimeSeconds() > 3) {
+                    setPathState(8);
+                }
+            case 8:
+                follower.setMaxPower(1);
+                follower.followPath(push_forward);
 
-
-
+                */
         }
     }
     /* back_park = follower.pathBuilder()
