@@ -1,21 +1,30 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
+
+
+
 
 @Config
 @Autonomous(name = "left_auto", group = "Auto")
@@ -248,6 +257,7 @@ public class left_auto extends OpMode {
             case 3:
                 follower.followPath(basket_1);
                 before_transfer_time = pathTimer.getElapsedTime();
+
                 //set states for transfer! Don't know these values yet
 
                 if (pathTimer.getElapsedTime() - before_transfer_time >= 2) {//TODO:Test if this work and tune values
@@ -438,6 +448,30 @@ public class left_auto extends OpMode {
         pathTimer = new Timer();
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
+
+        //Initializing hardware (sensors and actuators)
+        //setup arm variable
+        up = hardwareMap.get(DcMotorEx.class, "up");
+        up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        up.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //example position setup
+        out = hardwareMap.get(DcMotorEx.class, "out");
+        out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        servo_outtake = hardwareMap.get(CRServo.class,"outtake");
+
+        servo_intake = hardwareMap.get(CRServo.class, "intake");
+
+        servo_intake_wrist = hardwareMap.get(Servo.class, "intakeWrist");
+
+        servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
+
+        up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
+        out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
+
         buildPaths();
         //Initialize all states here!
         setViperState(0);
@@ -456,6 +490,20 @@ public class left_auto extends OpMode {
         autonomousActionUpdate();
         telemetry.addData("Path State",pathState);
         telemetry.addData("Position",follower.getPose().toString());
+        telemetry.addData("Viper State", viperState);
+        telemetry.addData("Viper Claw state", viperClawState);
+        telemetry.addData("Viper Wrist State", viperWristState);
+        telemetry.addData("Misumi State", misumiState);
+        telemetry.addData("Misumi Claw State", misumiClawState);
+        telemetry.addData("Misumi Wrist State", misumiWristState);
+
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("viperPOS", up.getCurrentPosition());
+        telemetry.addData("misumiPOS", out.getCurrentPosition());
+        telemetry.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
+        telemetry.addData("Follower busy", follower.isBusy());
         telemetry.update();
     }
 }
