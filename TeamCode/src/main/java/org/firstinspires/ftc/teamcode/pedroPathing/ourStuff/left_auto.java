@@ -61,7 +61,7 @@ public class left_auto extends OpMode {
     private double before_transfer_time = 0;
 
     //start pose
-    private Pose startPose = new Pose(9,88,Math.toRadians(0));//TODO: This isn't right according to path generator. Test!
+    private Pose startPose = new Pose(9,88,Math.toRadians(0));
     //Setting up variables for poses used throughout the pathchain
     private Pose hangPose = new Pose(39,82.5,Math.toRadians(0)); //TODO: Change to Eric's values because they are tuned!
     private Pose pivot1 = new Pose(31.3,122,Math.toRadians(0));
@@ -137,8 +137,8 @@ public class left_auto extends OpMode {
                 .addPath(
                         //Hanging specimen path
                         new BezierLine(
-                                new Point(8.990, 88.000, Point.CARTESIAN),
-                                new Point(38.955, 82.405, Point.CARTESIAN)
+                                new Point(startPose),
+                                new Point(hangPose)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -148,8 +148,8 @@ public class left_auto extends OpMode {
                 .addPath(
                         //Driving to pivot point 1
                         new BezierLine(
-                                new Point(38.955, 82.405, Point.CARTESIAN),
-                                new Point(31.297, 122.025, Point.CARTESIAN)
+                                new Point(hangPose),
+                                new Point(pivot1)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -159,8 +159,8 @@ public class left_auto extends OpMode {
                 .addPath(
                         //To basket
                         new BezierLine(
-                                new Point(31.297, 122.025, Point.CARTESIAN),
-                                new Point(11.320, 132.347, Point.CARTESIAN)
+                                new Point(pivot1),
+                                new Point(basket)
                         )
                 )
                 .setTangentHeadingInterpolation()
