@@ -51,13 +51,13 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(10.121, 63.0, Math.toRadians(0)); //TODO
+    private Pose startPose = new Pose(10.121, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose hangPose = new Pose(35.951, 63.0, Math.toRadians(0)); // TODO
+    private Pose hangPose = new Pose(35.951, 67.0, Math.toRadians(0)); // TODO
 
-    private Pose hangPose1 = new Pose(36.0, 60.0, Math.toRadians(0)); // TODO
+    private Pose hangPose1 = new Pose(36.0, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(16, 43, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPose = new Pose(15, 43, Math.toRadians(180)); // TODO : THISx value
 
     private Pose pushPose = new Pose(20, 43, Math.toRadians(180));
 
@@ -71,6 +71,7 @@ public class right_auto extends OpMode {
 
     private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
 
+    private Pose curve_curve = new Pose(78, 37, Math.toRadians(0));
 
     // Paths
 
@@ -195,8 +196,9 @@ public class right_auto extends OpMode {
         push_side  = follower.pathBuilder()
                 .addPath(
                 // Line 1
-                new BezierLine(
+                new BezierCurve(
                         new Point(secondpoint),
+                        new Point(curve_curve),
                         new Point(secondpoint1)
                 )
         )
@@ -268,7 +270,7 @@ public class right_auto extends OpMode {
                         setoutGrabState(2); // in
 
                         //if (pathTimer.getElapsedTimeSeconds() > 3) {
-                            if ((follower.getPose().getX() - pickupPose.getX()) < 1) { // prox sensor TODO : shorten?
+                            if ((follower.getPose().getX() - pickupPose.getX()) < 0.5) { // prox sensor TODO : shorten?
                                 setPathState(3);
                             }
                         //}
@@ -309,10 +311,7 @@ public class right_auto extends OpMode {
                     setPathState(7);
                 }
             case 7:
-                follower.setMaxPower(0.8);
                 follower.followPath(push_side);
-
-
 
 
 
