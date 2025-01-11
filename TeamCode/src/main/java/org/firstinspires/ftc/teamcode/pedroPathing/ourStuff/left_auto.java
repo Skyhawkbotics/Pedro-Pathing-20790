@@ -260,6 +260,25 @@ public class left_auto extends OpMode {
         pathState = pState;
         pathTimer.resetTimer();
     }
+    public void setViperState(int vState) {
+        viperState = vState;
+    }
+    public void setMisumiState(int mState) {
+        misumiState = mState;
+    }
+    public void setViperWristState(int vWState) {
+        viperWristState = vWState;
+    }
+    public void setMisumiWristState(int mWState) {
+        misumiWristState = mWState;
+    }
+    public void setViperClawState(int vCState) {
+        viperClawState = vCState;
+    }
+    public void setMisumiClawState(int mCState) {
+        misumiClawState = mCState;
+    }
+
 
 
     @Override
@@ -269,6 +288,13 @@ public class left_auto extends OpMode {
         follower.setStartingPose(startPose);
         buildPaths();
         //Initialize all states here!
+        setViperState(0);
+        setMisumiState(0);
+        setMisumiWristState(2);
+        setMisumiClawState(0);
+        setViperWristState(0);
+        setViperClawState(0);
+
     }
 
     @Override
