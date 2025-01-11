@@ -165,9 +165,9 @@ public class tuning_test extends OpMode {
                 )
                 .setLinearHeadingInterpolation(pickupPose.getHeading(),hangPose1.getHeading())
                 .build();
-        curve = follower.pathBuilder()
+        push_pos = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(hangPose1),
                                 new Point(control_p1),
                                 new Point(control_p2),
@@ -208,33 +208,33 @@ public class tuning_test extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0: // Drive and hang pos
-                follower.followPath(specimen_hang, true);
+                follower.followPath(specimen_hang);
 
                 setArmState(1); // hang pos
                 setoutClawState(1); // set pos to hanging pos
 
-                if(follower.getPose().getX() > (hangPose.getX() -1)) { // Proximity sensor
+                if(follower.getPose().getX() > (hangPose.getX() -1)) {
+                    setArmState(2);// down
                     setPathState(1); // move on
                 }
                 break;
             case 1: // Hang and release
-                    setArmState(2); // Hang done Pos
-                    if(up.getPower() == 0.01) { // After hang done
-                        setoutGrabState(1); //release
-                        setPathState(2);
-                    }
+                if(pathTimer.getElapsedTimeSeconds() > 0.75) {
+                    setoutGrabState(1); // release
+                    setPathState(2);
+                }
                     break;
             case 2: // Pickup Position
-                if (pathTimer.getElapsedTimeSeconds() > 3) {
-                    follower.followPath(back);
-                    if(pathTimer.getElapsedTimeSeconds() > 3) {
-                        setArmState(0); // up pickup pos// intake pos
-                        if ((follower.getPose().getX() - pickupPose.getX()) < 1) { // prox sensor TODO : shorten?
-                            setoutGrabState(2); // in
-                            setPathState(3);
+                    if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        follower.followPath(back);
+                        if (pathTimer.getElapsedTimeSeconds() > 3) {
+                            setArmState(0); // up pickup pos// intake pos
+                            if ((follower.getPose().getX() - pickupPose.getX()) < 1) { // prox sensor TODO : shorten?
+                                setoutGrabState(2); // in
+                                setPathState(3);
+                            }
                         }
                     }
-                }
                 break;
             case 3:
                 if(pathTimer.getElapsedTimeSeconds() > 2) {
@@ -311,7 +311,7 @@ public class tuning_test extends OpMode {
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("hang position 2", true);
                 if (up.getCurrentPosition() > up_hanging_position_done) {
-                    up.setPower(-0.6);
+                    up.setPower(-0.7);
                     telemetry.addData("arm moving", true);
                 } else if (up.getCurrentPosition() <= up_hanging_position_done) {
                     up.setPower(0.01);
