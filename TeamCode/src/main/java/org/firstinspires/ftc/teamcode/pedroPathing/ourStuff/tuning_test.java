@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
 @Autonomous(name = "tuning test", group = "AUTO")
+// 18.5 inches away from observation zone
 public class tuning_test extends OpMode {
     // cool
     private Follower follower; // THe drivetrain with the calculations needed for path following
@@ -55,7 +56,7 @@ public class tuning_test extends OpMode {
 
     private Pose back_Pose = new Pose(30,60, Math.toRadians(0));
 
-    private Pose pickupPose = new Pose(10.298, 39.063, Math.toRadians(180));
+    private Pose pickupPose = new Pose(11.298, 39.063, Math.toRadians(180));
 
 
     // Paths
@@ -86,7 +87,7 @@ public class tuning_test extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
-    int up_hanging_position_done = 1400; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
+    int up_hanging_position_done = 1320; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -181,38 +182,49 @@ public class tuning_test extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                //follower.followPath(specimen_hang, true);
-                setArmState(1);
+                follower.followPath(specimen_hang, true);
+                setArmState(1); // hang pos
                 setoutClawState(1); // set pos to hanging pos
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
+                /*if(pathTimer.getElapsedTimeSeconds() > 3) {
                     setPathState(1);
+                }
+
+                 */
+                if(follower.getPose().getX() > (hangPose.getX() -1)) {
+                    setPathState(1); // move on
                 }
                 break;
             case 1:
-                    setArmState(2);
-                    if(pathTimer.getElapsedTimeSeconds() > 5) {
+                    setArmState(2); // put it down
+                    if(up.getPower() == 0.01) { // after down
+                        setoutGrabState(1); //release
+                        setArmState(0); // all the way down
                         setPathState(2);
                     }
                     break;
-            /*case 2:
-                follower.followPath(back);
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    setoutGrabState(2); // 10 sec grab
-                    if(pathTimer.getElapsedTimeSeconds() > 8) {
-                        setArmState(1); // hang pos
-                        setoutGrabState(0);  // stop grab
+            case 2:
+                follower.followPath(back); // goes back to pickup
+                if (pathTimer.getElapsedTimeSeconds() > 1) { // starts intake
+                    setoutGrabState(2);
+                    if(follower.getPose().getX()-pickupPose.getX() < 2) {
+                        setoutGrabState(0);
+
                         setPathState(3);
-
-
                     }
                 }
                 break;
             case 3:
-                follower.followPath(hang2);
-                if(pathTimer.getElapsedTimeSeconds() > 5) {
-                    setArmState(2);
-                    setoutGrabState(3);
-                    setPathState(4);
+                if(pathTimer.getElapsedTimeSeconds() > 1) {
+                    follower.followPath(hang2); // second hang
+                    setArmState(1); // arm up
+                    setoutClawState(1); // servo up
+                    if (pathTimer.getElapsedTimeSeconds() > 5) { // waiting for it to reach pos
+                        setArmState(2); // hang
+                        if (up.getPower() == 0.01) {
+                            setoutGrabState(1); // release
+                            setPathState(4); // move on
+                        }
+                    }
                 }
                 break;
             case 4:
@@ -220,7 +232,6 @@ public class tuning_test extends OpMode {
                 setArmState(0);
                 break;
 
-             */
 
 
 
@@ -286,7 +297,7 @@ public class tuning_test extends OpMode {
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
-                servo_outtake_wrist.setPosition(0.75);
+                servo_outtake_wrist.setPosition(0.5);
                 telemetry.addData("claw position 2", true);
 
         }
@@ -392,7 +403,6 @@ public class tuning_test extends OpMode {
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
-
         opmodeTimer.resetTimer();
 
         follower = new Follower(hardwareMap);
