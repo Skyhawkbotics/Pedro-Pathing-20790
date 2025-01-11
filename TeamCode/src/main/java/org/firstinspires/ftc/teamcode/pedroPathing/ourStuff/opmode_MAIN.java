@@ -172,10 +172,10 @@ public class opmode_MAIN extends OpMode {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
-            out.setPower(0.3);
+            out.setPower(0.4);
             out_true_target_pos = 0;
         } else if (gamepad2.dpad_left && out.getCurrentPosition() > out_max_pos ) { //out
-            out.setPower(-0.3);
+            out.setPower(-0.4);
         } else if (gamepad2.dpad_right && out_zero.isPressed()) {
             out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.addData("reset out", true);
@@ -247,12 +247,13 @@ public class opmode_MAIN extends OpMode {
 
 
         //Encoder Transfer Method
-        if (gamepad2.b) { // He needs to hold B down for entire thing to work
+        if (gamepad2.b) {
+            servo_intake_wrist.setPosition(0);
+            servo_outtake_wrist.setPosition(0);// He needs to hold B down for entire thing to work
             //Add a variable and thing for setting the viper slide position to about 250 to avoid smashing stuff together
-            up.setTargetPosition(200);
-            servo_outtake_wrist_location = outtake_wrist_pos_transfer;
-            servo_intake_wrist_location = intake_wrist_pos_transfer;
-            out.setTargetPosition(0);
+            if(!out_zero.isPressed()) {
+                out.setPower(0.5);
+            }
             telemetry.addData("Misumi Slide Moving", true);
         }
         if (gamepad2.a) { //transfer
