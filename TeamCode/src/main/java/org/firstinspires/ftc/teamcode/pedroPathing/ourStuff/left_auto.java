@@ -30,11 +30,22 @@ public class left_auto extends OpMode {
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist;
     private CRServo servo_outtake;
-    private Servo servo_intake;
-    private CRServo servo_intake_wrist;
+    private Servo servo_intake_wrist;
+    private CRServo servo_intake;
 
     //Sensors in use!
     private TouchSensor up_zero;
+    private
+
+    //Position variables for robot!
+    int up_hanging_position = 1750; //TODO: Check pushes in tuning test to see if value has been changed
+    int up_hanging_posiion_done = 1400; //TODO: Check pushes in tuning test to see if value has been changed
+    int up_basket_position = 3650;
+    double viper_wrist_position_basket = 1;
+    double viper_wrist_position_transfer = 0;
+    double misumi_wrist_position_transfer = 0;
+    double misumi_wrist_position_grab = 1;
+    double viper_position_transfer = 150;
 
     //start pose
     private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
@@ -117,29 +128,39 @@ public class left_auto extends OpMode {
             case 0:
                 //going to closed position
 
+                break;
             case 1:
                 //extended length for picking up samples
+
+                break;
         }
         switch(misumiWristState){
             case 0:
                 //out of the way
+                //????
+                //Might just not do this one for now
                 break;
             case 1:
                 //sample collection position
+                servo_intake_wrist.setPosition(misumi_wrist_position_grab);
                 break;
             case 2:
                 //transfer position
+                servo_intake_wrist.setPosition(misumi_wrist_position_transfer);
                 break;
         }
         switch(misumiClawState){
             case 0:
                 //servos are set to power 0
+                servo_intake.setPower(0);
                 break;
             case 1:
                 //servos are set to power -1
+                servo_intake.setPower(-1);
                 break;
             case 2:
                 //servos are set to power 1
+                servo_intake.setPower(1);
                 break;
         }
 
@@ -147,34 +168,73 @@ public class left_auto extends OpMode {
         switch(viperState){
             case 0:
                 //position of the arm is at 0 ticks
+                telemetry.addData("Lowered position", true);
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (!up_zero.isPressed()) {
+                    up.setPower(-1);
+                } else if (up_zero.isPressed()) {
+                    up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
                 break;
             case 1:
                 //position of the viper slide is at transfer position
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (up.getCurrentPosition() < viper_position_transfer) {
+                    up.setPower(0.5);
+                }
+                else if (up.getCurrentPosition() > viper_position_transfer) {
+                    up.setPower(-1);
+                }
+                else {
+                    up.setPower(0.01);
+                }
                 break;
             case 2:
                 //position of the viper slide is at sample-dropping length (max)
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (up.getCurrentPosition() < up_basket_position){
+                    up.setPower(1);
+                }
+                else {
+                    up.setPower(0.01);
+                }
                 break;
+            case 3:
+                //specimen hanging height
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (up.getCurrentPosition() < up_hanging_position){
+                    up.setPower(0.5);
+                }
+                else if (up.getCurrentPosition() > up_hanging_position){
+                    up.setPower(0.01);
+                }
         }
         switch(viperWristState){
             case 0:
                 //transfer position
+                servo_outtake_wrist.setPosition(viper_wrist_position_transfer);
                 break;
             case 1:
                 //specimen hang position
+
                 break;
             case 2:
                 //sample-dropping position
+                servo_outtake_wrist.setPosition(viper_wrist_position_basket);
                 break;
         }
         switch(viperClawState){
             case 0:
                 //servos are set to power 0
+                servo_outtake.setPower(0);
                 break;
             case 1:
                 //servos are set to power -1
+                servo_outtake.setPower(-1);
                 break;
             case 2:
                 //servos are set to power 1
+                servo_outtake.setPower(1);
                 break;
         }
 
