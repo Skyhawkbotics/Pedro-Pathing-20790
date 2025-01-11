@@ -181,7 +181,7 @@ public class tuning_test extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(specimen_hang, true);
+                //follower.followPath(specimen_hang, true);
                 setArmState(1);
                 setoutClawState(1); // set pos to hanging pos
                 if(pathTimer.getElapsedTimeSeconds() > 5) {
@@ -189,14 +189,12 @@ public class tuning_test extends OpMode {
                 }
                 break;
             case 1:
-                    setoutGrabState(3); //
                     setArmState(2);
                     if(pathTimer.getElapsedTimeSeconds() > 5) {
                         setPathState(2);
-                        setArmState(0);
                     }
                     break;
-            case 2:
+            /*case 2:
                 follower.followPath(back);
                 if (pathTimer.getElapsedTimeSeconds() > 5) {
                     setoutGrabState(2); // 10 sec grab
@@ -221,6 +219,8 @@ public class tuning_test extends OpMode {
                 follower.followPath(back);
                 setArmState(0);
                 break;
+
+             */
 
 
 
@@ -310,7 +310,7 @@ public class tuning_test extends OpMode {
                 servo_intake_wrist.setPosition(0);
                 break;
             case 1:
-                servo_intake_wrist.setPosition(0.75);
+                servo_intake_wrist.setPosition(0.5);
                 break;
 
         }

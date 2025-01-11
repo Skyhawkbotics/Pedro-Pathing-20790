@@ -62,7 +62,7 @@ public class opmode_MAIN extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int out_pos_transfer = 0;//TODO: edit this for calibration!
-    int out_max_pos = -1300;
+    int out_max_pos = -1330;
 
     int up_specimen_hang = 1907; // Viper
 
@@ -172,22 +172,16 @@ public class opmode_MAIN extends OpMode {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
-            out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            out.setVelocity(gamepad2.right_stick_y * 1000);
+            out.setPower(0.3);
             out_true_target_pos = 0;
-        } else if (gamepad2.dpad_left/* && out.getCurrentPosition() > out_max_pos */) { //out
-            out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            out.setVelocity(gamepad2.right_stick_y * 1000);
-            out_true_target_pos = 0;
+        } else if (gamepad2.dpad_left && out.getCurrentPosition() > out_max_pos ) { //out
+            out.setPower(-0.3);
+        } else if (gamepad2.dpad_right && out_zero.isPressed()) {
+            out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            telemetry.addData("reset out", true);
         } else {
-            out.setPower(500);
-            //use position mode to stay up, as otherwise it would fall down. do some fancy stuff with up_true_target_pos to avoid the issue of it very slightly falling every tick
-            if (out_true_target_pos == 0) {
-                out.setTargetPosition(out.getCurrentPosition());
-                out_true_target_pos = out.getCurrentPosition();
-                out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            }
+            out.setPower(0);
+            out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
 
@@ -268,13 +262,16 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.y) { //goto hanging position
             up.setTargetPosition(up_specimen_hang);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            servo_outtake_wrist_location = 0.3;
+            servo_outtake_wrist_location = 0.50;
         }
 
 
         telemetry.addData("gamepad2.rightstickx", gamepad2.right_stick_x);
         telemetry.addData("gamepad2.rightsticky", gamepad2.right_stick_y);
         telemetry.addData("out.getCurrentpos", out.getCurrentPosition());
+        telemetry.addData("servo pos", servo_outtake_wrist.getPosition());
+        telemetry.addData("up pos", up.getCurrentPosition());
+        telemetry.addData("out_zero", out_zero.isPressed());
 
         telemetry.update();
     }
