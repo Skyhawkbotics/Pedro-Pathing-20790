@@ -34,8 +34,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
      */
 
     @Config
-    @Autonomous(name = "autoTest", group = "AUTO")
-    public class autoTest extends OpMode {
+    @Autonomous(name = "square_TEST", group = "TEST")
+    public class square_auto_test extends OpMode {
         // cool
         private Follower follower;
         private Timer pathTimer, actionTimer, opmodeTimer;

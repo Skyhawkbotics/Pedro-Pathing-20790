@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Config
 @Autonomous(name = "RIGHT_AUTO", group = "AUTO")
 // 18.5 inches away from observation zone
-public class tuning_test extends OpMode {
+public class right_auto extends OpMode {
     // cool
     private Follower follower; // THe drivetrain with the calculations needed for path following
     private Timer pathTimer, actionTimer, opmodeTimer, outtimer; // Timers for progression of states

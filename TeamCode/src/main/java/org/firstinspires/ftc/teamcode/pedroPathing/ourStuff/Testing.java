@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.localizers.TwoWheelLocalizer;
 
-@Autonomous(name = "Testing", group = "AUTO")
+@Autonomous(name = "Testing", group = "TEST")
 public class Testing extends opmode_MAIN{
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
