@@ -112,6 +112,7 @@ public class left_auto extends OpMode {
     }
 
     public void autonomousActionUpdate() {
+        //Misumi slide component states
         switch(misumiState){
             case 0:
                 //going to closed position
@@ -119,7 +120,30 @@ public class left_auto extends OpMode {
             case 1:
                 //extended length for picking up samples
         }
+        switch(misumiWristState){
+            case 0:
+                //out of the way
+                break;
+            case 1:
+                //sample collection position
+                break;
+            case 2:
+                //transfer position
+                break;
+        }
+        switch(misumiClawState){
+            case 0:
+                //servos are set to power 0
+                break;
+            case 1:
+                //servos are set to power -1
+                break;
+            case 2:
+                //servos are set to power 1
+                break;
+        }
 
+        //Viper slide component states
         switch(viperState){
             case 0:
                 //position of the arm is at 0 ticks
@@ -142,17 +166,6 @@ public class left_auto extends OpMode {
                 //sample-dropping position
                 break;
         }
-        switch(misumiWristState){
-            case 0:
-                //out of the way
-                break;
-            case 1:
-                //sample collection position
-                break;
-            case 2:
-                //transfer position
-                break;
-        }
         switch(viperClawState){
             case 0:
                 //servos are set to power 0
@@ -164,17 +177,7 @@ public class left_auto extends OpMode {
                 //servos are set to power 1
                 break;
         }
-        switch(misumiClawState){
-            case 0:
-                //servos are set to power 0
-                break;
-            case 1:
-                //servos are set to power -1
-                break;
-            case 2:
-                //servos are set to power 1
-                break;
-        }
+
     }
 
     public void setPathState(int pState) {
