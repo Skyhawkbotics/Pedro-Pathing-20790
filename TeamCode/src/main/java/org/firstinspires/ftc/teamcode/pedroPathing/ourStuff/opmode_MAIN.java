@@ -139,7 +139,7 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.7, -gamepad1.right_stick_x * 0.7);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.6, -gamepad1.right_stick_x * 0.7);
         follower.update();
 
 
@@ -249,7 +249,7 @@ public class opmode_MAIN extends OpMode {
         //Encoder Transfer Method
         if (gamepad2.b) { // He needs to hold B down for entire thing to work
             //Add a variable and thing for setting the viper slide position to about 250 to avoid smashing stuff together
-            up.setTargetPosition(2);
+            up.setTargetPosition(200);
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             out.setTargetPosition(0);

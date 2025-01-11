@@ -53,11 +53,11 @@ public class right_auto extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10.121, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose hangPose = new Pose(35.951, 67.0, Math.toRadians(0)); // TODO
+    private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
     private Pose hangPose1 = new Pose(36.0, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(15, 43, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPose = new Pose(15, 40, Math.toRadians(180)); // TODO : THISx value
 
     private Pose pushPose = new Pose(20, 43, Math.toRadians(180));
 
@@ -279,6 +279,7 @@ public class right_auto extends OpMode {
             case 3:
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     setArmState(1); // raise
+                    setoutClawState(0);
                     setoutGrabState(0);
                     setPathState(4);
                 }
@@ -287,11 +288,15 @@ public class right_auto extends OpMode {
                     follower.setMaxPower(0.8);
                     follower.followPath(hang2); // drive to hang pos
                     if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
-                        setArmState(2); // hang
-                        if (up.getPower() == 0.01) {
-                            setoutGrabState(1); // release
-                            setPathState(5); // move on
+                        setoutClawState(1);
+                        if(pathTimer.getElapsedTimeSeconds() > 5) {
+                            setArmState(2); // hang
+                            if (up.getPower() == 0.01) {
+                                setoutGrabState(1); // release
+                                setPathState(5); // move on
+                            }
                         }
+
                     }
                 break;
             case 5:
@@ -301,6 +306,7 @@ public class right_auto extends OpMode {
                   setArmState(0);
                   setoutGrabState(0);
                   follower.followPath(back);
+                  setoutClawState(0);
                   if (follower.getPose().getX() - pushPose.getX() < 2)
                       setPathState(6);
               }
