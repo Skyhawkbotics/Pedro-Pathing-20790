@@ -59,16 +59,22 @@ public class tuning_test extends OpMode {
 
     private Pose pickupPose = new Pose(16, 43, Math.toRadians(180)); // TODO : THISx value
 
-    private Pose firstpoint = new Pose(36.577, 41.371, Math.toRadians(0));
+    private Pose pushPose = new Pose(20, 43, Math.toRadians(180));
 
-    private Pose control_p1 = new Pose(15.625154130702835, 22.905055487053016, Math.toRadians(0));
+    private Pose firstpoint = new Pose(36.0,40.0, Math.toRadians(180));
+
+    private Pose secondpoint = new Pose(63.00, 40.00, Math.toRadians(180));
+    private Pose secondpoint1 = new Pose(63.00, 35.00, Math.toRadians(180));
+
+
+    private Pose thirdpoint = new Pose(63, 22.00, Math.toRadians(180));
 
     private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
 
 
     // Paths
 
-    private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_pos;
+    private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward;
 
 
 
@@ -143,9 +149,20 @@ public class tuning_test extends OpMode {
                 )
                 .setLinearHeadingInterpolation(hangPose.getHeading(),pickupPose.getHeading())
 
+
                 //.setConstantHeadingInterpolation(Math.toRadians(0))
                 //.setConstantHeadingInterpolation(Math.toRadians(180))
                 //.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180)) // Turning
+                .build();
+        back2 = follower.pathBuilder()
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(hangPose1), // hang pose
+                                new Point(pushPose) // observation zone pick up point
+                        )
+                )
+                .setLinearHeadingInterpolation(hangPose1.getHeading(),pushPose.getHeading())
                 .build();
         hang2 = follower.pathBuilder()
                 .addPath(
@@ -165,31 +182,35 @@ public class tuning_test extends OpMode {
                 )
                 .setLinearHeadingInterpolation(pickupPose.getHeading(),hangPose1.getHeading())
                 .build();
-        push_pos = follower.pathBuilder()
-        .addPath(
-                // Line 1
-                new BezierLine(
-                        new Point(hangPose1),
-                        new Point(36.577, 41.371, Point.CARTESIAN)
-                )
-        )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+        push_back = follower.pathBuilder()
                 .addPath(
                         // Line 2
                         new BezierLine(
-                                new Point(36.577, 41.371, Point.CARTESIAN),
-                                new Point(63.033, 41.194, Point.CARTESIAN)
+                                new Point(pushPose),
+                                new Point(secondpoint)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(pushPose.getHeading(),secondpoint.getHeading())
+                .build();
+        push_side  = follower.pathBuilder()
+                .addPath(
+                // Line 1
+                new BezierLine(
+                        new Point(secondpoint),
+                        new Point(secondpoint1)
+                )
+        )
+                .setLinearHeadingInterpolation(secondpoint.getHeading(),secondpoint1.getHeading())
+                .build();
+        push_forward = follower.pathBuilder()
                 .addPath(
                         // Line 3
                         new BezierLine(
-                                new Point(63.033, 41.194, Point.CARTESIAN),
-                                new Point(62.856, 22.905, Point.CARTESIAN)
+                                new Point(secondpoint1),
+                                new Point(thirdpoint)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(secondpoint1.getHeading(),thirdpoint.getHeading())
                 .build();
 
 
@@ -261,22 +282,36 @@ public class tuning_test extends OpMode {
                 }
                 break;
             case 4:
+                    follower.setMaxPower(0.8);
                     follower.followPath(hang2); // drive to hang pos
                     if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
                         setArmState(2); // hang
                         if (up.getPower() == 0.01) {
                             setoutGrabState(1); // release
-                            setPathState(4); // move on
+                            setPathState(5); // move on
                         }
                     }
                 break;
             case 5:
-               // if (pathTimer.getElapsedTimeSeconds() > 1) {
-                    //follower.followPath(push_pos);
-                  //  setoutGrabState(0);
-                 //   setArmState(0);
-                //}
-               // break;
+                follower.setMaxPower(1);
+
+                if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
+                  setArmState(0);
+                  setoutGrabState(0);
+                  follower.followPath(back2);
+                  if (follower.getPose().getX() - pushPose.getX() < 2)
+                      setPathState(6);
+              }
+              break;
+            case 6:
+                follower.followPath(push_back);
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    setPathState(7);
+                }
+            case 7:
+                follower.setMaxPower(0.8);
+                follower.followPath(push_side);
+
 
 
 
