@@ -270,6 +270,7 @@ public class opmode_MAIN extends OpMode {
         telemetry.addData("gamepad2.rightsticky", gamepad2.right_stick_y);
         telemetry.addData("out.getCurrentpos", out.getCurrentPosition());
         telemetry.addData("servo pos", servo_outtake_wrist.getPosition());
+        telemetry.addData("intake_servo", servo_intake_wrist.getPosition());
         telemetry.addData("up pos", up.getCurrentPosition());
         telemetry.addData("out_zero", out_zero.isPressed());
 

@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
@@ -33,7 +34,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  */
 
 @Config
-@Autonomous(name = "tuning test", group = "AUTO")
+@Autonomous(name = "RIGHT_AUTO", group = "AUTO")
 // 18.5 inches away from observation zone
 public class tuning_test extends OpMode {
     // cool
@@ -52,18 +53,22 @@ public class tuning_test extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10.121, 68.0, Math.toRadians(0));
 
-    private Pose hangPose = new Pose(35.951, 68.0, Math.toRadians(0));
+    private Pose hangPose = new Pose(35.951, 68.0, Math.toRadians(0)); // TODO
 
-    private Pose back_Pose = new Pose(30,60, Math.toRadians(0));
+    private Pose hangPose1 = new Pose(36.2, 65.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(11.298, 39.063, Math.toRadians(180));
+    private Pose pickupPose = new Pose(14.298, 39.063, Math.toRadians(180)); // TODO : THISx value
+
+    private Pose curve1_done = new Pose(63.388409371146736, 24.6806411837238, Math.toRadians(0));
+
+    private Pose control_p1 = new Pose(15.625154130702835, 22.905055487053016, Math.toRadians(0));
+
+    private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
 
 
     // Paths
 
-    private Path scorePreload;
-
-    private PathChain back_park, specimen_hang, back, park, hang2;
+    private PathChain back_park, specimen_hang, back, park, hang2, hang3, curve;
 
 
 
@@ -87,7 +92,7 @@ public class tuning_test extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
-    int up_hanging_position_done = 1320; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
+    int up_hanging_position_done = 1310; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -146,11 +151,32 @@ public class tuning_test extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(pickupPose),
-                                new Point(hangPose)
+                                new Point(hangPose1)
                         )
                 )
                 .setLinearHeadingInterpolation(pickupPose.getHeading(), hangPose.getHeading())
                 .build();
+        hang3 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(pickupPose),
+                                new Point(hangPose1) // new hang pos
+                        )
+                )
+                .setLinearHeadingInterpolation(pickupPose.getHeading(),hangPose1.getHeading())
+                .build();
+        curve = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(hangPose1),
+                                new Point(control_p1),
+                                new Point(control_p2),
+                                new Point(curve1_done)
+                )
+                )
+                .setLinearHeadingInterpolation(hangPose1.getHeading(),curve1_done.getHeading())
+                .build();
+
         /*park = follower.pathBuilder()
                 .addPath(
                         // Line 3
@@ -181,44 +207,41 @@ public class tuning_test extends OpMode {
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 0:
+            case 0: // Drive and hang pos
                 follower.followPath(specimen_hang, true);
+
                 setArmState(1); // hang pos
                 setoutClawState(1); // set pos to hanging pos
-                /*if(pathTimer.getElapsedTimeSeconds() > 3) {
-                    setPathState(1);
-                }
 
-                 */
-                if(follower.getPose().getX() > (hangPose.getX() -1)) {
+                if(follower.getPose().getX() > (hangPose.getX() -1)) { // Proximity sensor
                     setPathState(1); // move on
                 }
                 break;
-            case 1:
-                    setArmState(2); // put it down
-                    if(up.getPower() == 0.01) { // after down
+            case 1: // Hang and release
+                    setArmState(2); // Hang done Pos
+                    if(up.getPower() == 0.01) { // After hang done
                         setoutGrabState(1); //release
-                        setArmState(0); // all the way down
                         setPathState(2);
                     }
                     break;
-            case 2:
-                follower.followPath(back); // goes back to pickup
-                if (pathTimer.getElapsedTimeSeconds() > 1) { // starts intake
-                    setoutGrabState(2);
-                    if(follower.getPose().getX()-pickupPose.getX() < 2) {
-                        setoutGrabState(0);
-
-                        setPathState(3);
+            case 2: // Pickup Position
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    follower.followPath(back);
+                    if(pathTimer.getElapsedTimeSeconds() > 3) {
+                        setArmState(0); // up pickup pos// intake pos
+                        if ((follower.getPose().getX() - pickupPose.getX()) < 1) { // prox sensor TODO : shorten?
+                            setoutGrabState(2); // in
+                            setPathState(3);
+                        }
                     }
                 }
                 break;
             case 3:
-                if(pathTimer.getElapsedTimeSeconds() > 1) {
-                    follower.followPath(hang2); // second hang
-                    setArmState(1); // arm up
-                    setoutClawState(1); // servo up
-                    if (pathTimer.getElapsedTimeSeconds() > 5) { // waiting for it to reach pos
+                if(pathTimer.getElapsedTimeSeconds() > 2) {
+                    setArmState(1);
+                    setoutGrabState(0);
+                    follower.followPath(hang2, true); // drive to hang pos
+                    if (pathTimer.getElapsedTimeSeconds() > 6) { // waiting for it to reach pos // todo SHORTEN?
                         setArmState(2); // hang
                         if (up.getPower() == 0.01) {
                             setoutGrabState(1); // release
@@ -228,9 +251,13 @@ public class tuning_test extends OpMode {
                 }
                 break;
             case 4:
-                follower.followPath(back);
-                setArmState(0);
+                /*if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    follower.followPath(curve);
+                    setArmState(0);
+                }
                 break;
+
+                 */
 
 
 
@@ -391,7 +418,6 @@ public class tuning_test extends OpMode {
         telemetryA.addData("armPOS", up.getCurrentPosition());
         telemetryA.addData("out servo", servo_outtake_wrist.getPosition());
         telemetryA.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
-        telemetryA.addData("arm power", up.getPower());
         telemetryA.addData("armmode", up.getMode());
         telemetryA.addData("Follower busy", follower.isBusy());
         telemetryA.update();
