@@ -38,27 +38,35 @@ public class left_auto extends OpMode {
     private TouchSensor out_zero;
 
     //Position variables for robot!
-    int up_hanging_position = 1750; //TODO: Check pushes in tuning test to see if value has been changed
-    int up_hanging_position_done = 1400; //TODO: Check pushes in tuning test to see if value has been changed
-    int up_basket_position = 3650;
-    double viper_wrist_position_basket = 1;
-    double viper_wrist_position_transfer = 0;
-    double misumi_wrist_position_transfer = 0;
-    double misumi_wrist_position_grab = 1;
-    int viper_position_transfer = 150;
-    double viper_wrist_position_hang = 0.5;
-    int misumi_position_grab = 100; //TODO: Calibrate values!!!
+    private int up_hanging_position = 1750; //TODO: Check pushes in tuning test to see if value has been changed
+    private int up_hanging_position_done = 1320; //TODO: Check pushes in tuning test to see if value has been changed
+    private int up_basket_position = 3650;
+    private double viper_wrist_position_basket = 1;
+    private double viper_wrist_position_transfer = 0;
+    private double misumi_wrist_position_transfer = 0;
+    private double misumi_wrist_position_grab = 1;
+    private int viper_position_transfer = 150;
+    private double viper_wrist_position_hang = 0.5;
+    private int misumi_position_grab = 100; //TODO: Calibrate values!!!
+    //Time-related variables
+    private double before_transfer_time = 0;
 
     //start pose
-    private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
+    private Pose startPose = new Pose(9,88,Math.toRadians(0));//TODO: This isn't right according to path generator. Test!
+    //Setting up variables for poses used throughout the pathchain
+    private Pose hangPose = new Pose(39,82.5,Math.toRadians(0)); //TODO: Change to Eric's values because they are tuned!
+    private Pose pivot1 = new Pose(31.3,122,Math.toRadians(0));
+    private Pose basket = new Pose(11.3,132.3,Math.toRadians(153));
+    //private Pose pivot2 = new Pose()
+
     //Path variable!
-    private PathChain pushAll;
+    private PathChain specimen_hang, pivot1_1, basket_1, pivot2_1, basket_2, pivot2_2, basket_3;
 
     public void buildPaths() {
 
-        pushAll = follower.pathBuilder()
+/*        pushAll = follower.pathBuilder()
                 .addPath(
-                        // Line 1
+                        //Hanging specimen path
                         new BezierLine(
                                 new Point(8.990, 88.000, Point.CARTESIAN),
                                 new Point(38.955, 82.405, Point.CARTESIAN)
@@ -66,7 +74,7 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
-                        // Line 2
+                        //Driving to pivot point 1
                         new BezierLine(
                                 new Point(38.955, 82.405, Point.CARTESIAN),
                                 new Point(31.297, 122.025, Point.CARTESIAN)
@@ -74,7 +82,7 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
-                        // Line 3
+                        //To basket
                         new BezierLine(
                                 new Point(31.297, 122.025, Point.CARTESIAN),
                                 new Point(11.320, 132.347, Point.CARTESIAN)
@@ -82,7 +90,7 @@ public class left_auto extends OpMode {
                 )
                 .setTangentHeadingInterpolation()
                 .addPath(
-                        // Line 4
+                        //To pivot point 2
                         new BezierLine(
                                 new Point(11.320, 132.347, Point.CARTESIAN),
                                 new Point(33.461, 133.000, Point.CARTESIAN)
@@ -90,7 +98,7 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(-15))
                 .addPath(
-                        // Line 5
+                        //To basket
                         new BezierLine(
                                 new Point(33.461, 133.000, Point.CARTESIAN),
                                 new Point(11.320, 132.180, Point.CARTESIAN)
@@ -98,7 +106,7 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(145))
                 .addPath(
-                        // Line 6
+                        //To pivot point 2
                         new BezierLine(
                                 new Point(11.320, 132.180, Point.CARTESIAN),
                                 new Point(33.295, 133.000, Point.CARTESIAN)
@@ -106,7 +114,7 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(35))
                 .addPath(
-                        // Line 7
+                        //To basket
                         new BezierLine(
                                 new Point(33.295, 133.000, Point.CARTESIAN),
                                 new Point(11.487, 132.347, Point.CARTESIAN)
@@ -114,13 +122,147 @@ public class left_auto extends OpMode {
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(145))
                 .build();
+        */
+
+        specimen_hang = follower.pathBuilder()
+                .addPath(
+                        //Hanging specimen path
+                        new BezierLine(
+                                new Point(8.990, 88.000, Point.CARTESIAN),
+                                new Point(38.955, 82.405, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();
+
+        pivot1_1 = follower.pathBuilder()
+                .addPath(
+                        //Driving to pivot point 1
+                        new BezierLine(
+                                new Point(38.955, 82.405, Point.CARTESIAN),
+                                new Point(31.297, 122.025, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();
+
+        basket_1 = follower.pathBuilder()
+                .addPath(
+                        //To basket
+                        new BezierLine(
+                                new Point(31.297, 122.025, Point.CARTESIAN),
+                                new Point(11.320, 132.347, Point.CARTESIAN)
+                        )
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        pivot2_1 = follower.pathBuilder()
+                .addPath(
+                        //To pivot point 2
+                        new BezierLine(
+                                new Point(11.320, 132.347, Point.CARTESIAN),
+                                new Point(33.461, 133.000, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-15))
+                .build();
+
+        basket_2 = follower.pathBuilder()
+                .addPath(
+                        //To basket
+                        new BezierLine(
+                                new Point(33.461, 133.000, Point.CARTESIAN),
+                                new Point(11.320, 132.180, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(145))
+                .build();
+
+        pivot2_2 = follower.pathBuilder()
+                .addPath(
+                        //To pivot point 2
+                        new BezierLine(
+                                new Point(11.320, 132.180, Point.CARTESIAN),
+                                new Point(33.295, 133.000, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(35))
+                .build();
+
+        basket_3 = follower.pathBuilder()
+                .addPath(
+                        //To basket
+                        new BezierLine(
+                                new Point(33.295, 133.000, Point.CARTESIAN),
+                                new Point(11.487, 132.347, Point.CARTESIAN)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(145))
+                .build();
+
+        //park = follower.pathBuilder()
+        //Stuff to work on later
+
+
     }
+
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 1:
-                follower.followPath(pushAll, true);
-                setPathState(-1);
+            case 0://hanging specimen
+                follower.followPath(specimen_hang);
+
+                setViperState(3);
+                setViperWristState(1);
+
+                if (follower.getPose().getX() > (hangPose.getX()) - 1) {
+                    setViperState(4);//down
+                    setPathState(1);
+                }
                 break;
+            case 1://releasing specimen
+                if (pathTimer.getElapsedTime() > 0.75) {
+                    setViperClawState(2);//spit out specimen
+                    setPathState(2);
+                }
+                break;
+            case 2:
+                follower.followPath(pivot1_1);
+
+                setMisumiState(1);
+                if (follower.getPose().getX() > (pivot1.getX()) - 1 && follower.getPose().getY() > (pivot1.getY()) - 1) {//TODO: I think the signs might be wrong. Figure out their coordinate system
+                    setMisumiState(1);
+                }
+                if (misumiState == 1) {
+                    setMisumiClawState(); //TODO: Figure out if bumper or trigger is intake
+                    setMisumiWristState(1);
+                }
+                if (pathTimer.getElapsedTime() > 5) { //TODO: Change time value because it could damage servo!!!
+                    setMisumiClawState(0);
+                    setMisumiWristState(0);
+                    setViperState(1);
+                    setViperWristState(0);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                follower.followPath(basket_1);
+                before_transfer_time = pathTimer.getElapsedTime();
+                //set states for transfer! Don't know these values yet
+
+                if (pathTimer.getElapsedTime() - before_transfer_time >= 2) {//TODO:Test if this work and tune values
+                    setMisumiClawState(0); //turning off the claws
+                    setViperClawState(0); //turning off the claws
+                    setViperWristState(2); //setting wrist to dropping position
+                    setViperState(2); //extending viper to dropping height
+                }
+
+                if (follower.getPose().getX() > (basket.getX()) && follower.getPose().getY() > (basket.getY()) && up.getCurrentPosition() >= up_basket_position) {
+                    setViperClawState(); //TODO: What is the value for spitting out?
+                }
+                if (pathTimer.getElapsedTime() >= 10) {
+                    setPathState(-1); //TODO: For now until the rest of the path is added
+                }
         }
     }
 
@@ -224,6 +366,16 @@ public class left_auto extends OpMode {
                 else if (up.getCurrentPosition() > up_hanging_position){
                     up.setPower(0.01);
                 }
+                break;
+            case 4:
+                //specimen hanging done height
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (up.getCurrentPosition() > up_hanging_position_done) {
+                    up.setPower(-0.7);
+                } else if (up.getCurrentPosition() <= up_hanging_position_done) {
+                    up.setPower(0.01);
+                }
+                break;
         }
         switch(viperWristState){
             case 0:
