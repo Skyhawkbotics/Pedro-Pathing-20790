@@ -59,7 +59,7 @@ public class right_auto extends OpMode {
 
     private Pose pickupPose = new Pose(8, 20, Math.toRadians(270)); // TODO : THISx value
 
-    private Pose pushPose = new Pose(20, 43, Math.toRadians(180));
+    private Pose pushPose = new Pose(25, 38, Math.toRadians(180));
 
     private Pose firstpoint = new Pose(36.0,40.0, Math.toRadians(180));
 
@@ -305,7 +305,7 @@ public class right_auto extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
                   setArmState(0);
                   setoutGrabState(0);
-                  follower.followPath(back);
+                  follower.followPath(back2);
                   setoutClawState(0);
                   if (follower.getPose().getX() - pushPose.getX() < 2)
                       setPathState(6);
