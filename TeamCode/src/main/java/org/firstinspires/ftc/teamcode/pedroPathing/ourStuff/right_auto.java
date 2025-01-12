@@ -57,7 +57,7 @@ public class right_auto extends OpMode {
 
     private Pose hangPose1 = new Pose(36.0, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(15, 40, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPose = new Pose(8, 20, Math.toRadians(270)); // TODO : THISx value
 
     private Pose pushPose = new Pose(20, 43, Math.toRadians(180));
 
@@ -99,7 +99,7 @@ public class right_auto extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
-    int up_hanging_position_done = 1310; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
+    int up_hanging_position_done = 1290; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
