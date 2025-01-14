@@ -62,7 +62,7 @@ public class opmode_MAIN extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int out_pos_transfer = 0;//TODO: edit this for calibration!
-    int out_max_pos = -1330;
+    int out_max_pos = 1330;
 
     int up_specimen_hang = 1907; // Viper
 
@@ -111,7 +111,6 @@ public class opmode_MAIN extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        up.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //example velocity setup
         //up = hardwareMap.get(DcMotorEx.class, "up");
@@ -172,10 +171,10 @@ public class opmode_MAIN extends OpMode {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
-            out.setPower(0.4);
+            out.setPower(-0.6);
             out_true_target_pos = 0;
-        } else if (gamepad2.dpad_left && out.getCurrentPosition() > out_max_pos ) { //out
-            out.setPower(-0.4);
+        } else if (gamepad2.dpad_left && out.getCurrentPosition() < out_max_pos ) { //out
+            out.setPower(0.6);
         } else if (gamepad2.dpad_right && out_zero.isPressed()) {
             out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.addData("reset out", true);
