@@ -111,6 +111,7 @@ public class opmode_MAIN extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        up.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //example velocity setup
         //up = hardwareMap.get(DcMotorEx.class, "up");
@@ -246,12 +247,12 @@ public class opmode_MAIN extends OpMode {
 
 
         //Encoder Transfer Method
-        if (gamepad2.b) {
-            servo_intake_wrist.setPosition(0);
-            servo_outtake_wrist.setPosition(0);// He needs to hold B down for entire thing to work
+        if (gamepad2.b) { // He needs to hold B down for entire thing to work
             //Add a variable and thing for setting the viper slide position to about 250 to avoid smashing stuff together
+            servo_outtake_wrist_location = outtake_wrist_pos_transfer;
+            servo_intake_wrist_location = intake_wrist_pos_transfer;
             if(!out_zero.isPressed()) {
-                out.setPower(0.5);
+                out.setPower(-0.3);
             }
             telemetry.addData("Misumi Slide Moving", true);
         }
