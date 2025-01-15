@@ -256,7 +256,7 @@ public class opmode_MAIN extends OpMode {
             }
             if (!up_zero.isPressed()) { //left stick +, going down
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                up.setVelocity(-1200);
+                up.setPower(-1200);
                 up_true_target_pos = 0;
             }
 
