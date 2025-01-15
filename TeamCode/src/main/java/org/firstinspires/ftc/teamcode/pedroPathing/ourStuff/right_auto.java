@@ -276,7 +276,7 @@ public class right_auto extends OpMode {
                         //}
                     }
                 break;
-            case 3:
+            case 3: //grab from wall
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     setArmState(1); // raise
                     setoutClawState(0);
@@ -284,7 +284,7 @@ public class right_auto extends OpMode {
                     setPathState(4);
                 }
                 break;
-            case 4:
+            case 4: //hang 2
                     follower.setMaxPower(0.8);
                     follower.followPath(hang2); // drive to hang pos
                     if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
