@@ -252,8 +252,14 @@ public class opmode_MAIN extends OpMode {
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             if(!out_zero.isPressed()) {
-                out.setPower(-0.3);
+                out.setPower(-0.6);
             }
+            if (!up_zero.isPressed()) { //left stick +, going down
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                up.setVelocity(-1200);
+                up_true_target_pos = 0;
+            }
+
             telemetry.addData("Misumi Slide Moving", true);
         }
         if (gamepad2.a) { //transfer
