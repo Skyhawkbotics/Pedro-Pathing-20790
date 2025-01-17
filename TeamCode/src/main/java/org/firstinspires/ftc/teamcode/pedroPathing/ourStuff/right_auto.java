@@ -43,7 +43,6 @@ public class right_auto extends OpMode {
 
 
     private int pathState, armState, outclawState, outgrabState, inclawState, ingrabState; // Different cases and states of the different parts of the robot
-    private String navigation;
 
     /** Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
