@@ -38,22 +38,17 @@ public class opmode_MAIN extends OpMode {
     private DcMotorEx rightRear;
 
     //define these up here instead of in the init section like rr, idk why but it seems to work fine.
-    private Servo servo_outtake_wrist;
-    private Servo servo_intake_wrist;
-    private CRServo servo_intake;
-    private CRServo servo_outtake;
-    private DcMotorEx up;
-    private DcMotorEx out;
-    private TouchSensor up_zero;
-    private TouchSensor out_zero;
-    private TouchSensor out_out;
-
+    private Servo servo_outtake_wrist, servo_intake_wrist, servo_outtake_rotate;
+    private CRServo servo_intake, servo_outtake;
+    private DcMotorEx up, out;
+    private TouchSensor up_zero, out_zero;
     //from rr version of opmode_MAIN
     int arm_upper_lim = 4350;
     int up_true_target_pos;
     int out_true_target_pos;
     double servo_outtake_wrist_location = 0;
     double servo_intake_wrist_location = 0;
+    double servo_outtake_rotate_location = 0;
 
 
     //vars for set positions for transfer:
@@ -124,12 +119,12 @@ public class opmode_MAIN extends OpMode {
         servo_outtake = hardwareMap.get(CRServo.class, "outtake");
         servo_intake_wrist = hardwareMap.get(Servo.class, "intakeWrist");
         servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
+        servo_outtake_rotate = hardwareMap.get(Servo.class, "outtakeRotate");
 
 
         //initialize touch sensor
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
         out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
-        out_out = hardwareMap.get(TouchSensor.class, "out_out");
     }
 
     /**
@@ -228,6 +223,22 @@ public class opmode_MAIN extends OpMode {
         }
 
         servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
+
+        // manual outtake rotate location
+        if (gamepad1.dpad_up) {
+            servo_outtake_rotate_location += 0.03;
+        }
+        if (gamepad1.dpad_down) {
+            servo_outtake_rotate_location -= 0.03;
+        }
+
+        if (servo_outtake_rotate_location > 1) {
+            servo_outtake_rotate_location = 1;
+        } else if (servo_outtake_rotate_location < 0) {
+            servo_outtake_rotate_location = 0;
+        }
+
+        servo_outtake_rotate.setPosition(servo_outtake_rotate_location);
 
         // manual intake wrist location
         if (gamepad2.right_stick_y > 0.1) {
