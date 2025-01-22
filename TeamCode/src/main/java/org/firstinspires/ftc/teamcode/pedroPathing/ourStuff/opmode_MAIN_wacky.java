@@ -7,11 +7,9 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -28,8 +26,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/21/2024
  */
-@TeleOp(name = "opmode_MAIN", group = "MAIN")
-public class opmode_MAIN extends OpMode {
+@TeleOp(name = "opmode_MAIN_wacky", group = "MAIN")
+public class opmode_MAIN_wacky extends OpMode {
     private Follower follower;
 
     private DcMotorEx leftFront;
@@ -43,12 +41,13 @@ public class opmode_MAIN extends OpMode {
     private DcMotorEx up, out;
     private TouchSensor up_zero, out_zero;
     //from rr version of opmode_MAIN
-    int arm_upper_lim = 4000;
+    int arm_upper_lim = 4350;
     int up_true_target_pos;
     int out_true_target_pos;
     double servo_outtake_wrist_location = 0;
     double servo_intake_wrist_location = 0;
     double servo_intake_rotate_location = 0.47;
+    double xpos, ypos;
 
 
     //vars for set positions for transfer:
@@ -134,30 +133,35 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.6, -gamepad1.right_stick_x * 0.7);
+        follower.setTeleOpMovementVectors(-xpos, ypos, -gamepad1.right_stick_x * 0.7);
         follower.update();
 
+        if (gamepad1.touchpad_finger_1) {
+            ypos = gamepad1.touchpad_finger_1_x;
+            xpos = gamepad1.touchpad_finger_1_y;
+        } else {
+            xpos = 0;
+            ypos = 0;
+        }
 
         //from rr version
 
         //viper slide
-        if (gamepad2.dpad_up && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
+        if (gamepad2.dpad_up) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setPower(0.8);
+            up.setVelocity(gamepad2.left_stick_y * -1200);
             up_true_target_pos = 0;
-        } else if (gamepad2.dpad_up && (up.getCurrentPosition() >= arm_upper_lim)) {
-            up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            telemetry.addData("upper limit reached", true);
         } else if (!up_zero.isPressed() && gamepad2.dpad_down) { //left stick +, going down
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setPower(-0.8);
+            up.setVelocity(gamepad2.left_stick_y * -1200);
             up_true_target_pos = 0;
         } else if (up_zero.isPressed() && gamepad1.dpad_down) { // Lower limit for up
             telemetry.addData("Lower Limit Reached", up_zero);
             up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            gamepad2.rumble(200);
         } else {
-            up.setPower(1);
+            up.setPower(500);
             //use position mode to stay up, as otherwise it would fall down. do some fancy stuff with up_true_target_pos to avoid the issue of it very slightly falling every tick
             if (up_true_target_pos == 0) {
                 up.setTargetPosition(up.getCurrentPosition());
@@ -170,20 +174,16 @@ public class opmode_MAIN extends OpMode {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
-            out.setPower(-0.4);
+            out.setPower(-0.6);
             out_true_target_pos = 0;
         } else if (gamepad2.dpad_left && out.getCurrentPosition() < out_max_pos ) { //out
-            out.setPower(0.4);
+            out.setPower(0.6);
         } else if (gamepad2.dpad_right && out_zero.isPressed()) {
             out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.addData("reset out", true);
         } else {
             out.setPower(0);
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        if (gamepad1.y) {
-            out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            out.setTargetPosition(1000);
         }
 
 
@@ -270,12 +270,13 @@ public class opmode_MAIN extends OpMode {
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             servo_intake_rotate_location = 0.5;
-            if (!out_zero.isPressed()) { //left stick +, going down
-                out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                out.setPower(-0.6);
-                telemetry.addData("misumi move", true);
+            if (!up_zero.isPressed()) { //left stick +, going down
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                up.setVelocity(-1200);
+                up_true_target_pos = 0;
             }
 
+            telemetry.addData("Misumi Slide Moving", true);
         }
         if (gamepad2.touchpad_finger_2) { //transfer
             servo_outtake.setPower(-1);
