@@ -310,9 +310,9 @@ public class right_auto extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
                   setArmState(0);
                   setoutGrabState(0);
-                  follower.followPath(back2);
+                  follower.followPath(push_all);
                   setoutClawState(0);
-                  if (follower.getPose().getX() - pushPose.getX() < 2)
+                  if (follower.getPose().getX() - pickupPoseBack.getX() < 2)
                       setPathState(6);
               }
               break;
