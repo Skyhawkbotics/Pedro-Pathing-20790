@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
+import android.os.storage.StorageManager;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -56,7 +58,8 @@ public class right_auto extends OpMode {
 
     private Pose hangPose1 = new Pose(36.0, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(8, 20, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPose = new Pose(18, 40, Math.toRadians(180)); // TODO : THISx value
+    private Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
 
     private Pose pushPose = new Pose(25, 38, Math.toRadians(0));
 
@@ -74,7 +77,7 @@ public class right_auto extends OpMode {
 
     // Paths
 
-    private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward;
+    private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward, push_all, pickup;
 
 
 
@@ -213,7 +216,67 @@ public class right_auto extends OpMode {
                 )
                 .setLinearHeadingInterpolation(secondpoint1.getHeading(),thirdpoint.getHeading())
                 .build();
+        pickup = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(pickupPoseBack),
+                                new Point(pickupPose)
+                        )
+                )
+                .setConstantHeadingInterpolation(pickupPose.getHeading())
+                .build();
 
+
+        push_all = follower.pathBuilder()
+                .addPath(
+                        // Line 1
+                        new BezierCurve(
+                                new Point(hangPose1),
+                                new Point(25.394, 55.277, Point.CARTESIAN),
+                                new Point(20.903, 34.684, Point.CARTESIAN),
+                                new Point(60.000, 35.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 2
+                        new BezierLine(
+                                new Point(60.000, 35.000, Point.CARTESIAN),
+                                new Point(60.000, 29.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 3
+                        new BezierCurve(
+                                new Point(60.000, 29.000, Point.CARTESIAN),
+                                new Point(-22.000, 23.690, Point.CARTESIAN),
+                                new Point(30.039, 35.613, Point.CARTESIAN),
+                                new Point(66.581, 31.742, Point.CARTESIAN),
+                                new Point(60.000, 19.000, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 4
+                        new BezierCurve(
+                                new Point(60.000, 19.000, Point.CARTESIAN),
+                                new Point(-22.000, 14.710, Point.CARTESIAN),
+                                new Point(28.645, 29.110, Point.CARTESIAN),
+                                new Point(66.890, 23.690, Point.CARTESIAN),
+                                new Point(60.000, 9.700, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .addPath(
+                        // Line 5
+                        new BezierLine(
+                                new Point(60.000, 9.700, Point.CARTESIAN),
+                                new Point(pickupPoseBack)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), pickupPoseBack.getHeading())
+                .build();
 
         /*park = follower.pathBuilder()
                 .addPath(

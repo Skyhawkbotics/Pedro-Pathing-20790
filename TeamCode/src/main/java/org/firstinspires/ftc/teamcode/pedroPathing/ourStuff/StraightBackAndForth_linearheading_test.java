@@ -48,9 +48,9 @@ public class StraightBackAndForth_linearheading_test extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setMaxPower(0.4);
 
-        forwards = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(DISTANCE,0, Point.CARTESIAN)));
+        forwards = new Path(new BezierLine(new Point(0,0, Point.CARTESIAN), new Point(0,DISTANCE, Point.CARTESIAN)));
         forwards.setLinearHeadingInterpolation(0, Math.toRadians(180));
-        backwards = new Path(new BezierLine(new Point(DISTANCE,0, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));
+        backwards = new Path(new BezierLine(new Point(0, DISTANCE, Point.CARTESIAN), new Point(0,0, Point.CARTESIAN)));
         backwards.setLinearHeadingInterpolation(Math.toRadians(180), 0);
 
         follower.followPath(forwards);
