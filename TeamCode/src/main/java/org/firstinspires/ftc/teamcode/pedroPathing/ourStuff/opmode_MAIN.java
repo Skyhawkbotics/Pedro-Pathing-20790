@@ -231,22 +231,6 @@ public class opmode_MAIN extends OpMode {
 
         servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
 
-        // manual intake rotate location
-        if (gamepad2.left_stick_x > 0.1) {
-            servo_intake_rotate_location += 0.015;
-        }
-        if (gamepad2.left_stick_x < -0.1) {
-            servo_intake_rotate_location -= 0.015;
-        }
-
-        if (servo_intake_rotate_location > 1) {
-            servo_intake_rotate_location = 1;
-        } else if (servo_intake_rotate_location < 0) {
-            servo_intake_rotate_location = 0;
-        }
-
-        servo_intake_rotate.setPosition(servo_intake_rotate_location);
-
         // manual intake wrist location
         if (gamepad2.right_stick_y > 0.1) {
             servo_intake_wrist_location += 0.05;
