@@ -50,7 +50,7 @@ public class left_auto_trajectory_only extends OpMode {
                                     new Point(11.320, 132.347, Point.CARTESIAN)
                             )
                     )
-                    .setTangentHeadingInterpolation()
+                    .setTangentHeadingInterpolation() //tanget?
                     .addPath(
                             // Line 4
                             new BezierLine(
