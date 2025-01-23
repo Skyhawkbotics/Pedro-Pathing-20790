@@ -36,8 +36,8 @@ public class FollowerConstants {
 
     // This section is for setting the actual drive vector for the front left wheel, if the robot
     // is facing a heading of 0 radians with the wheel centered at (0,0)
-    private static double xMovement =   68.90015598872832;
-    private static double yMovement =  53.78422880932969;
+    private static double xMovement =   80;
+    private static double yMovement =  60;
     private static double[] convertToPolar = Point.cartesianToPolar(xMovement, -yMovement);
     public static Vector frontLeftVector = MathFunctions.normalizeVector(new Vector(convertToPolar[0], convertToPolar[1]));
 
@@ -62,9 +62,9 @@ public class FollowerConstants {
 
     // Heading error PIDF coefficients
     public static CustomPIDFCoefficients headingPIDFCoefficients = new CustomPIDFCoefficients(
-            1,
+            3,
             0,
-            0.12,
+            0.2,
             0);
 
     // Feed forward constant added on to the heading PIDF
@@ -73,7 +73,7 @@ public class FollowerConstants {
 
     // Drive PIDF coefficients
     public static CustomFilteredPIDFCoefficients drivePIDFCoefficients = new CustomFilteredPIDFCoefficients(
-            0.05,
+            0.03,
             0,
             0.000008,
             0.6,
@@ -97,7 +97,7 @@ public class FollowerConstants {
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
-    public static double forwardZeroPowerAcceleration =  -26.670069987563547;
+    public static double forwardZeroPowerAcceleration =  -30;
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
@@ -161,7 +161,7 @@ public class FollowerConstants {
     // These activate / deactivate the secondary PIDs. These take over at errors under a set limit for
     // the translational, heading, and drive PIDs.
     public static boolean useSecondaryTranslationalPID = false;
-    public static boolean useSecondaryHeadingPID = false;
+    public static boolean useSecondaryHeadingPID = true;
     public static boolean useSecondaryDrivePID = false;
 
 
@@ -192,9 +192,9 @@ public class FollowerConstants {
 
     // Secondary heading error PIDF coefficients
     public static CustomPIDFCoefficients secondaryHeadingPIDFCoefficients = new CustomPIDFCoefficients(
-            5,
+            1,
             0,
-            0.08,
+            0.1,
             0);
 
     // Feed forward constant added on to the secondary heading PIDF

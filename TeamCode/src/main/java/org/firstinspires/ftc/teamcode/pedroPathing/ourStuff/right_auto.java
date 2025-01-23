@@ -56,17 +56,17 @@ public class right_auto extends OpMode {
 
     private Pose hangPose1 = new Pose(36.0, 63.0, Math.toRadians(0)); // TODO
 
-    private Pose pickupPose = new Pose(8, 20, Math.toRadians(270)); // TODO : THISx value
+    private Pose pickupPose = new Pose(8, 20, Math.toRadians(180)); // TODO : THISx value
 
-    private Pose pushPose = new Pose(25, 38, Math.toRadians(180));
+    private Pose pushPose = new Pose(25, 38, Math.toRadians(0));
 
-    private Pose firstpoint = new Pose(36.0,40.0, Math.toRadians(180));
+    private Pose firstpoint = new Pose(36.0,40.0, Math.toRadians(0));
 
-    private Pose secondpoint = new Pose(63.00, 40.00, Math.toRadians(180));
-    private Pose secondpoint1 = new Pose(63.00, 35.00, Math.toRadians(180));
+    private Pose secondpoint = new Pose(63.00, 40.00, Math.toRadians(0));
+    private Pose secondpoint1 = new Pose(63.00, 35.00, Math.toRadians(0));
 
 
-    private Pose thirdpoint = new Pose(63, 22.00, Math.toRadians(180));
+    private Pose thirdpoint = new Pose(63, 22.00, Math.toRadians(0));
 
     private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
 
@@ -467,8 +467,6 @@ public class right_auto extends OpMode {
         follower.update();
         autonomousActionUpdate();
 
-        //follower.telemetryDebug(telemetryA);
-
 
         // Feedback to Driver Hub
         telemetryA.addData("path state", pathState);
@@ -484,6 +482,8 @@ public class right_auto extends OpMode {
         telemetryA.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
         telemetryA.addData("armmode", up.getMode());
         telemetryA.addData("Follower busy", follower.isBusy());
+
+        telemetryA.addData("headingPID error", follower.headingError);
         telemetryA.update();
     }
 
@@ -497,6 +497,8 @@ public class right_auto extends OpMode {
 
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
+        follower.setMaxPower(0.4);
+
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.update();
