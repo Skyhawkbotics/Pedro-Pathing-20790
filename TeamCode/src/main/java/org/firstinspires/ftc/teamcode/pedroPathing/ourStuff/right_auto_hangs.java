@@ -129,7 +129,8 @@ public class right_auto_hangs extends OpMode {
                                         new Point(startPose)
                                 )
                         )
-                        .setConstantHeadingInterpolation(Math.toRadians(180));
+                        .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
     }
     public void autonomousPathUpdate() {
         switch (pathState) { // 4 seconds ?
