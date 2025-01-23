@@ -133,7 +133,7 @@ public class right_auto_hangs extends OpMode {
                 .build();
     }
     public void autonomousPathUpdate() {
-        switch (pathState) { // 4 seconds ?
+        switch (pathState) {
             case 0:
                 follower.followPath(hangs);
 
