@@ -63,41 +63,15 @@ public class right_auto extends OpMode {
 
     private Pose pushPose = new Pose(25, 38, Math.toRadians(0));
 
-    private Pose firstpoint = new Pose(36.0,40.0, Math.toRadians(0));
-
-    private Pose secondpoint = new Pose(63.00, 40.00, Math.toRadians(0));
-    private Pose secondpoint1 = new Pose(63.00, 35.00, Math.toRadians(0));
-
-
-    private Pose thirdpoint = new Pose(63, 22.00, Math.toRadians(0));
-
-    private Pose control_p2 = new Pose(51.49198520345253, 44.74475955610358, Math.toRadians(0));
-
-    private Pose curve_curve = new Pose(75, 37, Math.toRadians(0));
-
     // Paths
-
     private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward, push_all, pickup;
 
-
-
-
-
-
-
     // Motors
-
     private DcMotorEx up, out;
-    private Servo servo_outtake_wrist;
-    private CRServo servo_outtake;
-
-    private Servo servo_intake_wrist;
-
-    private CRServo servo_intake;
-
+    private Servo servo_outtake_wrist, servo_intake_wrist;
+    private CRServo servo_outtake, servo_intake;
     private TouchSensor up_zero;
     private Telemetry telemetryA;
-
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
@@ -184,37 +158,6 @@ public class right_auto extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(pickupPose.getHeading(),hangPose1.getHeading())
-                .build();
-        push_back = follower.pathBuilder()
-                .addPath(
-                        // Line 2
-                        new BezierLine(
-                                new Point(pushPose),
-                                new Point(secondpoint)
-                        )
-                )
-                .setLinearHeadingInterpolation(pushPose.getHeading(),secondpoint.getHeading())
-                .build();
-        push_side  = follower.pathBuilder()
-                .addPath(
-                // Line 1
-                new BezierCurve(
-                        new Point(secondpoint),
-                        new Point(curve_curve),
-                        new Point(secondpoint1)
-                )
-        )
-                .setLinearHeadingInterpolation(secondpoint.getHeading(),secondpoint1.getHeading())
-                .build();
-        push_forward = follower.pathBuilder()
-                .addPath(
-                        // Line 3
-                        new BezierLine(
-                                new Point(secondpoint1),
-                                new Point(thirdpoint)
-                        )
-                )
-                .setLinearHeadingInterpolation(secondpoint1.getHeading(),thirdpoint.getHeading())
                 .build();
         pickup = follower.pathBuilder()
                 .addPath(
