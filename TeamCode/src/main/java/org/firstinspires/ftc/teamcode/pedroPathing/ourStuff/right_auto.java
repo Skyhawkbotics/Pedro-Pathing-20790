@@ -144,7 +144,7 @@ public class right_auto extends OpMode {
         hang2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(pickupPose),
+                                new Point(startPose),
                                 new Point(hangPose1)
                         )
                 )
@@ -251,7 +251,7 @@ public class right_auto extends OpMode {
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
         switch (pathState) { // 4 seconds ?
-            case 0: // Drive and hang pos
+            /*case 0: // Drive and hang pos
                 follower.followPath(specimen_hang);
 
                 setArmState(1); // hang pos
@@ -288,7 +288,7 @@ public class right_auto extends OpMode {
                     setoutGrabState(0);
                     setPathState(4);
                 }
-                break;
+                break;*/
             case 4: //hang 2
                     follower.setMaxPower(0.8);
                     follower.followPath(hang2); // drive to hang pos
@@ -528,15 +528,7 @@ public class right_auto extends OpMode {
 
         servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
 
-
-
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
-
-
-
-
-        //huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
-
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
@@ -571,7 +563,7 @@ public class right_auto extends OpMode {
         //setBackdropGoalPose();
         buildPaths();
         opmodeTimer.resetTimer();
-        setPathState(0);
+        setPathState(4);
         setArmState(0); //starting ArmState
         setoutGrabState(0);
         setinclawState(0);

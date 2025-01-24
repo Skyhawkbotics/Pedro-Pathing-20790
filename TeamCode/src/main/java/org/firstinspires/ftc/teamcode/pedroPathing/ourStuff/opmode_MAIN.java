@@ -17,7 +17,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 /**
  * This is the TeleOpEnhancements OpMode. It is an example usage of the TeleOp enhancements that
@@ -63,6 +69,7 @@ public class opmode_MAIN extends OpMode {
 
     double outtake_specimen_hang = 0.45;
     int up_pos_transfer1 = 0;
+    private PathChain park;
 
     // double up_pos_transfer2 = 10;
     // double up_pos_transfer3 = 20;
@@ -127,6 +134,22 @@ public class opmode_MAIN extends OpMode {
         out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
     }
 
+
+    //PATHING
+    private Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
+    private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
+
+    park = follower.pathBuilder()
+            .addPath(
+            new BezierLine(hangPose)
+        new BezierLine(pickupPoseBack)
+        )
+    )
+                .setConstantHeadingInterpolation(0)
+    .build();
+
+
+
     /**
      * This runs the OpMode. This is only drive control with Pedro Pathing live centripetal force
      * correction.
@@ -170,10 +193,10 @@ public class opmode_MAIN extends OpMode {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
-            out.setPower(-0.4);
+            out.setPower(-0.8);
             out_true_target_pos = 0;
         } else if (gamepad2.dpad_left && out.getCurrentPosition() < out_max_pos ) { //out
-            out.setPower(0.4);
+            out.setPower(0.8);
         } else if (gamepad2.dpad_right && out_zero.isPressed()) {
             out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.addData("reset out", true);
@@ -230,6 +253,23 @@ public class opmode_MAIN extends OpMode {
         }
 
         servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
+
+        // manual intake rotate location
+        if (gamepad2.left_stick_x > 0.1) {
+            servo_intake_rotate_location += 0.015;
+        }
+        if (gamepad2.left_stick_x < -0.1) {
+            servo_intake_rotate_location -= 0.015;
+        }
+
+        if (servo_intake_rotate_location > 1) {
+            servo_intake_rotate_location = 1;
+        } else if (servo_intake_rotate_location < 0) {
+            servo_intake_rotate_location = 0;
+        }
+
+        servo_intake_rotate.setPosition(servo_intake_rotate_location);
+
 
         // manual intake wrist location
         if (gamepad2.right_stick_y > 0.1) {
