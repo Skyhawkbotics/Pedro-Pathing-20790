@@ -70,7 +70,10 @@ public class opmode_MAIN extends OpMode {
     double outtake_specimen_hang = 0.45;
     int up_pos_transfer1 = 0;
     private PathChain park;
+    double driving_multiplier_fast = 0.7;
+    double driving_multiplier_slow = 0.3;
 
+    double driving_multiplier;
     // double up_pos_transfer2 = 10;
     // double up_pos_transfer3 = 20;
     // double outtake_wrist_pos_ready = 300;
@@ -83,7 +86,7 @@ public class opmode_MAIN extends OpMode {
     /**
      * This initializes the drive motors as well as the Follower and motion Vectors.
      */
-
+    @Override
     public void start() {
         park = follower.pathBuilder()
                 .addPath(
@@ -162,9 +165,16 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.6, -gamepad1.right_stick_x * 0.7);
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * driving_multiplier);
         follower.update();
 
+
+        //change drive speed for more accuracy if needed
+        if (gamepad1.left_bumper) {
+            driving_multiplier = driving_multiplier_slow;
+        } else {
+            driving_multiplier = driving_multiplier_fast;
+        }
 
         //from rr version
 
