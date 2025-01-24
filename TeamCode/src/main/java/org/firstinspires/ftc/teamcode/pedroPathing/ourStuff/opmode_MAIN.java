@@ -161,8 +161,8 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * driving_multiplier);
-        follower.update();
+        //follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * driving_multiplier);
+        //follower.update();
 
 
         //TESTING PATH THING VERSION
@@ -177,7 +177,6 @@ public class opmode_MAIN extends OpMode {
         } else {
             driving_multiplier = driving_multiplier_fast;
         }
-
 
         viper_slide();
         misumi_slide();
@@ -217,7 +216,7 @@ public class opmode_MAIN extends OpMode {
 
 
     public void viper_slide() {
-        if (gamepad2.dpad_up && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
+        if (gamepad2.dpad_up && (up.getCurrentPosition() < arm_upper_lim)) {
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             up.setPower(0.8);
