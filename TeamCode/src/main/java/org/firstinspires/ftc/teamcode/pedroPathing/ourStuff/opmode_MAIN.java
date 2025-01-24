@@ -141,10 +141,11 @@ public class opmode_MAIN extends OpMode {
 
     park = follower.pathBuilder()
             .addPath(
-            new BezierLine(hangPose)
-        new BezierLine(pickupPoseBack)
-        )
-    )
+                new BezierLine(
+                        new Point(hangPose),
+                    new Point(pickupPoseBack)
+                )
+                        )
                 .setConstantHeadingInterpolation(0)
     .build();
 
