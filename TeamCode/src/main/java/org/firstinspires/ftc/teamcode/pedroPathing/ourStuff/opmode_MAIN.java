@@ -74,6 +74,7 @@ public class opmode_MAIN extends OpMode {
     double driving_multiplier_slow = 0.3;
 
     double driving_multiplier;
+    boolean pathing = false;
     // double up_pos_transfer2 = 10;
     // double up_pos_transfer3 = 20;
     // double outtake_wrist_pos_ready = 300;
@@ -88,6 +89,10 @@ public class opmode_MAIN extends OpMode {
      */
     @Override
     public void start() {
+        //PATHING
+        Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
+        Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
+
         park = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
@@ -149,15 +154,6 @@ public class opmode_MAIN extends OpMode {
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
         out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
     }
-
-
-    //PATHING
-    private Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
-    private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
-
-
-
-
     /**
      * This runs the OpMode. This is only drive control with Pedro Pathing live centripetal force
      * correction.
@@ -165,9 +161,10 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * driving_multiplier);
-        follower.update();
-
+        if (!pathing) {
+            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * driving_multiplier);
+            follower.update();
+        }
 
         //change drive speed for more accuracy if needed
         if (gamepad1.left_bumper) {
@@ -176,9 +173,45 @@ public class opmode_MAIN extends OpMode {
             driving_multiplier = driving_multiplier_fast;
         }
 
-        //from rr version
 
-        //viper slide
+        viper_slide();
+        misumi_slide();
+        intake_claw();
+        outtake_claw();
+        macros();
+
+        //TEST PATH THING
+        if (gamepad1.x) {
+            follower.followPath(park);
+            pathing = true;
+        } else {
+            pathing = false;
+        }
+
+        //telemetry
+        telemetry.addData("gamepad2.rightstickx", gamepad2.right_stick_x);
+        telemetry.addData("gamepad2.rightsticky", gamepad2.right_stick_y);
+        telemetry.addData("out.getCurrentpos", out.getCurrentPosition());
+        telemetry.addData("servo pos", servo_outtake_wrist.getPosition());
+        telemetry.addData("intake_servo", servo_intake_wrist.getPosition());
+        telemetry.addData("rotate_pos", servo_intake_rotate.getPosition());
+        telemetry.addData("up pos", up.getCurrentPosition());
+        telemetry.addData("out_zero", out_zero.isPressed());
+        telemetry.addData("gamepad1.touchpad", gamepad1.touchpad);
+        telemetry.addData("gamepad1.touchpad_finger_1", gamepad1.touchpad_finger_1);
+        telemetry.addData("gamepad1.touchpad_finger_2", gamepad1.touchpad_finger_2);
+        telemetry.addData("gamepad1.touchpad_finger_1_x", gamepad1.touchpad_finger_1_x);
+        telemetry.addData("gamepad1.touchpad_finger_1_y", gamepad1.touchpad_finger_1_y);
+        telemetry.addData("gamepad1.touchpad_finger_2_x", gamepad1.touchpad_finger_2_x);
+        telemetry.addData("gamepad1.touchpad_finger_2_y", gamepad1.touchpad_finger_2_y);
+        telemetry.addData("gamepad1.share", gamepad1.share);
+        telemetry.addData("gamepad1.share", gamepad1.guide);
+        telemetry.update();
+    }
+
+
+
+    public void viper_slide() {
         if (gamepad2.dpad_up && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -204,7 +237,15 @@ public class opmode_MAIN extends OpMode {
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
+        //make sure the upper and lower limits are actually at the upper and lower limits
+        if (up.getCurrentPosition() < 0) {
+            up.setTargetPosition(0);
+        } else if (up.getCurrentPosition() > arm_upper_lim) {
+            up.setTargetPosition(arm_upper_lim);
+        }
+    }
 
+    public void misumi_slide() {
         // Misumi Slide
         if (gamepad2.dpad_right && !out_zero.isPressed()) { //in
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
@@ -223,16 +264,8 @@ public class opmode_MAIN extends OpMode {
             out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             out.setTargetPosition(1000);
         }
-
-
-        //make sure the upper and lower limits are actually at the upper and lower limits
-        if (up.getCurrentPosition() < 0) {
-            up.setTargetPosition(0);
-        } else if (up.getCurrentPosition() > arm_upper_lim) {
-            up.setTargetPosition(arm_upper_lim);
-        }
-
-
+    }
+    public void intake_claw() {
         // Gamepad2.right_trigger is analog, so we need a comparative statement to use it as a digital button.
         //servo intake control
         if (gamepad2.right_trigger > 0.8/* && servo_CLAW_position < 1000000000*/) { //NO LONGER NEEDED: find a better solution for this limits so we can actually use them
@@ -242,32 +275,6 @@ public class opmode_MAIN extends OpMode {
         } else {
             servo_intake.setPower(0);
         }
-
-
-        //Continuous servo outtake control
-        if (gamepad2.left_trigger > 0.8/* && servo_CLAW_position < 1000000000*/) { //NO LONGER NEEDED: find a better solution for this limits so we can actually use them
-            servo_outtake.setPower(1);
-        } else if (gamepad2.left_bumper) { //NO LONGER NEEDED: these limits too.
-            servo_outtake.setPower(-1);
-        } else {
-            servo_outtake.setPower(0);
-        }
-
-        // manual outtake wrist location
-        if (gamepad2.y) {
-            servo_outtake_wrist_location += 0.03;
-        }
-        if (gamepad2.a) {
-            servo_outtake_wrist_location -= 0.03;
-        }
-
-        if (servo_outtake_wrist_location > 1) {
-            servo_outtake_wrist_location = 1;
-        } else if (servo_outtake_wrist_location < 0) {
-            servo_outtake_wrist_location = 0;
-        }
-
-        servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
 
         // manual intake rotate location
         if (gamepad2.left_stick_x > 0.1) {
@@ -299,13 +306,37 @@ public class opmode_MAIN extends OpMode {
         } else if (servo_intake_wrist_location < 0) {
             servo_intake_wrist_location = 0;
         }
+    }
+    public void outtake_claw() {
+        //Continuous servo outtake control
+        if (gamepad2.left_trigger > 0.8/* && servo_CLAW_position < 1000000000*/) { //NO LONGER NEEDED: find a better solution for this limits so we can actually use them
+            servo_outtake.setPower(1);
+        } else if (gamepad2.left_bumper) { //NO LONGER NEEDED: these limits too.
+            servo_outtake.setPower(-1);
+        } else {
+            servo_outtake.setPower(0);
+        }
 
-        servo_intake_wrist.setPosition(servo_intake_wrist_location);
+        // manual outtake wrist location
+        if (gamepad2.y) {
+            servo_outtake_wrist_location += 0.03;
+        }
+        if (gamepad2.a) {
+            servo_outtake_wrist_location -= 0.03;
+        }
 
+        //reset outtake wrist location in case value is above or below 1 or 0
+        if (servo_outtake_wrist_location > 1) {
+            servo_outtake_wrist_location = 1;
+        } else if (servo_outtake_wrist_location < 0) {
+            servo_outtake_wrist_location = 0;
+        }
 
+        servo_outtake_wrist.setPosition(servo_outtake_wrist_location);
+    }
+    public void macros() {
         //Encoder Transfer Method
-        if (gamepad2.touchpad_finger_1 && !gamepad2.touchpad_finger_2) { // He needs to hold B down for entire thing to work
-            //Add a variable and thing for setting the viper slide position to about 250 to avoid smashing stuff together
+        if (gamepad2.touchpad_finger_1 && !gamepad2.touchpad_finger_2) {
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             servo_intake_rotate_location = 0.5;
@@ -329,38 +360,5 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.b) {
             servo_intake_rotate.setPosition(0.47);
         }
-
-        //TEST PATH THING
-        if (gamepad2.x) {
-            follower.followPath(park);
-        }
-
-
-        telemetry.addData("gamepad2.rightstickx", gamepad2.right_stick_x);
-        telemetry.addData("gamepad2.rightsticky", gamepad2.right_stick_y);
-        telemetry.addData("out.getCurrentpos", out.getCurrentPosition());
-        telemetry.addData("servo pos", servo_outtake_wrist.getPosition());
-        telemetry.addData("intake_servo", servo_intake_wrist.getPosition());
-        telemetry.addData("rotate_pos", servo_intake_rotate.getPosition());
-        telemetry.addData("up pos", up.getCurrentPosition());
-        telemetry.addData("out_zero", out_zero.isPressed());
-        telemetry.addData("gamepad1.touchpad", gamepad1.touchpad);
-        telemetry.addData("gamepad1.touchpad_finger_1", gamepad1.touchpad_finger_1);
-        telemetry.addData("gamepad1.touchpad_finger_2", gamepad1.touchpad_finger_2);
-        telemetry.addData("gamepad1.touchpad_finger_1_x", gamepad1.touchpad_finger_1_x);
-        telemetry.addData("gamepad1.touchpad_finger_1_y", gamepad1.touchpad_finger_1_y);
-        telemetry.addData("gamepad1.touchpad_finger_2_x", gamepad1.touchpad_finger_2_x);
-        telemetry.addData("gamepad1.touchpad_finger_2_y", gamepad1.touchpad_finger_2_y);
-        telemetry.addData("gamepad1.share", gamepad1.share);
-        telemetry.addData("gamepad1.share", gamepad1.guide);
-
-
-
-
-
-
-
-
-        telemetry.update();
     }
 }
