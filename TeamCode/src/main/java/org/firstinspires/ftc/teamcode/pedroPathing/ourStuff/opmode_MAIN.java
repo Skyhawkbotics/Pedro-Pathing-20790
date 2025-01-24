@@ -83,6 +83,19 @@ public class opmode_MAIN extends OpMode {
     /**
      * This initializes the drive motors as well as the Follower and motion Vectors.
      */
+
+    public void start() {
+        park = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                new Point(hangPose),
+                                new Point(pickupPoseBack)
+                        )
+                )
+                .setConstantHeadingInterpolation(0)
+                .build();
+
+    }
     @Override
     public void init() {
         follower = new Follower(hardwareMap);
@@ -139,15 +152,6 @@ public class opmode_MAIN extends OpMode {
     private Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
-    park = follower.pathBuilder()
-            .addPath(
-                new BezierLine(
-                        new Point(hangPose),
-                    new Point(pickupPoseBack)
-                )
-                        )
-                .setConstantHeadingInterpolation(0)
-    .build();
 
 
 
@@ -314,6 +318,11 @@ public class opmode_MAIN extends OpMode {
 
         if (gamepad2.b) {
             servo_intake_rotate.setPosition(0.47);
+        }
+
+        //TEST PATH THING
+        if (gamepad2.x) {
+            follower.followPath(park);
         }
 
 
