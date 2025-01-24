@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
     private final Pose hangPose = new Pose(38,65,Math.toRadians(0));
 
-    private final Pose turnPose_s = new Pose(26,65, Math.toRadians(180));
+    private final Pose turnPose_s = new Pose(16,65, Math.toRadians(180));
 
     private final Pose turnPose_e = new Pose(26, 65, Math.toRadians(180));
 
@@ -57,7 +57,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         back = new Path(
                 new BezierLine(
                         new Point(hangPose),
-                        new Point(turnPose_s)
+                        new Point(startPose)
                 )
         );
         back.setTangentHeadingInterpolation();
@@ -75,26 +75,31 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(pickup);
-                setPathState(1);
+                follower.followPath(pickup, true);
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    setPathState(1);
+                }
                 break;
 
             case 1:
                 //if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1))) {
                 if(!follower.isBusy()) {
-                    follower.followPath(hang);
-                    setPathState(-1);
-
+                    follower.followPath(hang, true);
+                    if (pathTimer.getElapsedTimeSeconds() > 4) {
+                        setPathState(2);
+                    }
                 }
                 break;
             case 2:
                 //if(follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1))) {
                 if(!follower.isBusy()) {
-
-                    follower.followPath(back);
+                    follower.followPath(back, true);
                 }
 
-
+                if (pathTimer.getElapsedTimeSeconds() > 4) {
+                    setPathState(-1);
+                }
+                break;
         }
     }
     public void setPathState(int pState) {

@@ -69,7 +69,7 @@ public class opmode_MAIN extends OpMode {
 
     double outtake_specimen_hang = 0.45;
     int up_pos_transfer1 = 0;
-    private PathChain park;
+    private Path park;
     double driving_multiplier_fast = 0.7;
     double driving_multiplier_slow = 0.3;
 
@@ -90,18 +90,16 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void start() {
         //PATHING
-        Pose pickupPoseBack = new Pose(24, 40, Math.toRadians(180)); // TODO: This value too!
+        Pose pickupPoseBack = new Pose(15, 40, Math.toRadians(180)); // TODO: This value too!
         Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
-        park = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Point(hangPose),
-                                new Point(pickupPoseBack)
-                        )
+        park = new Path(
+                new BezierLine(
+                        new Point(hangPose),
+                        new Point(pickupPoseBack)
                 )
-                .setConstantHeadingInterpolation(0)
-                .build();
+        );
+        park.setConstantHeadingInterpolation(pickupPoseBack.getHeading());
 
     }
     @Override
@@ -153,6 +151,9 @@ public class opmode_MAIN extends OpMode {
         //initialize touch sensor
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
         out_zero = hardwareMap.get(TouchSensor.class, "out_zero");
+
+        Pose startPose = new Pose(15, 40.0, Math.toRadians(0)); //TODO
+        follower.setStartingPose(startPose);
     }
     /**
      * This runs the OpMode. This is only drive control with Pedro Pathing live centripetal force
