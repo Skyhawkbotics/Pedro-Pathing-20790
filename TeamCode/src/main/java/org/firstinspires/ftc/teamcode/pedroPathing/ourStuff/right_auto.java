@@ -290,8 +290,7 @@ public class right_auto extends OpMode {
                 }
                 break;*/
             case 4: //hang 2
-                    follower.setMaxPower(0.8);
-                    follower.followPath(hang2); // drive to hang pos
+                   follower.followPath(hang2); // drive to hang pos
                     if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
                         setoutClawState(1);
                         if(pathTimer.getElapsedTimeSeconds() > 5) {
@@ -305,7 +304,6 @@ public class right_auto extends OpMode {
                     }
                 break;
             case 5:
-                follower.setMaxPower(1);
 
                 if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
                   setArmState(0);
@@ -322,8 +320,7 @@ public class right_auto extends OpMode {
                     setPathState(7);
                 }
             case 7:
-                follower.setMaxPower(0.8);
-                follower.followPath(push_side);
+]                follower.followPath(push_side);
                 if(pathTimer.getElapsedTimeSeconds() > 3) {
                     setPathState(8);
                 }
@@ -469,8 +466,9 @@ public class right_auto extends OpMode {
     public void loop() {
 
         // These loop the actions and movement of the robot
-        autonomousPathUpdate();
         follower.update();
+
+        autonomousPathUpdate();
         autonomousActionUpdate();
 
 
@@ -557,7 +555,7 @@ public class right_auto extends OpMode {
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/
-    @Override
+    /*@Override
     public void start() {
         //setBackdropGoalPose();
         buildPaths();
@@ -569,6 +567,8 @@ public class right_auto extends OpMode {
         setIngrabState(0);
         setoutClawState(0);
     }
+
+     */
 
     /** We do not use this because everything should automatically disable **/
     @Override
