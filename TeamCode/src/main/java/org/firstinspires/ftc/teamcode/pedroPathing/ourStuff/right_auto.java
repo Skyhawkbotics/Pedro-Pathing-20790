@@ -220,7 +220,7 @@ public class right_auto extends OpMode {
         pushAll7 = new Path (
                 new BezierLine(
                         new Point(60.000, 9.000, Point.CARTESIAN),
-                        new Point(pickupPoseBack)
+                        new Point(24, 9, Point.CARTESIAN)
                 )
         );
         pushAll7.setConstantHeadingInterpolation(0);
