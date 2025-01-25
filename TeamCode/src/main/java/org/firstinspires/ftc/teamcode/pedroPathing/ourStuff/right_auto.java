@@ -65,7 +65,7 @@ public class right_auto extends OpMode {
 
     // Paths
     private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward, push_all, pickup;
-    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5;
+    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7, pushAll8;
 
     // Motors
     private DcMotorEx up, out;
@@ -188,56 +188,42 @@ public class right_auto extends OpMode {
                 );
         pushAll2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
         pushAll3 = new Path(
-                        new BezierCurve(
+                        new BezierLine(
                                 new Point(60.000, 29.000, Point.CARTESIAN),
-                                new Point(-22.000, 23.690, Point.CARTESIAN),
-                                new Point(30.039, 35.613, Point.CARTESIAN),
-                                new Point(66.581, 31.742, Point.CARTESIAN),
-                                new Point(60.000, 19.000, Point.CARTESIAN)
+                                new Point(24.000, 29.000, Point.CARTESIAN)
                         )
                 );
         pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
         pushAll4 = new Path (
                         new BezierCurve(
-                                new Point(60.000, 19.000, Point.CARTESIAN),
-                                new Point(-22.000, 14.710, Point.CARTESIAN),
-                                new Point(28.645, 29.110, Point.CARTESIAN),
-                                new Point(66.890, 23.690, Point.CARTESIAN),
-                                new Point(60.000, 9.700, Point.CARTESIAN)
+                                new Point(24.000, 29.000, Point.CARTESIAN),
+                                new Point(63.174, 31.123, Point.CARTESIAN),
+                                new Point(60.000, 18.000, Point.CARTESIAN)
                         )
                 );
         pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
         pushAll5 = new Path(
-                        new BezierLine(
-                                new Point(60.000, 9.700, Point.CARTESIAN),
-                                new Point(pickupPoseBack)
+                new BezierLine(
+                        new Point(60.000, 18.000, Point.CARTESIAN),
+                        new Point(24.000, 18.000, Point.CARTESIAN)
                         )
                 );
-        pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), pickupPoseBack.getHeading());
-
-        /*park = follower.pathBuilder()
-                .addPath(
-                        // Line 3
-                        new BezierLine(
-                                new Point(10.298, 39.063, Point.CARTESIAN), // observation zone
-                                new Point(66.762, 39.596, Point.CARTESIAN) // forward straight
-                        )
+        pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll6 = new Path(
+                new BezierCurve(
+                        new Point(24.000, 18.000, Point.CARTESIAN),
+                        new Point(63.174, 20.594, Point.CARTESIAN),
+                        new Point(60.000, 16.000, Point.CARTESIAN)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0)) // turning
-                .build();
-
-         */
-
-        // Now I'm adding a Path chain of actions that will go back and strafe and turn to park (for tuning)
-        /*back = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(hangPose), new Point(back_Pose)))
-                .build();
-        park = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(back_Pose), new Point(parkPose)))
-                .setConstantHeadingInterpolation(parkPose.getHeading())
-                .build();
-
-         */
+        );
+        pushAll6.setConstantHeadingInterpolation(0);
+        pushAll7 = new Path (
+                new BezierLine(
+                        new Point(60.000, 9.000, Point.CARTESIAN),
+                        new Point(pickupPoseBack)
+                )
+        );
+        pushAll7.setConstantHeadingInterpolation(0);
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -283,11 +269,11 @@ public class right_auto extends OpMode {
                     setPathState(4);
                 }
                 break;*/
-            case 4: //hang 2
+            case 4:
                 follower.followPath(hang2); // drive to hang pos
                 setPathState(5);
                 break;
-            case 5:
+            case 5: //PUSHALL START
                 if(!follower.isBusy()) {
                     follower.followPath(pushAll1);
                     setPathState(6);
@@ -314,9 +300,21 @@ public class right_auto extends OpMode {
             case 9:
                 if(!follower.isBusy()) {
                     follower.followPath(pushAll5);
-                    setPathState(-1);
+                    setPathState(10);
                 }
                 break;
+            case 10:
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll6);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll7);
+                    setPathState(-1);
+                }
+                break; //PUSHALL END
         }
     }
     /* back_park = follower.pathBuilder()
@@ -543,7 +541,7 @@ public class right_auto extends OpMode {
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/
-    /*@Override
+    @Override
     public void start() {
         //setBackdropGoalPose();
         buildPaths();
@@ -556,7 +554,7 @@ public class right_auto extends OpMode {
         setoutClawState(0);
     }
 
-     */
+
 
     /** We do not use this because everything should automatically disable **/
     @Override
