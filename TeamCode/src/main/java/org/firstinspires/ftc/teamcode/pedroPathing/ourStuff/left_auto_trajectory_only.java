@@ -30,7 +30,7 @@ public class left_auto_trajectory_only extends OpMode {
     private int pathState;
 
     //start pose
-    private Pose startPose = new Pose(39,82.5,Math.toRadians(0));
+    private Pose startPose = new Pose(8.99,88.0,Math.toRadians(0));
     private PathChain pushAll;
 
     public void buildPaths() {
