@@ -65,6 +65,7 @@ public class right_auto extends OpMode {
 
     // Paths
     private PathChain back_park, specimen_hang, back, park, hang2, hang3, push_side, back2, push_back, push_forward, push_all, pickup;
+    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5;
 
     // Motors
     private DcMotorEx up, out;
@@ -170,27 +171,23 @@ public class right_auto extends OpMode {
                 .build();
 
 
-        push_all = follower.pathBuilder()
-                .addPath(
-                        // Line 1
+        pushAll1 = new Path(
                         new BezierCurve(
                                 new Point(hangPose1),
                                 new Point(25.394, 55.277, Point.CARTESIAN),
                                 new Point(20.903, 34.684, Point.CARTESIAN),
                                 new Point(60.000, 35.000, Point.CARTESIAN)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(
-                        // Line 2
+                );
+        pushAll1.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll2 = new Path(
                         new BezierLine(
                                 new Point(60.000, 35.000, Point.CARTESIAN),
                                 new Point(60.000, 29.000, Point.CARTESIAN)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(
-                        // Line 3
+                );
+        pushAll2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll3 = new Path(
                         new BezierCurve(
                                 new Point(60.000, 29.000, Point.CARTESIAN),
                                 new Point(-22.000, 23.690, Point.CARTESIAN),
@@ -198,10 +195,9 @@ public class right_auto extends OpMode {
                                 new Point(66.581, 31.742, Point.CARTESIAN),
                                 new Point(60.000, 19.000, Point.CARTESIAN)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(
-                        // Line 4
+                );
+        pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll4 = new Path (
                         new BezierCurve(
                                 new Point(60.000, 19.000, Point.CARTESIAN),
                                 new Point(-22.000, 14.710, Point.CARTESIAN),
@@ -209,17 +205,15 @@ public class right_auto extends OpMode {
                                 new Point(66.890, 23.690, Point.CARTESIAN),
                                 new Point(60.000, 9.700, Point.CARTESIAN)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .addPath(
-                        // Line 5
+                );
+        pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll5 = new Path(
                         new BezierLine(
                                 new Point(60.000, 9.700, Point.CARTESIAN),
                                 new Point(pickupPoseBack)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), pickupPoseBack.getHeading())
-                .build();
+                );
+        pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), pickupPoseBack.getHeading());
 
         /*park = follower.pathBuilder()
                 .addPath(
@@ -290,45 +284,39 @@ public class right_auto extends OpMode {
                 }
                 break;*/
             case 4: //hang 2
-                   follower.followPath(hang2); // drive to hang pos
-                    if (pathTimer.getElapsedTimeSeconds() > 4) { // waiting for it to reach pos // todo SHORTEN?
-                        setoutClawState(1);
-                        if(pathTimer.getElapsedTimeSeconds() > 5) {
-                            setArmState(2); // hang
-                            if (up.getPower() == 0.01) {
-                                setoutGrabState(1); // release
-                                setPathState(5); // move on
-                            }
-                        }
-
-                    }
+                follower.followPath(hang2); // drive to hang pos
+                setPathState(5);
                 break;
             case 5:
-
-                if(pathTimer.getElapsedTimeSeconds() > 4) { //todo shorten
-                  setArmState(0);
-                  setoutGrabState(0);
-                  follower.followPath(push_all);
-                  setoutClawState(0);
-                  if (follower.getPose().getX() - pickupPoseBack.getX() < 2)
-                      setPathState(6);
-              }
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll1);
+                    setPathState(6);
+                }
               break;
             case 6:
-               /* follower.followPath(push_back);
-                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll2);
                     setPathState(7);
                 }
+                break;
             case 7:
-]                follower.followPath(push_side);
-                if(pathTimer.getElapsedTimeSeconds() > 3) {
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll3);
                     setPathState(8);
                 }
+                break;
             case 8:
-                follower.setMaxPower(1);
-                follower.followPath(push_forward);
-
-                */
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll4);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if(!follower.isBusy()) {
+                    follower.followPath(pushAll5);
+                    setPathState(-1);
+                }
+                break;
         }
     }
     /* back_park = follower.pathBuilder()
