@@ -133,9 +133,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                         setPathState(3);
                     }
                 }
+                break;
             case 3:
-                follower.followPath(pickup);
-                setPathState(1);
+                if(pathTimer.getElapsedTime() > 3) {
+                    follower.followPath(pickup);
+                    setPathState(1);
+                }
                 break;
 
         }
