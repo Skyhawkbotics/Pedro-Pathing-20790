@@ -37,6 +37,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
     private Path hang;
     private Path back;
 
+    private Path pickup2;
+
     private Path turn;
 
     public void buildPaths() {
@@ -61,6 +63,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 )
         );
         back.setTangentHeadingInterpolation();
+
+
         /*turn = new Path(
                 new BezierLine(
                         new Point(turnPose_s),
@@ -75,29 +79,30 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(pickup, true);
-                if (pathTimer.getElapsedTimeSeconds() > 3) {
+                if(pathTimer.getElapsedTimeSeconds() > 1) {
+                    follower.followPath(pickup, true);
                     setPathState(1);
                 }
                 break;
 
             case 1:
-                //if(follower.getPose().getX() > (pickupPose.getX() - 1) && follower.getPose().getY() > (pickupPose.getY() - 1))) {
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTimeSeconds() > 3) {
+                //if (!follower.isBusy()) {
                     follower.followPath(hang, true);
-                    if (pathTimer.getElapsedTimeSeconds() > 4) {
-                        setPathState(2);
-                    }
+                    setPathState(2);
                 }
                 break;
             case 2:
-                //if(follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1))) {
-                if(!follower.isBusy()) {
-                    follower.followPath(back, true);
+                if(follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1)) {
+                    if(pathTimer.getElapsedTimeSeconds() > 3) {
+                        follower.followPath(back, true);
+                        setPathState(3);
+                    }
                 }
-
-                if (pathTimer.getElapsedTimeSeconds() > 4) {
-                    setPathState(-1);
+            case 3:
+                if(!follower.isBusy()) {
+                    follower.holdPoint(pickupPose);
+                    setPathState(1);
                 }
                 break;
         }

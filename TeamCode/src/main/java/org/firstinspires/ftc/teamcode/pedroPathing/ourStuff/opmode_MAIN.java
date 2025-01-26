@@ -167,10 +167,8 @@ public class opmode_MAIN extends OpMode {
 
 
         //TESTING PATH THING VERSION
-        if (!pathing) {
             follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * 0.5);
             follower.update();
-        }
 
         //change drive speed for more accuracy if needed
         if (gamepad1.left_bumper) {
