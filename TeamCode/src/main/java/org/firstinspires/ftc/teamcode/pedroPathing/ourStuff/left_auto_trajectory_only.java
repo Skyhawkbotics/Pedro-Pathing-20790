@@ -137,6 +137,9 @@ public class left_auto_trajectory_only extends OpMode {
                     if (follower.getPose().getX() > (basket.getX()) && follower.getPose().getY() > (basket.getY())) {
                         setPathState(-1); //TODO: For now until the rest of the path is added
                     }
+/*                case 3:
+                    follower.followPath(pivot2_1);
+                    if (follower.getPose().getX() > (.getX())) //TODO: oops need to add variable :'( */
             }
     }
 
