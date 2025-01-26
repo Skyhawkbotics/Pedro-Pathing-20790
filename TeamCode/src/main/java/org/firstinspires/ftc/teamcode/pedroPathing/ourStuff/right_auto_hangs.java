@@ -104,40 +104,40 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         switch (pathState) {
             case 0: // Grabs
                 follower.followPath(pickup);
-                setArmState(0);
-                setoutClawState(0);
-                setoutGrabState(2);
+                //setArmState(0);
+                //setoutClawState(0);
+                //setoutGrabState(2);
                 setPathState(1);
                 break;
 
             case 1: // going to hang
-                if (pathTimer.getElapsedTime() > 3) {
-                    setArmState(1);
-                    setoutGrabState(0);
-                    setoutClawState(1);
+                if (pathTimer.getElapsedTime() > 4) {
+                    //setArmState(1);
+                    //setoutGrabState(0);
+                    //setoutClawState(1);
                     follower.followPath(hang);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if (follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1)) { // hang it
-                    setoutGrabState(3);
-                    setArmState(2);
-                    setoutClawState(2);
+                //if (follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1)) { // hang it
+                    //setoutGrabState(3);
+                    //setArmState(2);
+                    //setoutClawState(2);
                     if (pathTimer.getElapsedTime() > 3) { // reset
                         follower.followPath(back, true);
-                        setArmState(0);
-                        setoutGrabState(2);
-                        setoutClawState(0);
+                        //setArmState(0);
+                        //setoutGrabState(2);
+                        //setoutClawState(0);
 
                         setPathState(3);
                     }
-                }
+                //}
                 break;
             case 3:
                 if(pathTimer.getElapsedTime() > 3) {
                     follower.followPath(pickup);
-                    setPathState(1);
+                    setPathState(0);
                 }
                 break;
 
@@ -275,6 +275,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         telemetryA.addData("headingPID error", follower.headingError);
         telemetryA.update();
     }
+    @Override
+    public void start() {
+        pathTimer.resetTimer();
+        opmodeTimer.resetTimer();
+        setPathState(0);
+    }
+
 }
 
 
