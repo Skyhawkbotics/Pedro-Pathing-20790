@@ -227,7 +227,7 @@ public class opmode_MAIN extends OpMode {
             telemetry.addData("upper limit reached", true);
         } else if (!up_zero.isPressed() && gamepad2.right_stick_y > 0.3) { //left stick +, going down
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Left stick goes down
-            up.setVelocity(gamepad2.right_stick_y * 1000);
+            up.setVelocity(gamepad2.right_stick_y * -1000);
             telemetry.addLine("trying to go down ma'am");
 
             up_true_target_pos = 0;
