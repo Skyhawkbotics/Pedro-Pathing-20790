@@ -52,7 +52,7 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(10.121, 67.0, Math.toRadians(0)); //TODO
+    private Pose startPose = new Pose(10.121, 58.0, Math.toRadians(0)); //TODO
 
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
@@ -115,7 +115,7 @@ public class right_auto extends OpMode {
         pushAll5 = new Path(
                 new BezierLine(
                         new Point(60.000, 18.000, Point.CARTESIAN),
-                        new Point(24.000, 18.000, Point.CARTESIAN)
+                        new Point(20.000, 18.000, Point.CARTESIAN)
                 )
         );
         pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
@@ -129,8 +129,8 @@ public class right_auto extends OpMode {
         pushAll6.setConstantHeadingInterpolation(0);
         pushAll7 = new Path (
                 new BezierLine(
-                        new Point(60.000, 9.000, Point.CARTESIAN),
-                        new Point(24, 9, Point.CARTESIAN)
+                        new Point(60.000, 11.000, Point.CARTESIAN),
+                        new Point(16, 11, Point.CARTESIAN)
                 )
         );
         pushAll7.setConstantHeadingInterpolation(0);
@@ -243,7 +243,7 @@ public class right_auto extends OpMode {
                 setPathState(5);
 
             case 5: //PUSHALL START
-                if(!follower.isBusy()) {
+                if (pathTimer.getElapsedTimeSeconds() > 4) {
                     follower.followPath(pushAll1);
                     setPathState(7);
                 }
@@ -264,7 +264,7 @@ public class right_auto extends OpMode {
                 break;
             case 8:
 
-                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 28) {
+                if (!follower.isBusy()) {
                     follower.followPath(pushAll4);
                     setPathState(9);
                 }
@@ -272,23 +272,23 @@ public class right_auto extends OpMode {
             case 9:
                 if (follower.getPose().getX() > 59 && follower.getPose().getY() > 17) {
                     follower.followPath(pushAll5);
-                    setPathState(10);
+                    setPathState(12); //skip pushing third one to save time (very sad)
                 }
                 break;
-            case 10:
-                if (follower.getPose().getX() > 59 && follower.getPose().getY() > 15) {
+            /*case 10:
+                if (!follower.isBusy()) {
                     follower.followPath(pushAll6);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 8) {
+                if (!follower.isBusy()) { //maybe change to pos later, but it made it so it wouldnt push the third one so idk
                     follower.followPath(pushAll7);
                     setPathState(12);
                 }
-                break; //PUSHALL EN// D
+                break; //PUSHALL EN// D*/
             case 12:
-                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 8) {
+                if (!follower.isBusy()) {
                     follower.followPath(readypickup);
                     setPathState(13);
                 }
