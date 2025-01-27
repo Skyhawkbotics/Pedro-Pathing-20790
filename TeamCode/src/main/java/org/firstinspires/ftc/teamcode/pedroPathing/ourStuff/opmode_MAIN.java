@@ -219,7 +219,7 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setVelocity(gamepad2.right_stick_y * -1000); // When left stick goes up?
+            up.setVelocity(gamepad2.right_stick_y * -1300); // When left stick goes up?
             telemetry.addLine("trying to go up ma'am");
             up_true_target_pos = 0;
         } else if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() >= arm_upper_lim)) {
@@ -227,7 +227,7 @@ public class opmode_MAIN extends OpMode {
             telemetry.addData("upper limit reached", true);
         } else if (!up_zero.isPressed() && gamepad2.right_stick_y > 0.3) { //left stick +, going down
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // Left stick goes down
-            up.setVelocity(gamepad2.right_stick_y * -1000);
+            up.setVelocity(gamepad2.right_stick_y * -1300);
             telemetry.addLine("trying to go down ma'am");
 
             up_true_target_pos = 0;
@@ -299,12 +299,16 @@ public class opmode_MAIN extends OpMode {
 
         servo_intake_rotate.setPosition(servo_intake_rotate_location);
 
+        if (gamepad2.circle) {
+            servo_intake_wrist_location = 0.7;
+            servo_intake_rotate_location = 0.47;
 
+        }
         // manual intake wrist location
-        if (gamepad2.dpad_up) {
+        if (gamepad2.dpad_down) {
             servo_intake_wrist_location += 0.05;
         }
-        if (gamepad2.dpad_down) {
+        if (gamepad2.dpad_up) {
             servo_intake_wrist_location -= 0.05;
         }
         // limits
@@ -363,11 +367,19 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.x) { //goto hanging position
             up.setTargetPosition(up_specimen_hang);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            up.setPower(1);
             servo_outtake_wrist_location = 0.50;
         }
 
-        if (gamepad2.b) {
-            servo_intake_rotate.setPosition(0.47);
+        if (gamepad2.options) {
+            servo_intake_rotate_location = 0.47;
+            servo_intake_rotate.setPosition(servo_intake_rotate_location);
+        }
+        if(gamepad2.share) {
+            up.setTargetPosition(400);
+            up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            up.setPower(1);
+            servo_outtake_wrist_location = 0.50;
         }
     }
 }
