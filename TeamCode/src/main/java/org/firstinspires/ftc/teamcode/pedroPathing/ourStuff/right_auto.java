@@ -249,43 +249,46 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 6:
-                if(!follower.isBusy()) {
+                /* if(!follower.isBusy()) {
                     follower.followPath(pushAll2);
                     setPathState(7);
                 }
+
+                 */
                 break;
             case 7:
-                if(!follower.isBusy()) {
+                if (follower.getPose().getX() > 57 && follower.getPose().getY() > 23) {
                     follower.followPath(pushAll3);
                     setPathState(8);
                 }
                 break;
             case 8:
-                if(pathTimer.getElapsedTimeSeconds() > 2) {
+
+                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 28) {
                     follower.followPath(pushAll4);
                     setPathState(9);
                 }
                 break;
             case 9:
-                if(!follower.isBusy()) {
+                if (follower.getPose().getX() > 59 && follower.getPose().getY() > 17) {
                     follower.followPath(pushAll5);
                     setPathState(10);
                 }
                 break;
             case 10:
-                if(!follower.isBusy()) {
+                if (follower.getPose().getX() > 59 && follower.getPose().getY() > 15) {
                     follower.followPath(pushAll6);
                     setPathState(11);
                 }
                 break;
             case 11:
-                if(!follower.isBusy()) {
+                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 8) {
                     follower.followPath(pushAll7);
                     setPathState(12);
                 }
                 break; //PUSHALL EN// D
             case 12:
-                if(!follower.isBusy()) {
+                if (follower.getPose().getX() > 23 && follower.getPose().getY() > 8) {
                     follower.followPath(readypickup);
                     setPathState(13);
                 }
