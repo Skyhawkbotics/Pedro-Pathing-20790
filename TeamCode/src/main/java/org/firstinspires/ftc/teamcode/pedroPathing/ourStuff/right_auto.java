@@ -115,7 +115,7 @@ public class right_auto extends OpMode {
         pushAll5 = new Path(
                 new BezierLine(
                         new Point(60.000, 18.000, Point.CARTESIAN),
-                        new Point(20.000, 18.000, Point.CARTESIAN)
+                        new Point(15.000, 18.000, Point.CARTESIAN)
                 )
         );
         pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
@@ -244,7 +244,7 @@ public class right_auto extends OpMode {
                 setPathState(5);
 
             case 5: //PUSHALL START
-                if (pathTimer.getElapsedTimeSeconds() > 4) {
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
                     follower.followPath(pushAll1);
                     setArmState(0);
                     setPathState(7);
@@ -259,14 +259,14 @@ public class right_auto extends OpMode {
                  */
                 break;
             case 7:
-                if (follower.getPose().getX() > 57 && follower.getPose().getY() > 23) {
+                if (follower.getPose().getX() > 27 && follower.getPose().getY() > 28) {
                     follower.followPath(pushAll3);
                     setPathState(8);
                 }
                 break;
             case 8:
 
-                if (!follower.isBusy()) {
+                if (follower.getPose().getX() > 57 && follower.getPose().getY() > 23) {
                     follower.followPath(pushAll4);
                     setPathState(9);
                 }
