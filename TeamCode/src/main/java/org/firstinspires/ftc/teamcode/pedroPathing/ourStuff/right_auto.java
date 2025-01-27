@@ -56,6 +56,8 @@ public class right_auto extends OpMode {
 
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
+    private Pose firstpushPose = new Pose(24,29, Math.toRadians(0));
+
 
 
     // Paths
@@ -100,7 +102,7 @@ public class right_auto extends OpMode {
         pushAll3 = new Path(
                 new BezierLine(
                         new Point(60.000, 29.000, Point.CARTESIAN),
-                        new Point(24.000, 29.000, Point.CARTESIAN)
+                        new Point(firstpushPose)
                 )
         );
         pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
@@ -272,8 +274,8 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 8:
-                //if(follower.getPose().roughlyEquals());
-                if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
+                if(follower.getPose().roughlyEquals((firstpushPose), 75)){
+                //if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
                     follower.followPath(pushAll4); // curvje forward
                     setPathState(9);
                 }
@@ -299,7 +301,6 @@ public class right_auto extends OpMode {
             case 12:
                 if (!follower.isBusy()) {
                     follower.followPath(readypickup);
-                    setoutGrabState(2);
                     setPathState(13);
                 }
                 break;
@@ -310,82 +311,36 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 14:
-                setoutGrabState(0);
                 if(!follower.isBusy()) {
                     follower.followPath(first_hang);
-                    setArmState(1); //up
-                    setPathState(145); //145 is equivilant to 14.5 but we cant use double
-                }
-                break;
-            case 145:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    setArmState(0);
-                    setPathState(146);
-                }
-                break;
-            case 146:
-                setoutGrabState(3); //release
-                if (pathTimer.getElapsedTimeSeconds() > 0.2) {
                     setPathState(15);
-                    setoutGrabState(0);
                 }
                 break;
             case 15:
                 if(!follower.isBusy()) {
                     follower.followPath(first_hang_back);
                     setPathState(16);
-                    setoutGrabState(2);
                 }
                 break;
             case 16:
-                if(pathTimer.getElapsedTimeSeconds() > 1) {
+                if(!follower.isBusy()) {
                     follower.followPath(second_hang);
-                    setoutGrabState(0);
-                    setArmState(1);
-                    setPathState(165);
-                }
-                break;
-            case 165:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    setArmState(0);
-                    setPathState(166);
-                }
-                break;
-            case 166:
-                setoutGrabState(3); //release
-                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
                     setPathState(17);
-                    setoutGrabState(0);
                 }
                 break;
             case 17:
                 if(!follower.isBusy()) {
                     follower.followPath(second_hang_back);
                     setPathState(18);
-                    setoutGrabState(2);
                 }
                 break;
             case 18:
                 if(!follower.isBusy()) {
                     follower.followPath(third_hang);
-                    setArmState(1);
-                    setPathState(185);
-                }
-                break;
-            case 185:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    setArmState(0);
-                    setPathState(186);
-                }
-                break;
-            case 186:
-                setoutGrabState(3); //release
-                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
                     setPathState(19);
-                    setoutGrabState(0);
                 }
                 break;
-            case 19:
+                case 19:
                 if(!follower.isBusy()) {
                     follower.followPath(third_hang_back);
                     setPathState(20);
@@ -437,7 +392,6 @@ public class right_auto extends OpMode {
                 up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //most of the code stolen from opmode_main
             case 0: //going to bottom position
-                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 telemetry.addData("Lowered position", true);
                 if (!up_zero.isPressed()) {
                     up.setPower(-1);
@@ -449,7 +403,6 @@ public class right_auto extends OpMode {
             case 1: //going to hanging position
                 up.setTargetPosition(up_hanging_position);
                 up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                up.setPower(1);
                 break;
             case 2: //going to hanging position
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -468,7 +421,7 @@ public class right_auto extends OpMode {
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
-                servo_outtake_wrist.setPosition(0.57);
+                servo_outtake_wrist.setPosition(0.5);
                 telemetry.addData("claw position 2", true);
 
         }
