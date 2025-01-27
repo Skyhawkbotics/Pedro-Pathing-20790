@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Autonomous(name = "right_auto_hangs", group = "AUTO")
     public class right_auto_hangs extends OpMode {
     private Follower follower;
-    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Timer pathTimer, actionTimer;
     private int pathState, armState, outclawState, outgrabState;
     //Poses
 
@@ -305,7 +305,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
     }
     @Override
     public void start() {
-        opmodeTimer.resetTimer();
+        buildPaths();
+
     }
 
 }
