@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 
 
-@Autonomous(name = "Testing", group = "TEST")
+@Autonomous(name = "Testing", group = "auto test")
 public class Testing extends opmode_MAIN{
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;

@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 
 @Config
-@Autonomous(name = "left_auto", group = "Auto")
+@Autonomous(name = "LEFT_AUTO", group = "AUTO")
 public class left_auto extends OpMode {
    //Standard variables
     private Follower follower;

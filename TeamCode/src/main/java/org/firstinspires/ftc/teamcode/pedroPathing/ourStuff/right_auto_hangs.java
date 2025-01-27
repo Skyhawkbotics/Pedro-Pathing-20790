@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 
 
-@Autonomous(name = "right_auto_hangs", group = "AUTO")
+@Autonomous(name = "right_auto_hangs", group = "auto test")
     public class right_auto_hangs extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
@@ -72,6 +72,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 )
         );
         pickup.setConstantHeadingInterpolation(waitPose.getHeading());
+
         hang = new Path(
                 new BezierLine(
                         new Point(pickupPose),
@@ -79,6 +80,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 )
         );
         hang.setLinearHeadingInterpolation(pickupPose.getHeading(), hangPose.getHeading());
+
         back = new Path(
                 new BezierLine(
                         new Point(hangPose),
@@ -107,7 +109,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 //setArmState(0);
                 //setoutClawState(0);
                 //setoutGrabState(2);
-                if(pathTimer.getElapsedTime() > 4) { // Time to pick up
+                if (pathTimer.getElapsedTimeSeconds() > 4) { // Time to pick up
                     setPathState(1);
                 }
                 break;
@@ -118,7 +120,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 //setoutClawState(1);
                 follower.followPath(hang);
 
-                if (pathTimer.getElapsedTime() > 4) {
+                if (pathTimer.getElapsedTimeSeconds() > 4) {
                     // hang it
 
                     setPathState(2);
@@ -126,30 +128,30 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 break;
             case 2:
                 //if (follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1)) { // hang it
-                    //setoutGrabState(3);
-                    //setArmState(2);
-                    //setoutClawState(2);
-                    if (pathTimer.getElapsedTime() > 3) { // waiting for hang to finish
-                        follower.followPath(back, true);
-                        //setArmState(0);
-                        //setoutGrabState(2);
-                        //setoutClawState(0);
+                //setoutGrabState(3);
+                //setArmState(2);
+                //setoutClawState(2);
+                if (pathTimer.getElapsedTimeSeconds() > 3) { // waiting for hang to finish
+                    follower.followPath(back, true);
+                    //setArmState(0);
+                    //setoutGrabState(2);
+                    //setoutClawState(0);
 
-                        setPathState(3);
-                    }
+                    setPathState(3);
+                }
                 //}
                 break;
             case 3:
-                if(pathTimer.getElapsedTime() > 3) { // waiting for back to be back, then pickup
+                if (pathTimer.getElapsedTimeSeconds() > 3) { // waiting for back to be back, then pickup
                     //setArmState(0);
                     //setoutClawState(0);
                     //setoutGrabState(2);
-                    follower.followPath(pickup,true);
+                    follower.followPath(pickup, true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if(pathTimer.getElapsedTime() > 3) { // waiting for pickup, then follows hangpath
+                if (pathTimer.getElapsedTimeSeconds() > 3) { // waiting for pickup, then follows hangpath
                     //setArmState(1);
                     //setoutGrabState(0);
                     //setoutClawState(1);
@@ -158,13 +160,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 }
                 break;
             case 5:
-                if(pathTimer.getElapsedTime() > 3) { // waits for hang path to finish, then hangs
+                if (pathTimer.getElapsedTimeSeconds() > 3) { // waits for hang path to finish, then hangs
                     // hangs
                     setPathState(6);
                 }
                 break;
             case 6:
-                if(pathTimer.getElapsedTime() > 3) {
+                if (pathTimer.getElapsedTime() > 3) {
                     follower.followPath(back, true);
                 }
                 break;
@@ -178,8 +180,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         pathTimer.resetTimer();
     }
 
-    public void autonomousActionUpdate() {
+    /*public void autonomousActionUpdate() {
         switch (armState) {
+            case -1:
+                up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
             // Run to position on initialized??
 
             case 0: //going to bottom position
@@ -192,15 +197,15 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 }
                 break;
             case 1: //going to hanging position
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 up.setTargetPosition(up_hanging_position);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (up_hanging_position - up.getCurrentPosition() < 3) {
                     telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
                 break;
             case 2: //going to hanging position done
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 up.setTargetPosition(up_hanging_position_done);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (up_hanging_position_done - up.getCurrentPosition() < 3) {
                     telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
@@ -251,33 +256,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         outgrabState = gstate;
     }
 
+     */
 
-    @Override
-    public void init() {
-        pathTimer = new Timer();
-        follower = new Follower(hardwareMap);
-        follower.setStartingPose(waitPose);
-        buildPaths();
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.update();
 
-        //setup arm variable
-        up = hardwareMap.get(DcMotorEx.class, "up");
-        up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        up.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //example position setup
-        out = hardwareMap.get(DcMotorEx.class, "out");
-        out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        servo_outtake = hardwareMap.get(CRServo.class, "outtake");
-
-        servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
-
-        up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
-    }
 
     @Override
     public void loop() {
@@ -304,11 +285,36 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         telemetryA.update();
     }
     @Override
+    public void init() {
+        pathTimer = new Timer();
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(waitPose);
+        buildPaths();
+        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetryA.update();
+
+        //setup arm variable
+        up = hardwareMap.get(DcMotorEx.class, "up");
+        up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        up.setDirection(DcMotorSimple.Direction.REVERSE);
+        up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        servo_outtake = hardwareMap.get(CRServo.class, "outtake");
+
+        servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
+
+        up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
+    }
+    @Override
     public void start() {
         buildPaths();
 
+        setPathState(0);
+        //setArmState(0); //starting ArmState
+        //setoutGrabState(0);
+        //setoutClawState(0);
     }
-
 }
 
 

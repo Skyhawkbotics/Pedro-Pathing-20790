@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 @Config
-@Autonomous(name = "square", group = "AUTO")
+@Autonomous(name = "square", group = "Autonomous Pathing Tuning")
 // 18.5 inches away from observation zone
 public class square_auto_test extends OpMode {
     private Follower follower;
