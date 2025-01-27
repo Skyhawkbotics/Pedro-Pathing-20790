@@ -232,16 +232,20 @@ public class right_auto extends OpMode {
         switch (pathState) {
             case 2:
                 follower.followPath(hang1);
-                setArmState(1);// drive to hang pos
+                setArmState(1);
                 setPathState(3);
                 break;
             case 3:
-                //arm code
-                setPathState(4);
+                setArmState(0);
+                if (pathTimer.getElapsedTimeSeconds() > 1) {
+                    setPathState(4);
+                }
                 break;
             case 4:
-                // hangs
-                setPathState(5);
+                setoutGrabState(1);
+                if (pathTimer.getElapsedTimeSeconds() > 0.2) {
+                    setPathState(5);
+                }
 
             case 5: //PUSHALL START
                 if (pathTimer.getElapsedTimeSeconds() > 2) {
@@ -381,7 +385,6 @@ public class right_auto extends OpMode {
         switch (armState) {
             case -1:
                 up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                up.setDirection(DcMotorSimple.Direction.REVERSE);
 //most of the code stolen from opmode_main
             case 0: //going to bottom position
                 telemetry.addData("Lowered position", true);
@@ -395,7 +398,6 @@ public class right_auto extends OpMode {
             case 1: //going to hanging position
                 up.setTargetPosition(up_hanging_position);
                 up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                up.setDirection(DcMotorSimple.Direction.REVERSE);
                 if (up_hanging_position - up.getCurrentPosition() < 3) {
                     telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
