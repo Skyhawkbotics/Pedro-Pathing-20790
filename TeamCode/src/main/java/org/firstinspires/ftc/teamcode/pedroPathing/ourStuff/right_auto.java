@@ -247,7 +247,7 @@ public class right_auto extends OpMode {
                     setPathState(5);
                 }
 
-            case 5: //PUSHALL START
+            case 5: //PUSHALL START // curves to behind
                 if (pathTimer.getElapsedTimeSeconds() > 2) {
                     follower.followPath(pushAll1);
                     setArmState(0);
@@ -265,19 +265,20 @@ public class right_auto extends OpMode {
             case 7:
                 if (/*follower.getPose().getX() > 27 && follower.getPose().getY() > 28
                */!follower.isBusy()) {
-                    follower.followPath(pushAll3);
+                    follower.followPath(pushAll3); // striagt back
                     setPathState(8);
                 }
                 break;
             case 8:
-                if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) {
-                    follower.followPath(pushAll4);
+                if(follower.getPose().roughlyEquals());
+                if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
+                    follower.followPath(pushAll4); // curvje forward
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (follower.getPose().getX() > 59 && follower.getPose().getY() > 17) {
-                    follower.followPath(pushAll5);
+                    follower.followPath(pushAll5); // striaght back
                     setPathState(12); //skip pushing third one to save time (very sad)
                 }
                 break;
