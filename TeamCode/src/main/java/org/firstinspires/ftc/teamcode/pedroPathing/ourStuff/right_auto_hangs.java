@@ -195,15 +195,15 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 }
                 break;
             case 1: //going to hanging position
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 up.setTargetPosition(up_hanging_position);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (up_hanging_position - up.getCurrentPosition() < 3) {
                     telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
                 break;
             case 2: //going to hanging position done
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 up.setTargetPosition(up_hanging_position_done);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 if (up_hanging_position_done - up.getCurrentPosition() < 3) {
                     telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
@@ -267,6 +267,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         //setup arm variable
         up = hardwareMap.get(DcMotorEx.class, "up");
         up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        up.setTargetPosition(0);
         up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         up.setDirection(DcMotorSimple.Direction.REVERSE);
 

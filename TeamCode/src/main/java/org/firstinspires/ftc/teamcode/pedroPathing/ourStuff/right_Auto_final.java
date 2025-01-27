@@ -52,12 +52,11 @@ public class right_Auto_final extends OpMode {
     private final Pose hangPose = new Pose(36, 65, Math.toRadians(0));
 
     // First initial hang
-    private PathChain hang1;
     // Push paths
     private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7;
     private Path towaitPose;
     private Path pickup;
-    private Path hang;
+    private Path hang, hang1;
     private Path back;
     private Path park;
 
@@ -76,15 +75,13 @@ public class right_Auto_final extends OpMode {
     /// Calibrate
     public void buildPaths() {
 
-        hang1 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                new Point(startPose),
-                                new Point(hangPose1)
-                        )
+        hang1 = new Path(
+                new BezierLine(
+                        new Point(startPose),
+                        new Point(hangPose1)
                 )
-                .setLinearHeadingInterpolation(pickupPose.getHeading(), hangPose.getHeading())
-                .build();
+        );
+        hang1.setLinearHeadingInterpolation(pickupPose.getHeading(), hangPose.getHeading());
 
         pickup = new Path(
                 new BezierLine(
