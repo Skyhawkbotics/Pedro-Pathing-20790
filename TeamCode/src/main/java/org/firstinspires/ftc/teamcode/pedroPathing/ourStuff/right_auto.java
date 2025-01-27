@@ -270,7 +270,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 8:
-                if (follower.getPose().getX() > 57 && follower.getPose().getY() > 23) {
+                if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) {
                     follower.followPath(pushAll4);
                     setPathState(9);
                 }
