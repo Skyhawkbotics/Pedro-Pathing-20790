@@ -236,9 +236,9 @@ public class right_auto extends OpMode {
                 setPathState(3);
                 break;
             case 3:
-                setArmState(0);
-                if (pathTimer.getElapsedTimeSeconds() > 1) {
+                if (pathTimer.getElapsedTimeSeconds() > 2) {
                     setPathState(4);
+                    setArmState(0);
                 }
                 break;
             case 4:
@@ -269,7 +269,6 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 8:
-
                 if (follower.getPose().getX() > 57 && follower.getPose().getY() > 23) {
                     follower.followPath(pushAll4);
                     setPathState(9);
@@ -396,10 +395,13 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 1: //going to hanging position
-                up.setTargetPosition(up_hanging_position);
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (up_hanging_position - up.getCurrentPosition() < 3) {
-                    telemetry.addData("Hang Pos", up.getCurrentPosition());
+                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                telemetry.addData("Hang position", true);
+                if (up.getCurrentPosition() < up_hanging_position) {
+                    up.setPower(0.5);
+                    telemetry.addData("arm moving", true);
+                } else if (up.getCurrentPosition() >= up_hanging_position) {
+                    up.setPower(0.01);
                 }
                 break;
             case 2: //going to hanging position
