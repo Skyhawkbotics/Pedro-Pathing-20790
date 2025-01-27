@@ -313,6 +313,8 @@ public class opmode_MAIN extends OpMode {
         } else if (servo_intake_wrist_location < 0) {
             servo_intake_wrist_location = 0;
         }
+
+        servo_intake_wrist.setPosition(servo_intake_rotate_location);
     }
     public void outtake_claw() {
         //Continuous servo outtake control
