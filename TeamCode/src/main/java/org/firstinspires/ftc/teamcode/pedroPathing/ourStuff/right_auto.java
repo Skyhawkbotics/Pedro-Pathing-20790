@@ -56,6 +56,8 @@ public class right_auto extends OpMode {
 
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
+    private Pose firstpushPose = new Pose(24,29, Math.toRadians(0));
+
 
 
     // Paths
@@ -100,7 +102,7 @@ public class right_auto extends OpMode {
         pushAll3 = new Path(
                 new BezierLine(
                         new Point(60.000, 29.000, Point.CARTESIAN),
-                        new Point(24.000, 29.000, Point.CARTESIAN)
+                        new Point(firstpushPose)
                 )
         );
         pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
@@ -270,8 +272,8 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 8:
-                if(follower.getPose().roughlyEquals());
-                if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
+                if(follower.getPose().roughlyEquals((firstpushPose), 75)){
+                //if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
                     follower.followPath(pushAll4); // curvje forward
                     setPathState(9);
                 }
