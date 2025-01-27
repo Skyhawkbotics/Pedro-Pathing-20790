@@ -90,6 +90,7 @@ public class right_Auto_final extends OpMode {
                 )
         );
         pickup.setConstantHeadingInterpolation(waitPose.getHeading());
+
         hang = new Path(
                 new BezierLine(
                         new Point(pickupPose),
@@ -600,15 +601,6 @@ public class right_Auto_final extends OpMode {
     /**
      * This method is called continuously after Init while waiting for "play".
      **/
-    @Override
-    public void init_loop() {
-
-
-        // After 4 Seconds, Robot Initialization is complete
-        if (opmodeTimer.getElapsedTimeSeconds() > 4) {
-            telemetryA.addData("Let's win", "DRIVER!");
-        }
-    }
 
 
     @Override
@@ -616,9 +608,9 @@ public class right_Auto_final extends OpMode {
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(0);
-        setArmState(0); //starting ArmState
-        setoutGrabState(0);
-        setoutClawState(0);
+        setArmState(-1); //starting ArmState
+        setoutGrabState(-1);
+        setoutClawState(-1);
     }
 
 
