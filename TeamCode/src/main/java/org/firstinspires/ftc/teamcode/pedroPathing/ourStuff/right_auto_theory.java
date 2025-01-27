@@ -36,9 +36,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  */
 
 @Config
-@Autonomous(name = "right auto theory", group = "auto test")
+@Autonomous(name = "RIGHT_AUTO", group = "AUTO")
 // 18.5 inches away from observation zone
-public class right_auto_theory extends OpMode {
+public class right_auto extends OpMode {
     // cool
     private Follower follower; // THe drivetrain with the calculations needed for path following
     private Timer pathTimer, actionTimer, opmodeTimer, outtimer; // Timers for progression of states
@@ -96,6 +96,7 @@ public class right_auto_theory extends OpMode {
                         new Point(58.000, 24.000, Point.CARTESIAN)
                 )
         );
+        pushAll1.setConstantHeadingInterpolation(0);
         pushAll3 = new Path(
                 new BezierLine(
                         new Point(60.000, 29.000, Point.CARTESIAN),
@@ -244,7 +245,7 @@ public class right_auto_theory extends OpMode {
             case 5: //PUSHALL START
                 if(!follower.isBusy()) {
                     follower.followPath(pushAll1);
-                    setPathState(6);
+                    setPathState(7);
                 }
                 break;
             case 6:
@@ -260,7 +261,7 @@ public class right_auto_theory extends OpMode {
                 }
                 break;
             case 8:
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTimeSeconds() > 2) {
                     follower.followPath(pushAll4);
                     setPathState(9);
                 }
@@ -473,9 +474,6 @@ public class right_auto_theory extends OpMode {
     public void setIngrabState(int icstate) {
         ingrabState = icstate;
     }
-
-
-
     public void setoutClawState(int cState) {
         outclawState = cState;
     }
@@ -500,10 +498,10 @@ public class right_auto_theory extends OpMode {
         telemetryA.addData("x", follower.getPose().getX());
         telemetryA.addData("y", follower.getPose().getY());
         telemetryA.addData("heading", follower.getPose().getHeading());
-        telemetryA.addData("armPOS", up.getCurrentPosition());
-        telemetryA.addData("out servo", servo_outtake_wrist.getPosition());
+        //telemetryA.addData("armPOS", up.getCurrentPosition());
+        //telemetryA.addData("out servo", servo_outtake_wrist.getPosition());
         telemetryA.addData("pathtimer elapsed time", pathTimer.getElapsedTimeSeconds());
-        telemetryA.addData("armmode", up.getMode());
+        //telemetryA.addData("armmode", up.getMode());
         telemetryA.addData("Follower busy", follower.isBusy());
 
         telemetryA.addData("headingPID error", follower.headingError);

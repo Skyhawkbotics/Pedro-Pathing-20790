@@ -19,14 +19,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name = "RIGHT_AUTO", group = "AUTO")
+@Autonomous(name = "dont touch", group = "auto test")
 // 18.5 inches away from observation zone
-public class right_Auto_final extends OpMode {
+public class right_auto_old extends OpMode {
     // cool
     private Follower follower; // THe drivetrain with the calculations needed for path following
     private Timer pathTimer, opmodeTimer; // Timers for progression of states
