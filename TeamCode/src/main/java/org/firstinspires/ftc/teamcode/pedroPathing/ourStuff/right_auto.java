@@ -231,7 +231,8 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 2:
-                follower.followPath(hang1); // drive to hang pos
+                follower.followPath(hang1);
+                setArmState(1);// drive to hang pos
                 setPathState(3);
                 break;
             case 3:
@@ -245,11 +246,12 @@ public class right_auto extends OpMode {
             case 5: //PUSHALL START
                 if(!follower.isBusy()) {
                     follower.followPath(pushAll1);
+                    setArmState(0);
                     setPathState(7);
                 }
                 break;
             case 6:
-                /* if(!follower.isBusy()) {
+                 /* if(!follower.isBusy()) {
                     follower.followPath(pushAll2);
                     setPathState(7);
                 }
@@ -375,24 +377,27 @@ public class right_auto extends OpMode {
 
     /** This switch is called continuously and runs the necessary actions, when finished, it will set the state to -1.
      * (Therefore, it will not run the action continuously) **/
-    /* public void autonomousActionUpdate() {
-        switch (armState) { //most of the code stolen from opmode_main
+    public void autonomousActionUpdate() {
+        switch (armState) {
+            case -1:
+                up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                up.setDirection(DcMotorSimple.Direction.REVERSE);
+//most of the code stolen from opmode_main
             case 0: //going to bottom position
                 telemetry.addData("Lowered position", true);
                 if (!up_zero.isPressed()) {
                     up.setPower(-1);
                 } else if (up_zero.isPressed()) {
+                    up.setPower(0);
                     up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
             case 1: //going to hanging position
-                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                telemetry.addData("Hang position", true);
-                if (up.getCurrentPosition() < up_hanging_position) {
-                    up.setPower(0.5);
-                    telemetry.addData("arm moving", true);
-                } else if (up.getCurrentPosition() >= up_hanging_position) {
-                    up.setPower(0.01);
+                up.setTargetPosition(up_hanging_position);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                up.setDirection(DcMotorSimple.Direction.REVERSE);
+                if (up_hanging_position - up.getCurrentPosition() < 3) {
+                    telemetry.addData("Hang Pos", up.getCurrentPosition());
                 }
                 break;
             case 2: //going to hanging position
@@ -454,11 +459,7 @@ public class right_auto extends OpMode {
         }
     }
 
-     */
-
-
-
-    /** These change the states of the paths and actions
+         /** These change the states of the paths and actions
      * It will also reset the timers of the individual switches **/
     public void setPathState(int pState) {
         pathState = pState;
@@ -527,12 +528,12 @@ public class right_auto extends OpMode {
         telemetryA.update();
 
         //setup arm variable
-        /*
+
         up = hardwareMap.get(DcMotorEx.class, "up");
         up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         up.setDirection(DcMotorSimple.Direction.REVERSE);
-
+/*
         //example position setup
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
