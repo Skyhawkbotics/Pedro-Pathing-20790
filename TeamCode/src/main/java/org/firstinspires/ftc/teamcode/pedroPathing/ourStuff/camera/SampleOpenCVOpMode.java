@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
+package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff.camera;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.pedroPathing.ourStuff.opmode_MAIN;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous()
