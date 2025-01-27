@@ -345,7 +345,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 22:
-                telemetryA.addLine("fucking done");
+                telemetryA.addLine("fucking done.....     oh hi ruben lol");
 
         }
     }
