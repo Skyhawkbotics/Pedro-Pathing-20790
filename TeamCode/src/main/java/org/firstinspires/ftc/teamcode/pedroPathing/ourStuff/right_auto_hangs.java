@@ -303,6 +303,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         telemetryA.addData("headingPID error", follower.headingError);
         telemetryA.update();
     }
+    @Override
+    public void start() {
+        setPathState(0);
+        setArmState(0); //starting ArmState
+        setoutGrabState(0);
+        setoutClawState(0);
+    }
 }
 
 
