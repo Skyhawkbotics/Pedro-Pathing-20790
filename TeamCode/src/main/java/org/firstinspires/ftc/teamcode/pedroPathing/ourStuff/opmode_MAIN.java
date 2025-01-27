@@ -216,19 +216,19 @@ public class opmode_MAIN extends OpMode {
 
 
     public void viper_slide() {
-        if (gamepad2.dpad_up && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
+        if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setPower(0.8);
+            up.setVelocity(gamepad2.right_stick_y * 1000);
             up_true_target_pos = 0;
-        } else if (gamepad2.dpad_up && (up.getCurrentPosition() >= arm_upper_lim)) {
+        } else if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() >= arm_upper_lim)) {
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             telemetry.addData("upper limit reached", true);
-        } else if (!up_zero.isPressed() && gamepad2.dpad_down) { //left stick +, going down
+        } else if (!up_zero.isPressed() && gamepad2.right_stick_y > 0.3) { //left stick +, going down
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setPower(-0.8);
+            up.setVelocity(gamepad2.right_stick_y * -1000);
             up_true_target_pos = 0;
-        } else if (up_zero.isPressed() && gamepad1.dpad_down) { // Lower limit for up
+        } else if (up_zero.isPressed() && gamepad2.right_stick_y > 0.3) { // Lower limit for up
             telemetry.addData("Lower Limit Reached", up_zero);
             up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         } else {
