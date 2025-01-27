@@ -95,7 +95,7 @@ public class right_auto extends OpMode {
                         new Point(13.231, 39.455, Point.CARTESIAN),
                         new Point(19.964, 33.549, Point.CARTESIAN),
                         new Point(75.367, 40.518, Point.CARTESIAN),
-                        new Point(58.000, 24.000, Point.CARTESIAN)
+                        new Point(60.000, 29.000, Point.CARTESIAN)
                 )
         );
         pushAll1.setConstantHeadingInterpolation(0);
@@ -147,8 +147,8 @@ public class right_auto extends OpMode {
         pickup = new Path(
                         // Line 2
                         new BezierLine(
-                                new Point(13.000, 16.000, Point.CARTESIAN),
-                                new Point(13.000, 9.000, Point.CARTESIAN)
+                                new Point(9.000, 16.000, Point.CARTESIAN),
+                                new Point(9.000, 9.000, Point.CARTESIAN)
                         )
                 );
         pickup.setConstantHeadingInterpolation(Math.toRadians(270));
@@ -205,7 +205,7 @@ public class right_auto extends OpMode {
                         new Point(13.000, 11.000, Point.CARTESIAN)
                 )
         );
-        third_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270));
+        third_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(320));
         fourth_hang = new Path(
                 // Line 7
                 new BezierCurve(
@@ -223,7 +223,7 @@ public class right_auto extends OpMode {
                         new Point(13.000, 11.000, Point.CARTESIAN)
                 )
         );
-        fourth_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270));
+        fourth_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
 
     }
 
@@ -235,36 +235,31 @@ public class right_auto extends OpMode {
             case 2: //go to hang
                 follower.followPath(hang1);
                 setArmState(1);
-                setoutClawState(1);
-                setPathState(3);
+                if(pathTimer.getElapsedTimeSeconds() > 1) {
+                    setoutClawState(1);
+                    setPathState(3);
+                }
                 break;
             case 3: //hang
-                if (pathTimer.getElapsedTime() > 3) { // Time to wait for it to reach hang position
+                if (pathTimer.getElapsedTimeSeconds() > 2) { // Time to wait for it to reach hang position
                     setoutGrabState(3);
                     setArmState(2);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if (pathTimer.getElapsedTimeSeconds() > 2) { // Allowing hang time
+                if (pathTimer.getElapsedTimeSeconds() > 1) { // Allowing hang time
                     setoutGrabState(0);
+                    setArmState(0);
                     setPathState(5);
                 }
+                break;
 
             case 5: //PUSHALL START // curves to behind
                 if (pathTimer.getElapsedTimeSeconds() > 1) {
                     follower.followPath(pushAll1);
-                    setArmState(0);
                     setPathState(7);
                 }
-                break;
-            case 6:
-                 /* if(!follower.isBusy()) {
-                    follower.followPath(pushAll2);
-                    setPathState(7);
-                }
-
-                 */
                 break;
             case 7:
                 if (/*follower.getPose().getX() > 27 && follower.getPose().getY() > 28
@@ -335,6 +330,7 @@ public class right_auto extends OpMode {
             case 15:
                 if(!follower.isBusy()) {
                     follower.followPath(first_hang_back);
+                    setArmState(0);
                     setPathState(16);
                     setoutGrabState(2);
                 }
@@ -361,11 +357,10 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 17:
-                if(!follower.isBusy()) {
-                    follower.followPath(second_hang_back);
-                    setPathState(18);
-                    setoutGrabState(2);
-                }
+                follower.followPath(second_hang_back);
+                setPathState(18);
+                setoutGrabState(2);
+                setArmState(0);
                 break;
             case 18:
                 if(!follower.isBusy()) {
@@ -390,18 +385,6 @@ public class right_auto extends OpMode {
             case 19:
                 if(!follower.isBusy()) {
                     follower.followPath(third_hang_back);
-                    setPathState(20);
-                }
-                break;
-            case 20:
-                if(!follower.isBusy()) {
-                    follower.followPath(fourth_hang);
-                    setPathState(21);
-                }
-                break;
-            case 21:
-                if(!follower.isBusy()) {
-                    follower.followPath(fourth_hang_back);
                     setPathState(22);
                 }
                 break;
@@ -489,7 +472,7 @@ public class right_auto extends OpMode {
                     servo_outtake.setPower(1);
                 }
         }
-        switch (inclawState) {
+        /*switch (inclawState) {
             case 0:
                 servo_intake_wrist.setPosition(0);
                 break;
@@ -509,7 +492,7 @@ public class right_auto extends OpMode {
                 servo_intake.setPower(-1);
                 break;
 
-        }
+        }*/
     }
 
          /** These change the states of the paths and actions
@@ -594,9 +577,9 @@ public class right_auto extends OpMode {
 */
         servo_outtake = hardwareMap.get(CRServo.class,"outtake");
 
-        servo_intake = hardwareMap.get(CRServo.class, "intake");
+        //servo_intake = hardwareMap.get(CRServo.class, "intake");
 
-        servo_intake_wrist = hardwareMap.get(Servo.class, "intakeWrist");
+        //servo_intake_wrist = hardwareMap.get(Servo.class, "intakeWrist");
 
         servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
 
@@ -624,13 +607,13 @@ public class right_auto extends OpMode {
         buildPaths();
         opmodeTimer.resetTimer();
         setPathState(2);
-        /* setArmState(0); //starting ArmState
+        setArmState(-1); //starting ArmState
         setoutGrabState(0);
         setinclawState(0);
         setIngrabState(0);
         setoutClawState(0);
 
-         */
+
     }
     // run this
 

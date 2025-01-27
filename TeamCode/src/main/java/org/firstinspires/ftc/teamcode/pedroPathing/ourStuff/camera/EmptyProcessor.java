@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
+package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff.camera;
 
 import android.graphics.Canvas;
 
