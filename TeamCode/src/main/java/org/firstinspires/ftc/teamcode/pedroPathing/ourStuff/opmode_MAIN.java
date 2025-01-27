@@ -219,7 +219,7 @@ public class opmode_MAIN extends OpMode {
         if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() < arm_upper_lim)) { //left stick -, is going up! (I think it's inverted)
             //use velocity mode to move so it doesn't we all funky with the smoothing of position mode
             up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            up.setVelocity(gamepad2.right_stick_y * 1000);
+            up.setVelocity(gamepad2.right_stick_y * -1000);
             telemetry.addLine("trying to go up ma'am");
             up_true_target_pos = 0;
         } else if (gamepad2.right_stick_y < -0.3 && (up.getCurrentPosition() >= arm_upper_lim)) {
