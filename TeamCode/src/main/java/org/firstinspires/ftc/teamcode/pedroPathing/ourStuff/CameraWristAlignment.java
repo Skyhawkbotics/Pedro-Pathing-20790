@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
+/*package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -31,7 +31,7 @@ public class CameraWristAlignment extends OpenCvPipeline {
         // ---COMPARE---
         final double THRESHOLD = 10;
         if (percentageInRectValue > THRESHOLD) {
-            telemetry.addData() //Aaaaa no enum! Try reading the FTC guide and using that instead
+            telemetry.addData(); //Aaaaa no enum! Try reading the FTC guide and using that instead
         }
         else {
             //A
@@ -40,4 +40,4 @@ public class CameraWristAlignment extends OpenCvPipeline {
     }
 
 
-}
+}*/

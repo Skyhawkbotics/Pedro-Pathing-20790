@@ -232,21 +232,23 @@ public class right_auto extends OpMode {
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 2:
+            case 2: //go to hang
                 follower.followPath(hang1);
                 setArmState(1);
                 setPathState(3);
+                setoutClawState(1);
                 break;
-            case 3:
+            case 3: //hang
                 if (pathTimer.getElapsedTimeSeconds() > 2) {
                     setArmState(0);
                     setPathState(4);
                 }
                 break;
             case 4:
-                setoutGrabState(1);
+                setoutGrabState(3); //release
                 if (pathTimer.getElapsedTimeSeconds() > 0.2) {
                     setPathState(5);
+                    setoutGrabState(0);
                 }
 
             case 5: //PUSHALL START // curves to behind
