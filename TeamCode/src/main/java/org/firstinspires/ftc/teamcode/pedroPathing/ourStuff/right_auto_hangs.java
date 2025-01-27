@@ -107,7 +107,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 //setArmState(0);
                 //setoutClawState(0);
                 //setoutGrabState(2);
-                if(pathTimer.getElapsedTime() > 4) { // Time to pick up
+                if (pathTimer.getElapsedTime() > 4) { // Time to pick up
                     setPathState(1);
                 }
                 break;
@@ -126,30 +126,30 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 break;
             case 2:
                 //if (follower.getPose().getX() > (hangPose.getX() - 1) && follower.getPose().getY() > (hangPose.getY() - 1)) { // hang it
-                    //setoutGrabState(3);
-                    //setArmState(2);
-                    //setoutClawState(2);
-                    if (pathTimer.getElapsedTime() > 3) { // waiting for hang to finish
-                        follower.followPath(back, true);
-                        //setArmState(0);
-                        //setoutGrabState(2);
-                        //setoutClawState(0);
+                //setoutGrabState(3);
+                //setArmState(2);
+                //setoutClawState(2);
+                if (pathTimer.getElapsedTime() > 3) { // waiting for hang to finish
+                    follower.followPath(back, true);
+                    //setArmState(0);
+                    //setoutGrabState(2);
+                    //setoutClawState(0);
 
-                        setPathState(3);
-                    }
+                    setPathState(3);
+                }
                 //}
                 break;
             case 3:
-                if(pathTimer.getElapsedTime() > 3) { // waiting for back to be back, then pickup
+                if (pathTimer.getElapsedTime() > 3) { // waiting for back to be back, then pickup
                     //setArmState(0);
                     //setoutClawState(0);
                     //setoutGrabState(2);
-                    follower.followPath(pickup,true);
+                    follower.followPath(pickup, true);
                     setPathState(4);
                 }
                 break;
             case 4:
-                if(pathTimer.getElapsedTime() > 3) { // waiting for pickup, then follows hangpath
+                if (pathTimer.getElapsedTime() > 3) { // waiting for pickup, then follows hangpath
                     //setArmState(1);
                     //setoutGrabState(0);
                     //setoutClawState(1);
@@ -158,13 +158,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
                 }
                 break;
             case 5:
-                if(pathTimer.getElapsedTime() > 3) { // waits for hang path to finish, then hangs
+                if (pathTimer.getElapsedTime() > 3) { // waits for hang path to finish, then hangs
                     // hangs
                     setPathState(6);
                 }
                 break;
             case 6:
-                if(pathTimer.getElapsedTime() > 3) {
+                if (pathTimer.getElapsedTime() > 3) {
                     follower.followPath(back, true);
                 }
                 break;
@@ -303,12 +303,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
         telemetryA.addData("headingPID error", follower.headingError);
         telemetryA.update();
     }
-    @Override
-    public void start() {
-        buildPaths();
-
-    }
-
 }
 
 
