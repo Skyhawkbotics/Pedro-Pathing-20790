@@ -237,8 +237,8 @@ public class right_auto extends OpMode {
                 break;
             case 3:
                 if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    setPathState(4);
                     setArmState(0);
+                    setPathState(4);
                 }
                 break;
             case 4:
@@ -396,14 +396,8 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 1: //going to hanging position
-                up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                telemetry.addData("Hang position", true);
-                if (up.getCurrentPosition() < up_hanging_position) {
-                    up.setPower(0.5);
-                    telemetry.addData("arm moving", true);
-                } else if (up.getCurrentPosition() >= up_hanging_position) {
-                    up.setPower(0.01);
-                }
+                up.setTargetPosition(up_hanging_position);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 break;
             case 2: //going to hanging position
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -495,7 +489,7 @@ public class right_auto extends OpMode {
         follower.update();
 
         autonomousPathUpdate();
-        // autonomousActionUpdate();
+        autonomousActionUpdate();
 
 
         // Feedback to Driver Hub
@@ -543,7 +537,7 @@ public class right_auto extends OpMode {
         out = hardwareMap.get(DcMotorEx.class, "out");
         out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+*/
         servo_outtake = hardwareMap.get(CRServo.class,"outtake");
 
         servo_intake = hardwareMap.get(CRServo.class, "intake");
@@ -554,7 +548,7 @@ public class right_auto extends OpMode {
 
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
 
-         */
+
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
