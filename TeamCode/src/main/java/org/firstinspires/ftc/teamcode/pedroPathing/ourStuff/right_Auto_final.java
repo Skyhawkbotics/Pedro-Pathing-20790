@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous(name = "RIGHT_AUTO_FINAL", group = "AUTO")
+@Autonomous(name = "RIGHT_AUTO", group = "AUTO")
 // 18.5 inches away from observation zone
 public class right_Auto_final extends OpMode {
     // cool

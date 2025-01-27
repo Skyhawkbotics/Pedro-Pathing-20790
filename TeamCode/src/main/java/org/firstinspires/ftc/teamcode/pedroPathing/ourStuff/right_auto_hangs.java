@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 
 
-@Autonomous(name = "right_auto_hangs", group = "AUTO")
+@Autonomous(name = "right_auto_hangs", group = "auto test")
     public class right_auto_hangs extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;

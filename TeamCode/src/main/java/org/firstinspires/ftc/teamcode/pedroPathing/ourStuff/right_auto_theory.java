@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
  */
 
 @Config
-@Autonomous(name = "right auto theory", group = "AUTO")
+@Autonomous(name = "right auto theory", group = "auto test")
 // 18.5 inches away from observation zone
 public class right_auto_theory extends OpMode {
     // cool

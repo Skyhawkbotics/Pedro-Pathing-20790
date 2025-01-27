@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 
 
 @Config
-@Autonomous(name = "left_auto_trajectory_only", group = "Auto")
+@Autonomous(name = "left_auto_trajectory_only", group = "auto test")
 public class left_auto_trajectory_only extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
