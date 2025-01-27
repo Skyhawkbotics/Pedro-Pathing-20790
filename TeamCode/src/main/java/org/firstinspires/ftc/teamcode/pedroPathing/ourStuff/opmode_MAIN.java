@@ -301,10 +301,10 @@ public class opmode_MAIN extends OpMode {
 
 
         // manual intake wrist location
-        if (gamepad2.right_stick_y > 0.1) {
+        if (gamepad2.dpad_up) {
             servo_intake_wrist_location += 0.05;
         }
-        if (gamepad2.right_stick_y < -0.1) {
+        if (gamepad2.dpad_down) {
             servo_intake_wrist_location -= 0.05;
         }
         // limits
