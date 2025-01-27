@@ -306,7 +306,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
     @Override
     public void start() {
         opmodeTimer.resetTimer();
-        setPathState(0);
     }
 
 }
