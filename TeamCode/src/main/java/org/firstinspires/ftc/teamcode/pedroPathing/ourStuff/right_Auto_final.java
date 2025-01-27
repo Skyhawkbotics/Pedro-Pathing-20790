@@ -452,6 +452,10 @@ public class right_Auto_final extends OpMode {
     public void autonomousActionUpdate() {
         switch (armState) {
             // Run to position on initialized??
+            case -1:
+            up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            break;
+            // Run to position on initialized??
 
             case 0: //going to bottom position
                 up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

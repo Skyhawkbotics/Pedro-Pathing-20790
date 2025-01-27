@@ -180,6 +180,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
     public void autonomousActionUpdate() {
         switch (armState) {
+            case -1:
+                up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
             // Run to position on initialized??
 
             case 0: //going to bottom position
@@ -302,6 +305,13 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
         telemetryA.addData("headingPID error", follower.headingError);
         telemetryA.update();
+    }
+    @Override
+    public void start() {
+        setPathState(0);
+        setArmState(0); //starting ArmState
+        setoutGrabState(0);
+        setoutClawState(0);
     }
 }
 
