@@ -62,6 +62,8 @@ public class right_auto extends OpMode {
 
     private Pose endPush = new Pose(15,18, Math.toRadians(0));
 
+    private Pose readyPose = new Pose(9,16,Math.toRadians(270));
+
 
 
     // Paths
@@ -146,14 +148,14 @@ public class right_auto extends OpMode {
                 // Line 1
                 new BezierLine(
                         new Point(17.000, 9.000, Point.CARTESIAN),
-                        new Point(13.000, 16.000, Point.CARTESIAN)
+                        new Point(readyPose)
                 )
         );
         readypickup.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270));
         pickup = new Path(
                         // Line 2
                         new BezierLine(
-                                new Point(9.000, 16.000, Point.CARTESIAN),
+                                new Point(readyPose),
                                 new Point(9.000, 9.000, Point.CARTESIAN)
                         )
                 );
@@ -249,14 +251,14 @@ public class right_auto extends OpMode {
             case 3: //hang
                 if (pathTimer.getElapsedTimeSeconds() > 2) { // Time to wait for it to reach hang position
                     setoutGrabState(3);
-                    setArmState(2);
-                    setPathState(4);
+                    setArmState(3);
+                    setoutClawState(2);
                 }
                 break;
             case 4:
                 if (pathTimer.getElapsedTimeSeconds() > 1) { // Allowing hang time
+                    setoutClawState(2);
                     setoutGrabState(0);
-                    setArmState(0);
                     setPathState(5);
                 }
                 break;
@@ -264,6 +266,7 @@ public class right_auto extends OpMode {
             case 5: //PUSHALL START // curves to behind
                 if (pathTimer.getElapsedTimeSeconds() > 1) {
                     follower.followPath(pushAll1);
+                    setArmState(0);
                     setPathState(7);
                 }
                 break;
@@ -301,13 +304,15 @@ public class right_auto extends OpMode {
             case 12:
                 if (!follower.isBusy() || follower.getPose().roughlyEquals(endPush)) {
                     follower.followPath(readypickup);
+                    setoutClawState(1);
                     setoutGrabState(2); //grab
                     setPathState(13);
                 }
                 break;
             case 13:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || follower.getPose().roughlyEquals(readyPose)) {
                     follower.followPath(pickup);
+
                     setPathState(14);
                 }
                 break;
@@ -320,16 +325,19 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 145:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {
-                    setArmState(2);
+                if (pathTimer.getElapsedTimeSeconds() > 2) { // time to reach hang pos
+                    setoutGrabState(3);
+
+                    setArmState(3);
+                    setoutClawState(2);
                     setPathState(146);
                 }
                 break;
             case 146:
-                setoutGrabState(3); //release
                 if (pathTimer.getElapsedTimeSeconds() > 0.2) {
-                    setPathState(15);
+                    setoutGrabState(3); //release
                     setoutGrabState(0);
+                    setPathState(15);
                 }
                 break;
             case 15:
@@ -451,6 +459,12 @@ public class right_auto extends OpMode {
                     up.setPower(0.01);
                 }
                 break;
+            case 3:
+                up.setTargetPosition(1560);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                up.setPower(-1);
+                break;
+
         }
         switch (outclawState) {
             case 0:
@@ -460,6 +474,8 @@ public class right_auto extends OpMode {
             case 1:
                 servo_outtake_wrist.setPosition(0.57);
                 telemetry.addData("claw position 2", true);
+            case 2:
+                servo_outtake_wrist.setPosition(0.4);
 
         }
         switch (outgrabState) {
@@ -473,7 +489,7 @@ public class right_auto extends OpMode {
                 servo_outtake.setPower(-1);
                 break;
             case 3: // hang release?
-                if (up.getCurrentPosition() < 1500) {
+                if (up.getCurrentPosition() < 1600) {
                     servo_outtake.setPower(1);
                 }
         }
