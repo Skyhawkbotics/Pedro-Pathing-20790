@@ -56,7 +56,11 @@ public class right_auto extends OpMode {
 
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
+    private Pose pushstart = new  Pose(60,29,0);
+
     private Pose firstpushPose = new Pose(24,29, Math.toRadians(0));
+
+    private Pose endPush = new Pose(15,18, Math.toRadians(0));
 
 
 
@@ -76,6 +80,8 @@ public class right_auto extends OpMode {
     double outtake_wrist_pos_transfer = 0;
     int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
     int up_hanging_position_done = 1290; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
+    // 1543
+    //0.29
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
@@ -95,13 +101,13 @@ public class right_auto extends OpMode {
                         new Point(13.231, 39.455, Point.CARTESIAN),
                         new Point(19.964, 33.549, Point.CARTESIAN),
                         new Point(75.367, 40.518, Point.CARTESIAN),
-                        new Point(60.000, 29.000, Point.CARTESIAN)
+                        new Point(pushstart)
                 )
         );
         pushAll1.setConstantHeadingInterpolation(0);
         pushAll3 = new Path(
                 new BezierLine(
-                        new Point(60.000, 29.000, Point.CARTESIAN),
+                        new Point(pushstart),
                         new Point(firstpushPose)
                 )
         );
@@ -117,7 +123,7 @@ public class right_auto extends OpMode {
         pushAll5 = new Path(
                 new BezierLine(
                         new Point(60.000, 18.000, Point.CARTESIAN),
-                        new Point(15.000, 18.000, Point.CARTESIAN)
+                        new Point(endPush)
                 )
         );
         pushAll5.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
@@ -262,14 +268,13 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 7:
-                if (/*follower.getPose().getX() > 27 && follower.getPose().getY() > 28
-               */!follower.isBusy()) {
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose, 0.5)) {
                     follower.followPath(pushAll3); // striagt back
                     setPathState(8);
                 }
                 break;
             case 8:
-                if(!follower.isBusy()){
+                if(!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose, 0.5)) {
                 //if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
                     follower.followPath(pushAll4); // curvje forward
                     setPathState(9);
@@ -294,7 +299,7 @@ public class right_auto extends OpMode {
                 }
                 break; //PUSHALL EN// D*/
             case 12:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(endPush)) {
                     follower.followPath(readypickup);
                     setoutGrabState(2); //grab
                     setPathState(13);
