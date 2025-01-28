@@ -8,6 +8,7 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
@@ -28,54 +29,50 @@ public class left_auto_trajectory_only extends OpMode {
     private Pose pivot1 = new Pose(31.3,122,Math.toRadians(0));
     private Pose basket = new Pose(11.3,132.3,Math.toRadians(153));
     //setting up the pathChain
-    private PathChain specimen_hang, pivot1_1, basket_1, pivot2_1, basket_2, pivot2_2, basket_3;
+
+    private Path hang, pivot1_1, basket_1, pivot2_1, basket_2, pivot2_2, basket_3;
 
     public void buildPaths() {
 
-        specimen_hang = follower.pathBuilder()
-                .addPath(
-                        //Hanging specimen path
-                        new BezierLine(
-                                new Point(startPose),
-                                new Point(hangPose)
-                        )
+        hang = new Path(
+                //Hanging specimen path
+                new BezierLine(
+                        new Point(startPose),
+                        new Point(hangPose)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+                hang.setConstantHeadingInterpolation(Math.toRadians(0));
 
-        pivot1_1 = follower.pathBuilder()
-                .addPath(
-                        //Driving to pivot point 1
-                        new BezierLine(
-                                new Point(hangPose),
-                                new Point(pivot1)
-                        )
+
+        pivot1_1 = new Path(
+                //Driving to pivot point 1
+                new BezierLine(
+                        new Point(hangPose),
+                        new Point(pivot1)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
+        );
+                pivot1_1.setConstantHeadingInterpolation(Math.toRadians(0));
 
-        basket_1 = follower.pathBuilder()
-                .addPath(
-                        //To basket
-                        new BezierLine(
-                                new Point(pivot1),
-                                new Point(basket)
-                        )
+        basket_1 = new Path(
+                //To basket
+                new BezierLine(
+                        new Point(pivot1),
+                        new Point(basket)
                 )
-                .setTangentHeadingInterpolation()
-                .build();
+        );
+                basket_1.setTangentHeadingInterpolation();
 
-        pivot2_1 = follower.pathBuilder()
-                .addPath(
+        pivot2_1 = new Path(
+                new BezierLine(
                         //To pivot point 2
-                        new BezierLine(
-                                new Point(11.320, 132.347, Point.CARTESIAN),
-                                new Point(33.461, 133.000, Point.CARTESIAN)
-                        )
+                        new Point(11.320, 132.347, Point.CARTESIAN),
+                        new Point(33.461, 133.000, Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(-15))
-                .build();
 
+        );
+                pivot2_1.setConstantHeadingInterpolation(Math.toRadians(-15));
+
+/*
         basket_2 = follower.pathBuilder()
                 .addPath(
                         //To basket
@@ -107,12 +104,13 @@ public class left_auto_trajectory_only extends OpMode {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(145))
-                .build();
+                .build();*/
         }
+
         public void autonomousPathUpdate() {
             switch (pathState) {
                 case 0://hanging specimen
-                    follower.followPath(specimen_hang);
+                    follower.followPath(hang);
                     if (follower.getPose().getX() > (hangPose.getX()) - 1) {
                         setPathState(1);
                     }
