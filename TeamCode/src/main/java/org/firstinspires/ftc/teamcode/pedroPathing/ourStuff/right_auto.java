@@ -80,7 +80,7 @@ public class right_auto extends OpMode {
     private Telemetry telemetryA;
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
-    int up_hanging_position = 1750; //DONE: calibrate this value, viper slide position to
+    int up_hanging_position = 1907; //DONE: calibrate this value, viper slide position to
     int up_hanging_position_done = 1290; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
     // 1543
     //0.29
@@ -243,8 +243,8 @@ public class right_auto extends OpMode {
             case 2: //go to hang
                 follower.followPath(hang1);
                 setArmState(1);
+                setoutClawState(1);
                 if(pathTimer.getElapsedTimeSeconds() > 1) {
-                    setoutClawState(1);
                     setPathState(3);
                 }
                 break;
@@ -253,6 +253,7 @@ public class right_auto extends OpMode {
                     setoutGrabState(3);
                     setArmState(3);
                     setoutClawState(2);
+                    setPathState(4);
                 }
                 break;
             case 4:
@@ -472,10 +473,12 @@ public class right_auto extends OpMode {
                 telemetry.addData("claw position 1 ", true);
                 break;
             case 1:
-                servo_outtake_wrist.setPosition(0.57);
+                servo_outtake_wrist.setPosition(0.65);
                 telemetry.addData("claw position 2", true);
+                break;
             case 2:
-                servo_outtake_wrist.setPosition(0.4);
+                servo_outtake_wrist.setPosition(0.3);
+                break;
 
         }
         switch (outgrabState) {

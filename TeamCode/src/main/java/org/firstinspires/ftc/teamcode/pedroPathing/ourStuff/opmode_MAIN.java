@@ -162,8 +162,6 @@ public class opmode_MAIN extends OpMode {
     @Override
     public void loop() {
         //drive code from TeleOpEnhancements
-        //follower.setTeleOpMovementVectors(-gamepad1.left_stick_y * driving_multiplier, -gamepad1.left_stick_x * driving_multiplier, -gamepad1.right_stick_x * 0.5);
-        //follower.update();
 
 
         //TESTING PATH THING VERSION
@@ -266,10 +264,6 @@ public class opmode_MAIN extends OpMode {
         } else {
             out.setPower(0);
             out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        if (gamepad1.y) {
-            out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            out.setTargetPosition(1000);
         }
     }
     public void intake_claw() {
