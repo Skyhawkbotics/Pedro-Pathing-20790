@@ -41,7 +41,7 @@ public class left_auto_trajectory_only extends OpMode {
                         new Point(hangPose)
                 )
         );
-                hang.setConstantHeadingInterpolation(Math.toRadians(0));
+        hang.setConstantHeadingInterpolation(Math.toRadians(0));
 
 
         pivot1_1 = new Path(
@@ -51,7 +51,7 @@ public class left_auto_trajectory_only extends OpMode {
                         new Point(pivot1)
                 )
         );
-                pivot1_1.setConstantHeadingInterpolation(Math.toRadians(0));
+        pivot1_1.setConstantHeadingInterpolation(Math.toRadians(0));
 
         basket_1 = new Path(
                 //To basket
@@ -60,7 +60,7 @@ public class left_auto_trajectory_only extends OpMode {
                         new Point(basket)
                 )
         );
-                basket_1.setTangentHeadingInterpolation();
+        basket_1.setTangentHeadingInterpolation();
 
         pivot2_1 = new Path(
                 new BezierLine(
@@ -70,7 +70,7 @@ public class left_auto_trajectory_only extends OpMode {
                 )
 
         );
-                pivot2_1.setConstantHeadingInterpolation(Math.toRadians(-15));
+        pivot2_1.setConstantHeadingInterpolation(Math.toRadians(-15));
 
 /*
         basket_2 = follower.pathBuilder()
@@ -111,7 +111,7 @@ public class left_auto_trajectory_only extends OpMode {
             switch (pathState) {
                 case 0://hanging specimen
                     follower.followPath(hang);
-                    if (follower.getPose().getX() > (hangPose.getX()) - 1) {
+                    if (follower.getPose().getX() > (hangPose.getX()) - 1) {  //try !follower.isbusy() or timer pathTimer.getElapsedTimeSeconds() > x
                         setPathState(1);
                     }
                     break;
