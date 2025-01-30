@@ -367,7 +367,7 @@ public class opmode_MAIN extends OpMode {
             servo_intake_rotate_location = 0.47;
             servo_intake_rotate.setPosition(servo_intake_rotate_location);
         }
-        if(gamepad2.share) {
+        if(gamepad2.share) { //viper slide up to avoid touching!
             up.setTargetPosition(400);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             up.setPower(1);

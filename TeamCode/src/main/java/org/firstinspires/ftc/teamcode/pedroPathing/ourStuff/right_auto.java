@@ -68,12 +68,12 @@ public class right_auto extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose pickupPose = new Pose( 10, 11, Math.toRadians(270));
+    private Pose pickupPose = new Pose( 8, 11, Math.toRadians(270));
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
-    private Pose firsthangPose = new Pose(36,65,0);
+    private Pose firsthangPose = new Pose(36,66,0);
 
-    private Pose secondhangPose = new Pose(36,63,0);
+    private Pose secondhangPose = new Pose(36,68,0);
 
     private Pose thirdhangPose = new Pose(36, 61,0);
 
@@ -85,7 +85,7 @@ public class right_auto extends OpMode {
 
     private Pose endPush = new Pose(15,18, Math.toRadians(0));
 
-    private Pose readyPose = new Pose(12,16,Math.toRadians(270));
+    private Pose readyPose = new Pose(10,16, Math.toRadians(270));
 
 
 
@@ -124,8 +124,8 @@ public class right_auto extends OpMode {
         pushAll1 = new Path(
                 new BezierCurve(
                         new Point(hangPose),
-                        new Point(19.877766069546894, 10.773445732349838, Point.CARTESIAN),
-                        new Point(62.51633298208641, 52.956796628029494, Point.CARTESIAN),
+                        new Point(22.87, 10.77, Point.CARTESIAN),
+                        new Point(58.51, 52.954, Point.CARTESIAN),
                         new Point(pushstart)
                 )
         );
