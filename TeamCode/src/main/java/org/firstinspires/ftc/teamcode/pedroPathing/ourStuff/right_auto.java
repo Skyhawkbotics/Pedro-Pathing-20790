@@ -85,7 +85,7 @@ public class right_auto extends OpMode {
 
     private Pose endPush = new Pose(15,18, Math.toRadians(0));
 
-    private Pose readyPose = new Pose(10,16, Math.toRadians(270));
+    private Pose readyPose = new Pose(20,37, Math.toRadians(180));
 
 
 
@@ -170,11 +170,11 @@ public class right_auto extends OpMode {
         ready_pickup = new Path(
                 // Line 1
                 new BezierLine(
-                        new Point(17.000, 18.000, Point.CARTESIAN),
+                        new Point(16, 11, Point.CARTESIAN),
                         new Point(readyPose)
                 )
         );
-        ready_pickup.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270));
+        ready_pickup.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
         pickup = new Path(
                         // Line 2
                         new BezierLine(
