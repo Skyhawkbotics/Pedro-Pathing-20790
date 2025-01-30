@@ -77,11 +77,11 @@ public class right_auto extends OpMode {
 
     private Pose thirdhangPose = new Pose(36, 61,0);
 
-    private Pose pushstart = new  Pose(60,27,0);
+    private Pose pushstart = new  Pose(60,30,0);
 
-    private Pose firstpushPose = new Pose(24,29, Math.toRadians(0));
+    private Pose firstpushPose = new Pose(20,29, Math.toRadians(0));
 
-    private Pose pushstart2 = new Pose(60,18,0);
+    private Pose pushstart2 = new Pose(60,22,0);
 
     private Pose endPush = new Pose(15,18, Math.toRadians(0));
 
@@ -272,7 +272,7 @@ public class right_auto extends OpMode {
                 break; // BREAK
 
             case 3: //hang
-                if (pathTimer.getElapsedTime() > 3.000) { // TODO: Time to reach hang Position, shorten
+                if (pathTimer.getElapsedTime() > 2.5*(Math.pow(10,9))){ // TODO: Time to reach hang Position, shorten
                     setArmState(3);
                     setoutGrabState(4); // unstable outtake state
                     setoutClawState(2);
@@ -280,7 +280,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > 2.000) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > (2*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
@@ -332,7 +332,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 14:
-                if (!follower.isBusy() || pathTimer.getElapsedTime() > 3) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -342,14 +342,14 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 145:
-                if (pathTimer.getElapsedTime() > 2) { //TODO: HANG CODE time to reach hang pos, then hang shorten
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(146);
                 }
                 break;
             case 146:
-                if (pathTimer.getElapsedTime() > 1) { // TODO : Time to release, shorten
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO : Time to release, shorten
                     setPathState(15);
                 }
                 break;
@@ -362,14 +362,14 @@ public class right_auto extends OpMode {
                 //}
                 break;
             case 155:
-                if (pathTimer.getElapsedTimeSeconds() > 1) { // TODO time to get out of bar
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO time to get out of bar
                     setArmState(0);
                     setoutClawState(1);
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (pathTimer.getElapsedTime() > 2) { // TODO time to pickup
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO time to pickup
                     // pickup
                     follower.followPath(second_hang);
                     setoutClawState(1);
@@ -630,12 +630,13 @@ public class right_auto extends OpMode {
         up.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         up.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         up.setDirection(DcMotorSimple.Direction.REVERSE);
-/*
+
         //example position setup
         out = hardwareMap.get(DcMotorEx.class, "out");
-        out.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-*/
+        out.setTargetPosition(0);
+        out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        out.setPower(1);
+
         servo_outtake = hardwareMap.get(CRServo.class,"outtake");
 
         //servo_intake = hardwareMap.get(CRServo.class, "intake");
