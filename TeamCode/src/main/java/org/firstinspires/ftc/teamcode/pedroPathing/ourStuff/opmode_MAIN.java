@@ -63,12 +63,13 @@ public class opmode_MAIN extends OpMode {
     double intake_wrist_pos_transfer = 0;
     double outtake_wrist_pos_transfer = 0;
     int out_pos_transfer = 0;//TODO: edit this for calibration!
+    int up_pos_transfer1 = 400; //TODO: TUNE
+
     int out_max_pos = 1330;
 
     int up_specimen_hang = 1907; // Viper
 
     double outtake_specimen_hang = 0.45;
-    int up_pos_transfer1 = 0;
     private Path park;
     double driving_multiplier_fast = 0.7;
     double driving_multiplier_slow = 0.3;
@@ -293,11 +294,7 @@ public class opmode_MAIN extends OpMode {
 
         servo_intake_rotate.setPosition(servo_intake_rotate_location);
 
-        if (gamepad2.circle) {
-            servo_intake_wrist_location = 0.7;
-            servo_intake_rotate_location = 0.47;
 
-        }
         // manual intake wrist location
         if (gamepad2.dpad_down) {
             servo_intake_wrist_location += 0.05;
@@ -343,15 +340,16 @@ public class opmode_MAIN extends OpMode {
     }
     public void macros() {
         //Encoder Transfer Method
-        if (gamepad2.touchpad_finger_1 && !gamepad2.touchpad_finger_2) {
+        if (gamepad2.touchpad_finger_1 && !gamepad2.touchpad_finger_2) { //transfer pos
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             servo_intake_rotate_location = 0.5;
-            if (!out_zero.isPressed()) { //left stick +, going down
-                out.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                out.setPower(-0.6);
-                telemetry.addData("misumi move", true);
-            }
+            up.setTargetPosition(up_pos_transfer1);
+            out.setTargetPosition(out_pos_transfer);
+            out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            out.setPower(1);
+            up.setPower(1);
 
         }
         if (gamepad2.touchpad_finger_2) { //transfer
@@ -365,7 +363,7 @@ public class opmode_MAIN extends OpMode {
             servo_outtake_wrist_location = 0.50;
         }
 
-        if (gamepad2.options) {
+        if (gamepad2.options) { //reset intake rotate
             servo_intake_rotate_location = 0.47;
             servo_intake_rotate.setPosition(servo_intake_rotate_location);
         }
@@ -374,6 +372,10 @@ public class opmode_MAIN extends OpMode {
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             up.setPower(1);
             servo_outtake_wrist_location = 0.50;
+        }
+        if (gamepad2.circle) { //reset intake wrist and rotate
+            servo_intake_wrist_location = 0.7;
+            servo_intake_rotate_location = 0.47;
         }
     }
 }
