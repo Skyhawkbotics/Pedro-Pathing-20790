@@ -264,7 +264,7 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 2: //go to hang
-                follower.followPath(hang1);
+                follower.followPath(hang_first);
                 setArmState(1); // arm hang pos
                 setoutClawState(1); // hang claw pos
                 setoutGrabState(4); // unstable outtake state
@@ -272,14 +272,15 @@ public class right_auto extends OpMode {
                 break; // BREAK
 
             case 3: //hang
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(hangPose)) { // TODO: Time to reach hang Position, shorten
+                if (pathTimer.getElapsedTime() > 3.000) { // TODO: Time to reach hang Position, shorten
                     setArmState(3);
+                    setoutGrabState(4); // unstable outtake state
                     setoutClawState(2);
                     setPathState(4);
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > 2) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > 2.000) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
