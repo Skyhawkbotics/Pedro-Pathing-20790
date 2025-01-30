@@ -123,9 +123,8 @@ public class right_auto extends OpMode {
         pushAll1 = new Path(
                 new BezierCurve(
                         new Point(hangPose),
-                        new Point(13.231, 39.455, Point.CARTESIAN),
-                        new Point(19.964, 33.549, Point.CARTESIAN),
-                        new Point(75.367, 40.518, Point.CARTESIAN),
+                        new Point(19.877766069546894, 10.773445732349838, Point.CARTESIAN),
+                        new Point(62.51633298208641, 52.956796628029494, Point.CARTESIAN),
                         new Point(pushstart)
                 )
         );

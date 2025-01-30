@@ -60,10 +60,10 @@ public class opmode_MAIN extends OpMode {
     //vars for set positions for transfer:
     /// DONE FOR NOW (do when we try full auto transfer: CHANGE THESE
     // int transfer_step = 0;
-    double intake_wrist_pos_transfer = 0;
-    double outtake_wrist_pos_transfer = 0;
-    int out_pos_transfer = 0;//TODO: edit this for calibration!
-    int up_pos_transfer1 = 400; //TODO: TUNE
+    double intake_wrist_pos_transfer = 0.3;
+    double outtake_wrist_pos_transfer = 0.21;
+    int out_pos_transfer = 0;
+    int up_pos_transfer1 = 388;
 
     int out_max_pos = 1330;
 
@@ -372,6 +372,8 @@ public class opmode_MAIN extends OpMode {
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             up.setPower(1);
             servo_outtake_wrist_location = 0.50;
+            servo_intake_wrist_location = 0.2;
+            servo_intake_rotate_location = 0.5;
         }
         if (gamepad2.circle) { //reset intake wrist and rotate
             servo_intake_wrist_location = 0.7;
