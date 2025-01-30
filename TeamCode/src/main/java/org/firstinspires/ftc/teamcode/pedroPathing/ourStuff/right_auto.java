@@ -119,6 +119,7 @@ public class right_auto extends OpMode {
                                 new Point(hangPose)
                         )
                 );
+        hang_first.setZeroPowerAccelerationMultiplier(1);
         hang_first.setConstantHeadingInterpolation(hangPose.getHeading());
 
         pushAll1 = new Path(
