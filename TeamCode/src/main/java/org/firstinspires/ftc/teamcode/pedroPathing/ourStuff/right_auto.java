@@ -91,6 +91,8 @@ public class right_auto extends OpMode {
 
     // Paths
     private PathChain hang1;
+
+    private Path hang_first;
     private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7, pushAll8;
 
     private Path ready_pickup, pickup, first_hang, first_hang_back, second_hang, second_hang_back, third_hang, third_hang_back, fourth_hang, fourth_hang_back;
@@ -111,15 +113,14 @@ public class right_auto extends OpMode {
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
-        hang1 = follower.pathBuilder()
-                .addPath(
+        hang_first = new Path(
                         new BezierLine(
                                 new Point(startPose),
                                 new Point(hangPose)
                         )
-                )
-                .setConstantHeadingInterpolation(hangPose.getHeading())
-                .build();
+                );
+        hang_first.setConstantHeadingInterpolation(hangPose.getHeading());
+
         pushAll1 = new Path(
                 new BezierCurve(
                         new Point(hangPose),
@@ -271,14 +272,14 @@ public class right_auto extends OpMode {
                 break; // BREAK
 
             case 3: //hang
-                if (pathTimer.getElapsedTime() > 2) { // TODO: Time to reach hang Position, shorten
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(hangPose)) { // TODO: Time to reach hang Position, shorten
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(4);
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > 1) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > 2) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
