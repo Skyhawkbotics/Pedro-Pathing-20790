@@ -68,22 +68,22 @@ public class right_auto extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose pickupPose = new Pose( 6, 37, Math.toRadians(180));
-    private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
+    private Pose pickupPose = new Pose( 4, 37, Math.toRadians(180));
+    private Pose hangPose = new Pose(36.0, 72, Math.toRadians(0)); // TODO
 
-    private Pose firsthangPose = new Pose(36.5,65,0);
+    private Pose firsthangPose = new Pose(36.0,70,0);
 
-    private Pose secondhangPose = new Pose(36.5,65,0);
+    private Pose secondhangPose = new Pose(36.0,68,0);
 
-    private Pose thirdhangPose = new Pose(36.5, 65,0);
+    private Pose thirdhangPose = new Pose(36.0, 72,0);
 
     private Pose pushstart = new  Pose(60,30,0);
 
-    private Pose firstpushPose = new Pose(20,29, Math.toRadians(0));
+    private Pose firstpushPose = new Pose(27,29, Math.toRadians(0));
 
     private Pose pushstart2 = new Pose(60,22,0);
 
-    private Pose endPush = new Pose(15,18, Math.toRadians(0));
+    private Pose endPush = new Pose(27,18, Math.toRadians(0));
 
     private Pose readyPose = new Pose(20,37, Math.toRadians(180));
 
@@ -140,15 +140,16 @@ public class right_auto extends OpMode {
                 )
         );
         pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
-        pushAll3.setZeroPowerAccelerationMultiplier(1.5);
+        pushAll3.setZeroPowerAccelerationMultiplier(3);
         pushAll4 = new Path (
                 new BezierCurve(
                         new Point(24.000, 29.000, Point.CARTESIAN),
-                        new Point(63.174, 31.123, Point.CARTESIAN)
-//                        new Point(pushstart2)
+                        new Point(63.174, 31.123, Point.CARTESIAN),
+                        new Point(pushstart2)
                 )
         );
         pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0)); // curve toget in front of second sample
+        pushAll4.setZeroPowerAccelerationMultiplier(3);
         pushAll5 = new Path(
                 new BezierLine(
                         new Point(pushstart2),
@@ -156,6 +157,7 @@ public class right_auto extends OpMode {
                 )
         );
         pushAll5.setConstantHeadingInterpolation(endPush.getHeading());
+        pushAll5.setZeroPowerAccelerationMultiplier(3);
         /*
         pushAll6 = new Path(
                 new BezierCurve(
@@ -195,7 +197,7 @@ public class right_auto extends OpMode {
                         // Line 3
                         new BezierCurve(
                                 new Point(pickupPose),
-                                new Point(15.5, 63, Point.CARTESIAN),
+                                new Point(12, 68, Point.CARTESIAN),
                                 new Point(firsthangPose)
                         )
                 );
@@ -215,7 +217,7 @@ public class right_auto extends OpMode {
                         // Line 5
                         new BezierCurve(
                                 new Point(pickupPose),
-                                new Point(15.5, 63, Point.CARTESIAN),
+                                new Point(12, 68, Point.CARTESIAN),
                                 new Point(secondhangPose)
                         )
                 );
@@ -235,7 +237,7 @@ public class right_auto extends OpMode {
                         // Line 7
                         new BezierCurve(
                                 new Point(pickupPose),
-                                new Point(15.5, 63, Point.CARTESIAN),
+                                new Point(12, 68, Point.CARTESIAN),
                                 new Point(thirdhangPose)
                         )
                 );
@@ -352,7 +354,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 14:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -362,14 +364,14 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 145:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
+                if (pathTimer.getElapsedTime() > (2.4*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(146);
                 }
                 break;
             case 146:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO : Time to release, shorten
+                if (pathTimer.getElapsedTime() > (0.6*Math.pow(10,9))) { // TODO : Time to release, shorten
                     setPathState(15);
                 }
                 break;
@@ -392,13 +394,13 @@ public class right_auto extends OpMode {
 
              */
             case 156:
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTime() > (2*Math.pow(10,9))) {
                     follower.followPath(pickup);
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (pathTimer.getElapsedTime() > (5*Math.pow(10,9))) { // TODO time to reach pickup/pickup
+                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { // TODO time to reach pickup/pickup
                     // pickup
                     follower.followPath(second_hang);
                     setoutClawState(1);
@@ -408,7 +410,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 165:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {// TODO : hang
+                if (pathTimer.getElapsedTime() > (2.4*Math.pow(10,9))) {// TODO : hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(166);
@@ -445,7 +447,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 185:
-                if (pathTimer.getElapsedTimeSeconds() > 2) { // wait to reach, hang
+                if (pathTimer.getElapsedTimeSeconds() > 1) { // wait to reach, hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(186);

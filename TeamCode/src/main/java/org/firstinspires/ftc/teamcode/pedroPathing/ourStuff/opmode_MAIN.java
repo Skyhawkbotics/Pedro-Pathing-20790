@@ -60,10 +60,10 @@ public class opmode_MAIN extends OpMode {
     //vars for set positions for transfer:
     /// DONE FOR NOW (do when we try full auto transfer: CHANGE THESE
     // int transfer_step = 0;
-    double intake_wrist_pos_transfer = 0.3;
+    double intake_wrist_pos_transfer = 0.25;
     double outtake_wrist_pos_transfer = 0.21;
     int out_pos_transfer = 0;
-    int up_pos_transfer1 = 388;
+    int up_pos_transfer1 = 825;
 
     int out_max_pos = 1330;
 
@@ -347,10 +347,11 @@ public class opmode_MAIN extends OpMode {
             out.setTargetPosition(out_pos_transfer);
             out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             out.setPower(1);
+            up.setTargetPosition(up_pos_transfer1);
+            up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            up.setPower(1);
             if (out.getCurrentPosition() <= 10) {
-                up.setTargetPosition(up_pos_transfer1);
-                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                up.setPower(1);
+                up.setTargetPosition(430);
             }
         }
         if (gamepad2.touchpad_finger_2) { //transfer
