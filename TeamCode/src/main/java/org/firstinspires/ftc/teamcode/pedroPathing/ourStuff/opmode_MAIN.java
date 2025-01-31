@@ -344,13 +344,14 @@ public class opmode_MAIN extends OpMode {
             servo_outtake_wrist_location = outtake_wrist_pos_transfer;
             servo_intake_wrist_location = intake_wrist_pos_transfer;
             servo_intake_rotate_location = 0.5;
-            up.setTargetPosition(up_pos_transfer1);
             out.setTargetPosition(out_pos_transfer);
             out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             out.setPower(1);
-            up.setPower(1);
-
+            if (out.getCurrentPosition() >= 10) {
+                up.setTargetPosition(up_pos_transfer1);
+                up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                up.setPower(1);
+            }
         }
         if (gamepad2.touchpad_finger_2) { //transfer
             servo_outtake.setPower(-1);
