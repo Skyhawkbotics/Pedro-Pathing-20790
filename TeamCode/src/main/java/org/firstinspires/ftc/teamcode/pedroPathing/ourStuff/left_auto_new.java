@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
 @Config
-@Autonomous
+@Autonomous(name = "left_auto", group = "AUTO")
 public class left_auto_new extends OpMode {
     private Follower follower; // THe drivetrain with the calculations needed for path following
     private Timer actionTimer, opmodeTimer, outtimer; // Timers for progression of states
