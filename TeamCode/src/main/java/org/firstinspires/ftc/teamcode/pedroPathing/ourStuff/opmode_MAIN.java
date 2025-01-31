@@ -347,7 +347,7 @@ public class opmode_MAIN extends OpMode {
             out.setTargetPosition(out_pos_transfer);
             out.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             out.setPower(1);
-            if (out.getCurrentPosition() >= 10) {
+            if (out.getCurrentPosition() <= 10) {
                 up.setTargetPosition(up_pos_transfer1);
                 up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 up.setPower(1);

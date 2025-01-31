@@ -68,7 +68,7 @@ public class right_auto extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose pickupPose = new Pose( 8, 37, Math.toRadians(180));
+    private Pose pickupPose = new Pose( 6, 37, Math.toRadians(180));
     private Pose hangPose = new Pose(36.5, 67.0, Math.toRadians(0)); // TODO
 
     private Pose firsthangPose = new Pose(36.5,65,0);
@@ -127,7 +127,7 @@ public class right_auto extends OpMode {
         pushAll1 = new Path(
                 new BezierCurve(
                         new Point(hangPose),
-                        new Point(22.1, 17.6, Point.CARTESIAN),
+                        new Point(22.1, 20.0, Point.CARTESIAN),
                         new Point(56.51, 47.2, Point.CARTESIAN),
                         new Point(pushstart)
                 )
@@ -342,6 +342,7 @@ public class right_auto extends OpMode {
                 if (!follower.isBusy() || follower.getPose().roughlyEquals((endPush))) { // calls in once its at the end of push stage following push all 5
                     follower.followPath(ready_pickup);
                     setPathState(13);
+                    setoutClawState(3);
                 }
                 break; // BREAK
             case 13:
@@ -375,7 +376,7 @@ public class right_auto extends OpMode {
             case 15:
                 //if (!follower.isBusy() || follower.getPose().roughlyEquals(firsthangPose)) { // TODO : see if roughly equals is good enough, i dont think this is needed
                     follower.followPath(first_hang_back);
-                    setoutClawState(1);
+                    setoutClawState(3);
                     if(pathTimer.getElapsedTime() > (0.5*Math.pow(10,9))) {
                         setArmState(0);
                         setoutGrabState(2);
@@ -420,7 +421,7 @@ public class right_auto extends OpMode {
                 break;
             case 17:
                 follower.followPath(second_hang_back);
-                setoutClawState(1);
+                setoutClawState(3);
                 if(pathTimer.getElapsedTime() > (0.5*Math.pow(10,9))) {
                     setArmState(0);
                     setPathState(175);
@@ -431,6 +432,7 @@ public class right_auto extends OpMode {
                     follower.followPath(pickup);
                     setoutGrabState(2);
                     setPathState(18);
+                    setoutClawState(1);
                 }
                 break;
             case 18:
@@ -544,6 +546,9 @@ public class right_auto extends OpMode {
                 break;
             case 2: // Hang done Pos
                 servo_outtake_wrist.setPosition(0.25);
+                break;
+            case 3:
+                servo_outtake_wrist.setPosition(0.47);
                 break;
 
         }
