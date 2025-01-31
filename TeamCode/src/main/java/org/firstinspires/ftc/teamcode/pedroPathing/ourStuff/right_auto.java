@@ -149,7 +149,8 @@ public class right_auto extends OpMode {
         pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0)); // curve toget in front of second sample
         pushAll5 = new Path(
                 new BezierLine(
-                        new Point(pushstart2), new Point(endPush)
+                        new Point(pushstart2),
+                        new Point(endPush)
                 )
         );
         pushAll5.setConstantHeadingInterpolation(endPush.getHeading());
