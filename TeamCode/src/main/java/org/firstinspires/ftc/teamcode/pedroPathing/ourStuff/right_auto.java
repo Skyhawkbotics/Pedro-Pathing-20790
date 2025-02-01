@@ -287,6 +287,7 @@ public class right_auto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 2: //go to hang
+                setinclawState(1);
                 follower.followPath(hang_first);
                 setArmState(1); // arm hang pos
                 setoutClawState(1); // hang claw pos
@@ -295,7 +296,7 @@ public class right_auto extends OpMode {
                 break; // BREAK
 
             case 3: //hang
-                if (pathTimer.getElapsedTime() > 2.5*(Math.pow(10,9))){ // TODO: Time to reach hang Position, shorten
+                if (pathTimer.getElapsedTime() > 3*(Math.pow(10,9))){ // TODO: Time to reach hang Position, shorten
                     setArmState(3);
                     setoutGrabState(4); // unstable outtake state
                     setoutClawState(2);
@@ -303,35 +304,39 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > (2*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > (0.5*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
             case 5: // Starts the push all curve, don't think we need a wait time here
                     follower.followPath(pushAll1);
                     if(pathTimer.getElapsedTimeSeconds() > 1) {
+                        setinclawState(-1);
                         setoutClawState(1); // pickup position claw// Curve forward
-                        setArmState(0); // sets arm down
-                        setoutGrabState(-1); // Stops grab
-                        setPathState(7);
+                        if(pathTimer.getElapsedTimeSeconds() > 2) {
+                            setArmState(0);
+                            setoutGrabState(-1); // Stops grab
+                            setPathState(7);
+                        }; // sets arm down
+
                     }
                     /// The time frame between the hang and the pushall it is advised to set the servo and arm back in pickup position, however, they must be lowered when directly after the hang itself or else it might latch onto the low bar
                 break; // BREAK
             case 7:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart)) {// await based on distance, calls when its clsoe to behind of first sample
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart, 1)) {// await based on distance, calls when its clsoe to behind of first sample
                     follower.followPath(pushAll3); // straight back, ends with first push pose
                     setPathState(8);
                 }
                 break; // break
             case 8:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose)) { // end of push all 3 into the observation zone doesn't stop and continues
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose,1)) { // end of push all 3 into the observation zone doesn't stop and continues
                     //if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
                     follower.followPath(pushAll4); // curve forward
                     setPathState(9);
                 }
                 break; // break
             case 9:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart2)) { // follower not busy or close to end of the curve forward
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart2,1)) { // follower not busy or close to end of the curve forward
                     follower.followPath(pushAll5); // straight back
                     setoutGrabState(2); //grab
                     setPathState(12); //skip pushing third one to save time (very sad)
@@ -339,10 +344,10 @@ public class right_auto extends OpMode {
                 break; // BREAK
             // skipped case 10 cuz there was some stuff
             case 12:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals((endPush))) { // calls in once its at the end of push stage following push all 5
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(endPush,1)) { // calls in once its at the end of push stage following push all 5
                     follower.followPath(ready_pickup);
-                    setPathState(13);
                     setoutClawState(3);
+                    setPathState(13);
                 }
                 break; // BREAK
             case 13:
@@ -352,7 +357,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 14:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9)) || !follower.isBusy()) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -573,6 +578,12 @@ public class right_auto extends OpMode {
                     servo_outtake.setPower(0);
                 }
                 break;
+        }
+        switch (inclawState) {
+            case -1:
+                servo_intake_wrist.setPosition(0);
+            case 1:
+                servo_intake_wrist.setPosition(0.8);
         }
         /*switch (inclawState) {
             case 0:
