@@ -138,6 +138,7 @@ public class right_auto extends OpMode {
                 )
         );
         pushAll1.setConstantHeadingInterpolation(0);
+        pushAll1.setZeroPowerAccelerationMultiplier(2);
         pushAll3 = new Path( // goes back
                 new BezierLine(
                         new Point(pushstart),
@@ -200,7 +201,7 @@ public class right_auto extends OpMode {
         first_hang = new Path(
                         // Line 3
                         new BezierCurve(
-                                new Point(pickupPose),
+                                new Point(pickupPose1),
                                 new Point(15.5, 63, Point.CARTESIAN),
                                 new Point(firsthangPose)
                         )
@@ -349,7 +350,7 @@ public class right_auto extends OpMode {
             case 9:
                 if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart2, 1)) { // follower not busy or close to end of the curve forward
                     follower.followPath(pushAll5); // straight back
-                    setoutGrabState(2); //grab
+                    setoutGrabState(3); //grab
                     setPathState(12); //skip pushing third one to save time (very sad)
                 }
                 break; // BREAK
@@ -712,8 +713,6 @@ public class right_auto extends OpMode {
         //servo_intake = hardwareMap.get(CRServo.class, "intake");
 
         servo_intake_wrist = hardwareMap.get(Servo.class, "intakeWrist");
-
-        servo_intake_wrist.setPosition(-1);
 
         servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
         servo_outtake_wrist.setPosition(0);
