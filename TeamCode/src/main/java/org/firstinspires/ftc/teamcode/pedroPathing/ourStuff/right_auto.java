@@ -61,7 +61,6 @@ public class right_auto extends OpMode {
 
 
     private int pathState, armState, outclawState, outgrabState, inclawState, ingrabState; // Different cases and states of the different parts of the robot
-
     /** Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
      * Pedro uses 0 - 144 for x and y, with 0, 0 being on the bottom left.
@@ -73,11 +72,11 @@ public class right_auto extends OpMode {
     private Pose pickupPose = new Pose( 4, 37, Math.toRadians(180));
     private Pose hangPose = new Pose(36.0, 72, Math.toRadians(0)); // TODO
 
-    private Pose firsthangPose = new Pose(36.5,65,0);
+    private Pose firsthangPose = new Pose(36.5,70,0);
 
-    private Pose secondhangPose = new Pose(36.5,65,0);
+    private Pose secondhangPose = new Pose(36.5,68,0);
 
-    private Pose thirdhangPose = new Pose(36.5, 65,0);
+    private Pose thirdhangPose = new Pose(36.5, 66,0);
 
     private Pose pushstart = new  Pose(60,30,0);
 
@@ -392,7 +391,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 145:
-                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
+                if (pathTimer.getElapsedTime() > (2.2*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(146);
@@ -422,7 +421,7 @@ public class right_auto extends OpMode {
 
              */
             case 156:
-                if(!follower.isBusy() || pathTimer.getElapsedTime() > (2 * Math.pow(10, 9))) {
+                if(!follower.isBusy() || pathTimer.getElapsedTime() > (1.5 * Math.pow(10, 9))) {
                     follower.followPath(pickup);
                     setPathState(16);
                 }
@@ -438,7 +437,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 165:
-                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) {// TODO : hang
+                if (pathTimer.getElapsedTime() > (2.2*Math.pow(10,9))) {// TODO : hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(166);
@@ -475,7 +474,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 185:
-                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // wait to reach, hang
+                if (pathTimer.getElapsedTime() > (2.2*Math.pow(10,9))) { // wait to reach, hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(186);
