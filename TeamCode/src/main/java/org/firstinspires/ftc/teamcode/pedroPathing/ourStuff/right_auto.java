@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 
+import java.net.BindException;
+
 /**
  * This is an example auto that showcases movement and control of three servos autonomously.
  * It is able to detect the team element using a huskylens and then use that information to go to the correct spike mark and backdrop position.
@@ -83,11 +85,15 @@ public class right_auto extends OpMode {
 
     private Pose pushstart2 = new Pose(60,22,0);
 
-    private Pose endPush = new Pose(15,18, Math.toRadians(0));
+    private Pose endPush = new Pose(20,18, Math.toRadians(0));
 
     private Pose readyPose = new Pose(20,37, Math.toRadians(180));
 
     private Pose parkPose = new Pose(10,24,0);
+
+    private Pose readyPose1 = new Pose(20,18, Math.toRadians(180));
+
+    private Pose pickupPose1 = new Pose(4,18,Math.toRadians(180));
 
 
 
@@ -95,7 +101,7 @@ public class right_auto extends OpMode {
     private PathChain hang1;
 
     private Path hang_first, park;
-    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7, pushAll8;
+    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7, pushAll8, pickup1;
 
     private Path ready_pickup, pickup, first_hang, first_hang_back, second_hang, second_hang_back, third_hang, third_hang_back, fourth_hang, fourth_hang_back;
 
@@ -144,8 +150,8 @@ public class right_auto extends OpMode {
         pushAll4 = new Path (
                 new BezierCurve(
                         new Point(24.000, 29.000, Point.CARTESIAN),
-                        new Point(63.174, 31.123, Point.CARTESIAN)
-//                        new Point(pushstart2)
+                        new Point(63.174, 31.123, Point.CARTESIAN),
+                        new Point(pushstart2)
                 )
         );
         pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0)); // curve toget in front of second sample
@@ -156,7 +162,7 @@ public class right_auto extends OpMode {
                 )
         );
         pushAll5.setConstantHeadingInterpolation(endPush.getHeading());
-        pushAll5.setZeroPowerAccelerationMultiplier(3);
+        pushAll5.setZeroPowerAccelerationMultiplier(1.5);
         /*
         pushAll6 = new Path(
                 new BezierCurve(
@@ -280,6 +286,16 @@ public class right_auto extends OpMode {
         );
         park.setConstantHeadingInterpolation(0);
 
+        pickup1 = new Path (
+                new BezierCurve(
+                        new Point(readyPose1),
+                        new Point(pickupPose1)
+                )
+        );
+        pickup1.setLinearHeadingInterpolation(readyPose1.getHeading(), pickupPose1.getHeading());
+        pickup1.setZeroPowerAccelerationMultiplier(1.5);
+
+
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
@@ -319,39 +335,52 @@ public class right_auto extends OpMode {
                     /// The time frame between the hang and the pushall it is advised to set the servo and arm back in pickup position, however, they must be lowered when directly after the hang itself or else it might latch onto the low bar
                 break; // BREAK
             case 7:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart)) {// await based on distance, calls when its clsoe to behind of first sample
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart, 1)) {// await based on distance, calls when its clsoe to behind of first sample
                     follower.followPath(pushAll3); // straight back, ends with first push pose
                     setPathState(8);
                 }
                 break; // break
             case 8:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose)) { // end of push all 3 into the observation zone doesn't stop and continues
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(firstpushPose, 1)) { // end of push all 3 into the observation zone doesn't stop and continues
                     //if (/*follower.getPose().getX() > 57 && follower.getPose().getY() > 23*/ !follower.isBusy()) { // curve
                     follower.followPath(pushAll4); // curve forward
                     setPathState(9);
                 }
                 break; // break
             case 9:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart2)) { // follower not busy or close to end of the curve forward
+                if (!follower.isBusy() || follower.getPose().roughlyEquals(pushstart2, 1)) { // follower not busy or close to end of the curve forward
                     follower.followPath(pushAll5); // straight back
                     setoutGrabState(2); //grab
                     setPathState(12); //skip pushing third one to save time (very sad)
                 }
                 break; // BREAK
             // skipped case 10 cuz there was some stuff
-            case 12:
+            /*case 12:
                 if (!follower.isBusy() || follower.getPose().roughlyEquals((endPush))) { // calls in once its at the end of push stage following push all 5
-                    follower.followPath(ready_pickup);
+                    /*follower.followPath(ready_pickup);
                     setPathState(13);
                     setoutClawState(3);
                 }
                 break; // BREAK
+
             case 13:
                 if (!follower.isBusy() || follower.getPose().roughlyEquals((readyPose))) {
                     follower.followPath(pickup);
                     setPathState(14);
                 }
                 break; // BREAK
+
+                     */
+            case 12:
+                if(!follower.isBusy() || follower.getPose().roughlyEquals(endPush, 1)) {
+                    follower.holdPoint(readyPose1);
+                    setPathState(13);
+                }
+            case 13:
+                if (!follower.isBusy()) {
+                    follower.followPath(pickup1);
+                    setPathState(14);
+                }
             case 14:
                 if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
@@ -688,6 +717,8 @@ public class right_auto extends OpMode {
         servo_intake_wrist.setPosition(-1);
 
         servo_outtake_wrist = hardwareMap.get(Servo.class, "outtakeWrist");
+        servo_outtake_wrist.setPosition(0);
+
 
         up_zero = hardwareMap.get(TouchSensor.class, "up_zero");
 
