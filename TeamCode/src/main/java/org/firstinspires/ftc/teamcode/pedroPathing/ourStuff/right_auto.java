@@ -317,7 +317,7 @@ public class right_auto extends OpMode {
                     setArmState(3);
                     setoutGrabState(4); // unstable outtake state
                     setoutClawState(2);
-                    setoutClawState(0);
+                    setinclawState(0);
                     setPathState(4);
                 }
                 break; // BREAK
