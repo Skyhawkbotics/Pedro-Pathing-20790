@@ -312,7 +312,7 @@ public class right_auto extends OpMode {
                 break; // BREAK
 
             case 3: //hang
-                if (pathTimer.getElapsedTime() > 2.5*(Math.pow(10,9))){ // TODO: Time to reach hang Position, shorten
+                if (pathTimer.getElapsedTime() > 2*(Math.pow(10,9))){ // TODO: Time to reach hang Position, shorten
                     setArmState(3);
                     setoutGrabState(4); // unstable outtake state
                     setoutClawState(2);
@@ -320,7 +320,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > (1*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > (0.7*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
@@ -377,12 +377,12 @@ public class right_auto extends OpMode {
                     setPathState(13);
                 }
             case 13:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) {
+                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) {
                     follower.followPath(pickup1);
                     setPathState(14);
                 }
             case 14:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -392,14 +392,14 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 145:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
+                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { //TODO: HANG CODE time to reach hang pos, then hang shorten
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(146);
                 }
                 break;
             case 146:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO : Time to release, shorten
+                if (pathTimer.getElapsedTime() > (0.7*Math.pow(10,9))) { // TODO : Time to release, shorten
                     setPathState(15);
                 }
                 break;
@@ -422,13 +422,13 @@ public class right_auto extends OpMode {
 
              */
             case 156:
-                if(!follower.isBusy()) {
+                if(!follower.isBusy() || pathTimer.getElapsedTime() > (2 * Math.pow(10, 9))) {
                     follower.followPath(pickup);
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (pathTimer.getElapsedTime() > (5*Math.pow(10,9))) { // TODO time to reach pickup/pickup
+                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // TODO time to reach pickup/pickup
                     // pickup
                     follower.followPath(second_hang);
                     setoutClawState(1);
@@ -438,14 +438,14 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 165:
-                if (pathTimer.getElapsedTimeSeconds() > 2) {// TODO : hang
+                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) {// TODO : hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(166);
                 }
                 break;
             case 166:
-                if (pathTimer.getElapsedTimeSeconds() > 1) {// time for relase
+                if (pathTimer.getElapsedTime() > (0.7*Math.pow(10,9))) {// time for relase
                     setPathState(17);
                 }
                 break;
@@ -458,7 +458,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 175:
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTime() > (2*Math.pow(10,9))) {
                     follower.followPath(pickup);
                     setoutGrabState(2);
                     setPathState(18);
@@ -466,7 +466,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 18:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pickup time
+                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // TODO pickup time
                     follower.followPath(third_hang);
                     setArmState(1);
                     setoutClawState(1);
@@ -475,7 +475,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 185:
-                if (pathTimer.getElapsedTimeSeconds() > 2) { // wait to reach, hang
+                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // wait to reach, hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(186);
