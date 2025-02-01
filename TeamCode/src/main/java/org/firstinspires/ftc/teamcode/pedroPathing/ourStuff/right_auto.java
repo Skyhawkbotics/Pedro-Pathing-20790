@@ -320,7 +320,7 @@ public class right_auto extends OpMode {
                 }
                 break; // BREAK
             case 4:
-                if (pathTimer.getElapsedTime() > (2*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
+                if (pathTimer.getElapsedTime() > (1*(Math.pow(10,9)))) { // TODO : Allowing hang time / release
                     setPathState(5);
                 }
                 break; // BREAK
@@ -377,7 +377,7 @@ public class right_auto extends OpMode {
                     setPathState(13);
                 }
             case 13:
-                if (!follower.isBusy()) {
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) {
                     follower.followPath(pickup1);
                     setPathState(14);
                 }
