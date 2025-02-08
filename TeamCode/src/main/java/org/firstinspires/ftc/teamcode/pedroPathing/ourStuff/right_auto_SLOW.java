@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.ourStuff;
 
 
-import android.os.storage.StorageManager;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -16,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
@@ -25,8 +23,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.NanoTimer;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
-
-import java.net.BindException;
 
 /**
  * This is an example auto that showcases movement and control of three servos autonomously.
@@ -39,9 +35,9 @@ import java.net.BindException;
  */
 
 @Config
-@Autonomous(name = "RIGHT_AUTO", group = "AUTO")
+@Autonomous(name = "RIGHT_AUTO_slow", group = "AUTO_outreach")
 // 18.5 inches away from observation zone
-public class right_auto extends OpMode {
+public class right_auto_SLOW extends OpMode {
 
     /*
     Scrimage notes -
@@ -379,12 +375,12 @@ public class right_auto extends OpMode {
                     setPathState(13);
                 }
             case 13:
-                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) {
+                if (pathTimer.getElapsedTime() > (5*Math.pow(10,9))) {
                     follower.followPath(pickup1);
                     setPathState(14);
                 }
             case 14:
-                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9))) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -425,14 +421,14 @@ public class right_auto extends OpMode {
 
              */
             case 156:
-                if(!follower.isBusy() || pathTimer.getElapsedTime() > (1.5 * Math.pow(10, 9))) { // todo  pickups
+                if(!follower.isBusy() || pathTimer.getElapsedTime() > (5 * Math.pow(10, 9))) { // todo  pickups
                     setoutGrabState(2);
                     follower.followPath(pickup);
                     setPathState(16);
                 }
                 break;
             case 16:
-                if (pathTimer.getElapsedTime() > (1.75*Math.pow(10,9))) { // TODO time to reach pickup/pickup
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO time to reach pickup/pickup
                     // pickup
                     follower.followPath(second_hang);
                     setoutClawState(1);
@@ -462,7 +458,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 175:
-                if(pathTimer.getElapsedTime() > (2*Math.pow(10,9)) || !follower.isBusy()) {
+                if(pathTimer.getElapsedTime() > (5*Math.pow(10,9)) || !follower.isBusy()) {
                     follower.followPath(pickup);
                     setoutGrabState(2);
                     setPathState(18);

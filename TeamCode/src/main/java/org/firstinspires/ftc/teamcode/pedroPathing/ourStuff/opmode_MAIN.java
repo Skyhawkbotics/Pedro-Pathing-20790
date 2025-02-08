@@ -362,7 +362,7 @@ public class opmode_MAIN extends OpMode {
             up.setTargetPosition(up_specimen_hang);
             up.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             up.setPower(1);
-            servo_outtake_wrist_location = 0.50;
+            servo_outtake_wrist_location = 0.56;
         }
 
         if (gamepad2.options) { //reset intake rotate
