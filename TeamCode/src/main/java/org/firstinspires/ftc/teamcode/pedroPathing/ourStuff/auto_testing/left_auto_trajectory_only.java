@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 public class left_auto_trajectory_only extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-    private String navigation;
     private int pathState;
 
     //start pose
@@ -42,6 +41,8 @@ public class left_auto_trajectory_only extends OpMode {
                 )
         );
         hang.setConstantHeadingInterpolation(Math.toRadians(0));
+        hang.setZeroPowerAccelerationMultiplier(1.25);
+
 
 
         pivot1_1 = new Path(
@@ -52,6 +53,8 @@ public class left_auto_trajectory_only extends OpMode {
                 )
         );
         pivot1_1.setConstantHeadingInterpolation(Math.toRadians(0));
+        pivot1_1.setZeroPowerAccelerationMultiplier(1.25);
+
 
         basket_1 = new Path(
                 //To basket
@@ -61,6 +64,7 @@ public class left_auto_trajectory_only extends OpMode {
                 )
         );
         basket_1.setTangentHeadingInterpolation();
+        basket_1.setZeroPowerAccelerationMultiplier(1.25);
 
         pivot2_1 = new Path(
                 new BezierLine(
@@ -71,6 +75,8 @@ public class left_auto_trajectory_only extends OpMode {
 
         );
         pivot2_1.setConstantHeadingInterpolation(Math.toRadians(-15));
+        pivot2_1.setZeroPowerAccelerationMultiplier(1.25);
+
 
 /*
         basket_2 = follower.pathBuilder()
@@ -111,19 +117,19 @@ public class left_auto_trajectory_only extends OpMode {
             switch (pathState) {
                 case 0://hanging specimen
                     follower.followPath(hang);
-                    if (follower.getPose().getX() > (hangPose.getX()) - 1) {  //try !follower.isbusy() or timer pathTimer.getElapsedTimeSeconds() > x
+                    if (!follower.isBusy()) {  //try !follower.isbusy() or timer pathTimer.getElapsedTimeSeconds() > x
                         setPathState(1);
                     }
                     break;
                 case 1:
                     follower.followPath(pivot1_1);
-                    if (follower.getPose().getX() > (pivot1.getX()) - 1 && follower.getPose().getY() > (pivot1.getY()) - 1) {//TODO: I think the signs might be wrong. Figure out their coordinate system
+                    if (!follower.isBusy()) {//TODO: I think the signs might be wrong. Figure out their coordinate system
                         setPathState(2);
                     }
                     break;
                 case 2:
                     follower.followPath(basket_1);
-                    if (follower.getPose().getX() > (basket.getX()) && follower.getPose().getY() > (basket.getY())) {
+                    if (!follower.isBusy()) {
                         setPathState(-1); //TODO: For now until the rest of the path is added
                     }
 /*                case 3:
@@ -142,7 +148,6 @@ public class left_auto_trajectory_only extends OpMode {
         pathTimer = new Timer();
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
-        buildPaths();
     }
 
     @Override
@@ -153,5 +158,22 @@ public class left_auto_trajectory_only extends OpMode {
         telemetry.addData("Position",follower.getPose().toString());
         telemetry.update();
     }
+    @Override
+    public void start() {
+        //setBackdropGoalPose();
+        buildPaths();
+        opmodeTimer.resetTimer();
+        setPathState(0);
+
+    }
+    // run this
+
+
+
+    /** We do not use this because everything should automatically disable **/
+    @Override
+    public void stop() {
+    }
 }
+
 
