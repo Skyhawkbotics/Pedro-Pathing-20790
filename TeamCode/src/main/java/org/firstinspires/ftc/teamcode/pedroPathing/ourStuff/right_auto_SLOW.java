@@ -374,13 +374,15 @@ public class right_auto_SLOW extends OpMode {
                     follower.holdPoint(readyPose1);
                     setPathState(13);
                 }
+                break; //BREAK YOU FUCKING IDIOT
             case 13:
-                if (pathTimer.getElapsedTime() > (5*Math.pow(10,9))) {
+                if (pathTimer.getElapsedTime() > (5.0*Math.pow(10,9))) {
                     follower.followPath(pickup1);
                     setPathState(14);
                 }
+                break;
             case 14:
-                if (pathTimer.getElapsedTime() > (2*Math.pow(10,9))) { // TODO pick up time shorten
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pick up time shorten
                     follower.followPath(first_hang);
                     setArmState(1); //up
                     setoutGrabState(4); // unstable release path state
@@ -466,7 +468,7 @@ public class right_auto_SLOW extends OpMode {
                 }
                 break;
             case 18:
-                if (pathTimer.getElapsedTime() > (1.5*Math.pow(10,9)) || !follower.isBusy()) { // TODO pickup time
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9)) || !follower.isBusy()) { // TODO pickup time
                     follower.followPath(third_hang);
                     setArmState(1);
                     setoutClawState(1);
