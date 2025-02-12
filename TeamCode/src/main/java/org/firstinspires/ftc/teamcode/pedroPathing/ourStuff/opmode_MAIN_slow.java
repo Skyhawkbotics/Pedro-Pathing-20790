@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/21/2024
  */
-@TeleOp(name = "opmode_MAIN", group = "MAIN")
+@TeleOp(name = "opmode_MAIN_slow", group = "MAIN")
 public class opmode_MAIN_slow extends OpMode {
     private Follower follower;
 
