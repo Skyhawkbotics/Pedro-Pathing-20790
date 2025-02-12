@@ -423,7 +423,7 @@ public class right_auto_SLOW extends OpMode {
 
              */
             case 156:
-                if(!follower.isBusy() || pathTimer.getElapsedTime() > (5 * Math.pow(10, 9))) { // todo  pickups
+                if(pathTimer.getElapsedTime() > (5 * Math.pow(10, 9))) { // todo  pickups
                     setoutGrabState(2);
                     follower.followPath(pickup);
                     setPathState(16);
@@ -460,7 +460,7 @@ public class right_auto_SLOW extends OpMode {
                 }
                 break;
             case 175:
-                if(pathTimer.getElapsedTime() > (5*Math.pow(10,9)) || !follower.isBusy()) {
+                if(pathTimer.getElapsedTime() > (5*Math.pow(10,9))) {
                     follower.followPath(pickup);
                     setoutGrabState(2);
                     setPathState(18);
@@ -468,7 +468,7 @@ public class right_auto_SLOW extends OpMode {
                 }
                 break;
             case 18:
-                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9)) || !follower.isBusy()) { // TODO pickup time
+                if (pathTimer.getElapsedTime() > (3*Math.pow(10,9))) { // TODO pickup time
                     follower.followPath(third_hang);
                     setArmState(1);
                     setoutClawState(1);
@@ -477,7 +477,7 @@ public class right_auto_SLOW extends OpMode {
                 }
                 break;
             case 185:
-                if (pathTimer.getElapsedTime() > (2.2*Math.pow(10,9)) || !follower.isBusy()) { // wait to reach, hang
+                if (pathTimer.getElapsedTime() > (2.2*Math.pow(10,9))) { // wait to reach, hang
                     setArmState(3);
                     setoutClawState(2);
                     setPathState(186);
@@ -485,7 +485,7 @@ public class right_auto_SLOW extends OpMode {
                 break;
 
             case 186:
-                if (pathTimer.getElapsedTimeSeconds() > 0.6|| !follower.isBusy()) { // wait hang, for relase
+                if (pathTimer.getElapsedTimeSeconds() > 0.6) { // wait hang, for relase
                     setPathState(19);
                 }
                 break;
