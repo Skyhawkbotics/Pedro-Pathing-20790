@@ -155,7 +155,7 @@ public class right_auto_new_trajectoryonly extends OpMode {
                         new Point(35.000, 24.000, Point.CARTESIAN)
                 )
         );
-        six.setConstantHeadingInterpolation(300);//TODO: ?!?!
+        six.setConstantHeadingInterpolation(300);
         seven = new Path(
                 new BezierLine(
                         new Point(35.000, 24.000, Point.CARTESIAN),
