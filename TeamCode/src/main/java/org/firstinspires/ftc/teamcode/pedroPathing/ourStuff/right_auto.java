@@ -69,7 +69,7 @@ public class right_auto extends OpMode {
     //Start Pose
     private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); //TODO
 
-    private Pose pickupPose = new Pose( 6, 30, Math.toRadians(180));
+
     private Pose hangPose = new Pose(36.5, 72, Math.toRadians(0)); // TODO runs on
 
     private Pose firsthangPose = new Pose(36.0,70,0);
@@ -78,21 +78,23 @@ public class right_auto extends OpMode {
 
     private Pose thirdhangPose = new Pose(36.0, 66,0);
 
-    private Pose pushstart = new  Pose(60,30,0);
+    private Pose pushstart = new  Pose(61.000, 28.000,0); // behind the first one
 
-    private Pose firstpushPose = new Pose(20,29, Math.toRadians(0));
+    private Pose firstpushPose = new Pose(20.000, 28.000, 0); // pushed the first one in
 
-    private Pose pushstart2 = new Pose(60,22,0);
+    private Pose pushstart2 = new Pose(63.000, 14.000,0); // behind second
 
-    private Pose endPush = new Pose(20,18, Math.toRadians(0));
+    private Pose endPush = new Pose(20.000, 14.000, Math.toRadians(0)); // pushed second
 
-    private Pose readyPose = new Pose(20,37, Math.toRadians(180));
+    private Pose readyPose = new Pose(20,37, Math.toRadians(180)); // these two have to have same y cords
+
+    private Pose pickupPose = new Pose( 6, 37, Math.toRadians(180)); // ^^^
 
     private Pose parkPose = new Pose(10,24,0);
 
-    private Pose readyPose1 = new Pose(20,18, Math.toRadians(180));
+    private Pose readyPose1 = new Pose(20,14, Math.toRadians(180));
 
-    private Pose pickupPose1 = new Pose(6 ,18,Math.toRadians(180));
+    private Pose pickupPose1 = new Pose(6 ,14,Math.toRadians(180));
 
 
 
@@ -132,8 +134,8 @@ public class right_auto extends OpMode {
         pushAll1 = new Path(
                 new BezierCurve(
                         new Point(hangPose),
-                        new Point(22.1, 20.0, Point.CARTESIAN),
-                        new Point(56.51, 47.2, Point.CARTESIAN),
+                        new Point(22.100, 20.000, Point.CARTESIAN),
+                        new Point(22.100, 20.000, Point.CARTESIAN),
                         new Point(pushstart)
                 )
         );
@@ -145,50 +147,24 @@ public class right_auto extends OpMode {
                         new Point(firstpushPose)
                 )
         );
-        pushAll3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
+        pushAll3.setConstantHeadingInterpolation(0);
         pushAll3.setZeroPowerAccelerationMultiplier(1.5);
         pushAll4 = new Path (
                 new BezierCurve(
-                        new Point(24.000, 29.000, Point.CARTESIAN),
-                        new Point(63.174, 31.123, Point.CARTESIAN),
+                        new Point(firstpushPose),
+                        new Point(53.631, 28.942, Point.CARTESIAN),
                         new Point(pushstart2)
                 )
         );
-        pushAll4.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0)); // curve toget in front of second sample
+        pushAll4.setConstantHeadingInterpolation(0); // curve toget in front of second sample
         pushAll5 = new Path(
                 new BezierLine(
                         new Point(pushstart2),
                         new Point(endPush)
                 )
         );
-        pushAll5.setConstantHeadingInterpolation(endPush.getHeading());
+        pushAll5.setConstantHeadingInterpolation(0);
         pushAll5.setZeroPowerAccelerationMultiplier(1.5);
-        /*
-        pushAll6 = new Path(
-                new BezierCurve(
-                        new Point(24.000, 18.000, Point.CARTESIAN),
-                        new Point(63.174, 20.594, Point.CARTESIAN),
-                        new Point(60.000, 16.000, Point.CARTESIAN)
-                )
-        );
-        pushAll6.setConstantHeadingInterpolation(0);
-        pushAll7 = new Path (
-                new BezierLine(
-                        new Point(60.000, 11.000, Point.CARTESIAN),
-                        new Point(16, 11, Point.CARTESIAN)
-                )
-        );
-        pushAll7.setConstantHeadingInterpolation(0);
-
-         */
-        ready_pickup = new Path(
-                // Line 1
-                new BezierLine(
-                        new Point(endPush),
-                        new Point(readyPose)
-                )
-        );
-        ready_pickup.setLinearHeadingInterpolation(endPush.getHeading(), readyPose.getHeading());
         pickup = new Path(
                         // Line 2
                         new BezierLine(
@@ -240,14 +216,17 @@ public class right_auto extends OpMode {
         second_hang_back.setZeroPowerAccelerationMultiplier(3);
         third_hang = new Path(
                         // Line 7
-                        new BezierCurve(
-                                new Point(pickupPose),
-                                new Point(15.5, 63, Point.CARTESIAN),
-                                new Point(thirdhangPose)
-                        )
-                );
-        third_hang.setLinearHeadingInterpolation(pickupPose.getHeading(), Math.toRadians(0));
+                new BezierCurve(
+                        new Point(20.000, 37.000, Point.CARTESIAN),
+                        new Point(16.774, 55.639, Point.CARTESIAN),
+                        new Point(36.000, 62.000, Point.CARTESIAN)
+                )
+            );
+        third_hang.setConstantHeadingInterpolation(0);
         third_hang.setZeroPowerAccelerationMultiplier(1.25);
+
+
+        /*
         third_hang_back = new Path(
                 // Line 6
                 new BezierCurve(
@@ -258,6 +237,7 @@ public class right_auto extends OpMode {
         );
         third_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(320));
         third_hang_back.setZeroPowerAccelerationMultiplier(3);
+
         fourth_hang = new Path(
                 // Line 7
                 new BezierCurve(
@@ -277,11 +257,12 @@ public class right_auto extends OpMode {
         );
         fourth_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
         fourth_hang_back.setZeroPowerAccelerationMultiplier(1.5);
+
+         */
         park = new Path(
-                new BezierCurve(
-                        new Point(parkPose),
-                        new Point(12.070, 59.679, Point.CARTESIAN),
-                        new Point(10.393, 24.475, Point.CARTESIAN)
+                new BezierLine(
+                        new Point(36.000, 62.000, Point.CARTESIAN),
+                        new Point(13.703, 20.673, Point.CARTESIAN)
                 )
         );
         park.setConstantHeadingInterpolation(0);
@@ -292,7 +273,7 @@ public class right_auto extends OpMode {
                         new Point(pickupPose1)
                 )
         );
-        pickup1.setLinearHeadingInterpolation(readyPose1.getHeading(), pickupPose1.getHeading());
+        pickup1.setConstantHeadingInterpolation(Math.toRadians(180));;
         pickup1.setZeroPowerAccelerationMultiplier(1.5);
 
 
