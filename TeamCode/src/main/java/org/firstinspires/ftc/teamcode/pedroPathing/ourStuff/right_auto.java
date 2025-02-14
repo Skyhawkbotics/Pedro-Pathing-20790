@@ -67,17 +67,27 @@ public class right_auto extends OpMode {
      * (For Centerstage, this would be blue far side/red human player station.)
      * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
     //Start Pose
-    private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); //TODO
+    private Pose startPose = new Pose(10, 67.0, Math.toRadians(0)); // TODO - find a good start pos
+
+    /** Hang Poses
+     * Used for each of the four hangs, in this case, set 2 inches apart
+     * Preload hang Pose is slightly overshoot in case human player doesn't touch the back wall with the robot / field errors
+     * The other hang poses should naturally overshoot anyway
+     */
+    private Pose preloadhangPose = new Pose(36.5, 70, 0); // means it curves left a bit so we can fit more specimens
+
+    private Pose firsthangPose = new Pose(36.0,68,0);
+
+    private Pose secondhangPose = new Pose(36.0,66,0);
+
+    private Pose thirdhangPose = new Pose(36.0, 64,0);
 
 
-    private Pose hangPose = new Pose(36.5, 72, Math.toRadians(0)); // TODO runs on
-
-    private Pose firsthangPose = new Pose(36.0,70,0);
-
-    private Pose secondhangPose = new Pose(36.0,68,0);
-
-    private Pose thirdhangPose = new Pose(36.0, 66,0);
-
+    /** Push Poses
+     * End push marks end of push and the transition to pickups
+     * first pickup is at the same y value as the end push
+     * other pickups are supposed to be at the start of the observation zone
+     */
     private Pose pushstart = new  Pose(61.000, 28.000,0); // behind the first one
 
     private Pose firstpushPose = new Pose(20.000, 28.000, 0); // pushed the first one in
@@ -86,54 +96,66 @@ public class right_auto extends OpMode {
 
     private Pose endPush = new Pose(20.000, 14.000, Math.toRadians(0)); // pushed second
 
+    /** These are the pickup poses, the pickup paths, and the turn before poses
+     * Pickup Pose 1 is for the first hang, picking up from the end push area
+     * readyPose1 is a marker for the before the pickup1 and after the pickup1, facing the human player
+     * pickupDone1 is after moving back and after the 180 degree turn - either holdPoint or the new turn() method
+     */
+    private Pose readyPose1 = new Pose(20,14, Math.toRadians(180));
+    private Pose pickupPose1 = new Pose(6 ,14,Math.toRadians(180));
+    private Pose pickupDone1 = new Pose(20,14, Math.toRadians(0));
+
+
+    private Pose before_ready = new Pose(20,37, 0); // Ready pose before the turn
+
+    /// There is a 180 degree turn between these two
     private Pose readyPose = new Pose(20,37, Math.toRadians(180)); // these two have to have same y cords
 
     private Pose pickupPose = new Pose( 6, 37, Math.toRadians(180)); // ^^^
 
-    private Pose parkPose = new Pose(10,24,0);
+    /// Finally, the part Pose
 
-    private Pose readyPose1 = new Pose(20,14, Math.toRadians(180));
-
-    private Pose pickupPose1 = new Pose(6 ,14,Math.toRadians(180));
+    private Pose parkPose = new Pose(13.703, 20.673, Point.CARTESIAN);
 
 
+    /// Paths - in order of calling, separated into 3 segments
+    // Preload Path, and the two Pushes
 
-    // Paths
-    private PathChain hang1;
+    private Path hang_first, pushAll1, pushAll3, pushAll4, pushAll5;
+    // The First pick up and hang then transition to the next pickup spot
+    private Path pickup1, pickup1_back, first_hang, first_hang_back;
+    // The other hang and pickup spots
+    private Path pickup, pickup_back, second_hang, second_hang_back, third_hang;
+    private Path park;
 
-    private Path hang_first, park;
-    private Path pushAll1, pushAll2, pushAll3, pushAll4, pushAll5, pushAll6, pushAll7, pushAll8, pickup1;
 
-    private Path ready_pickup, pickup, first_hang, first_hang_back, second_hang, second_hang_back, third_hang, third_hang_back, fourth_hang, fourth_hang_back;
-
-    // Motors
+    /// Motors
     private DcMotorEx up, out;
     private Servo servo_outtake_wrist, servo_intake_wrist, servo_intake_rotate;
     private CRServo servo_outtake, servo_intake;
     private TouchSensor up_zero, out_zero;
     private Telemetry telemetryA;
-    double intake_wrist_pos_transfer = 0;
-    double outtake_wrist_pos_transfer = 0;
+
+
+    /// Values for the hangs
     int up_hanging_position = 1775; //DONE: calibrate this value, viper slide position to
     int up_hanging_position_done = 1270; //TODO: calibrate this value, position of viper slide when releasing after speciman is on the bar.
     // 1543
     //0.29
-
-    /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
-     * It is necessary to do this so that all the paths are built before the auto starts. **/
+    // also if we put it too low maybe it might drift when it stretches
     public void buildPaths() {
         hang_first = new Path(
                         new BezierLine(
                                 new Point(startPose),
-                                new Point(hangPose)
+                                new Point(preloadhangPose)
                         )
                 );
-        hang_first.setConstantHeadingInterpolation(hangPose.getHeading());
+        hang_first.setConstantHeadingInterpolation(preloadhangPose.getHeading());
         hang_first.setZeroPowerAccelerationMultiplier(1.5);
 
         pushAll1 = new Path(
                 new BezierCurve(
-                        new Point(hangPose),
+                        new Point(preloadhangPose),
                         new Point(22.100, 20.000, Point.CARTESIAN),
                         new Point(22.100, 20.000, Point.CARTESIAN),
                         new Point(pushstart)
@@ -165,110 +187,13 @@ public class right_auto extends OpMode {
         );
         pushAll5.setConstantHeadingInterpolation(0);
         pushAll5.setZeroPowerAccelerationMultiplier(1.5);
-        pickup = new Path(
-                        // Line 2
-                        new BezierLine(
-                                new Point(readyPose),
-                                new Point(pickupPose)
-                        )
-                );
-        pickup.setConstantHeadingInterpolation(pickupPose.getHeading());
-        pickup.setZeroPowerAccelerationMultiplier(1);
-        first_hang = new Path(
-                        // Line 3
-                        new BezierCurve(
-                                new Point(pickupPose1),
-                                new Point(15.5, 63, Point.CARTESIAN),
-                                new Point(firsthangPose)
-                        )
-                );
-        first_hang.setLinearHeadingInterpolation(pickupPose.getHeading(), Math.toRadians(0));
-        first_hang.setZeroPowerAccelerationMultiplier(1.25);
-        first_hang_back = new Path(
-                        // Line 4
-                        new BezierCurve(
-                                new Point(firsthangPose),
-                                new Point(23.5,68, Point.CARTESIAN),
-                                new Point(readyPose)
-                        )
-                );
-        first_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), pickupPose.getHeading());
-        first_hang_back.setZeroPowerAccelerationMultiplier(3);
-        second_hang = new Path(
-                        // Line 5
-                        new BezierCurve(
-                                new Point(pickupPose),
-                                new Point(15.5, 63, Point.CARTESIAN),
-                                new Point(secondhangPose)
-                        )
-                );
-        second_hang.setLinearHeadingInterpolation(pickupPose.getHeading(), Math.toRadians(0));
-        second_hang.setZeroPowerAccelerationMultiplier(1.25);
-        second_hang_back = new Path(
-                        // Line 6
-                    new BezierCurve(
-                        new Point(secondhangPose),
-                        new Point(23.5,68, Point.CARTESIAN),
-                        new Point(readyPose)
-                    )
-                );
-        second_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), readyPose.getHeading());
-        second_hang_back.setZeroPowerAccelerationMultiplier(3);
-        third_hang = new Path(
-                        // Line 7
-                new BezierCurve(
-                        new Point(20.000, 37.000, Point.CARTESIAN),
-                        new Point(16.774, 55.639, Point.CARTESIAN),
-                        new Point(36.000, 62.000, Point.CARTESIAN)
-                )
-            );
-        third_hang.setConstantHeadingInterpolation(0);
-        third_hang.setZeroPowerAccelerationMultiplier(1.25);
 
+        /// Turn 180 here
 
-        /*
-        third_hang_back = new Path(
-                // Line 6
-                new BezierCurve(
-                        new Point(36.000, 65.000, Point.CARTESIAN),
-                        new Point(23.5,68, Point.CARTESIAN),
-                        new Point(pickupPose)
-                )
-        );
-        third_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(320));
-        third_hang_back.setZeroPowerAccelerationMultiplier(3);
-
-        fourth_hang = new Path(
-                // Line 7
-                new BezierCurve(
-                        new Point(13.000, 11.000, Point.CARTESIAN),
-                        new Point(14.199, 59.162, Point.CARTESIAN),
-                        new Point(36.000, 65.000, Point.CARTESIAN)
-                )
-        );
-        fourth_hang.setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(0));
-        fourth_hang_back = new Path(
-                // Line 6
-                new BezierCurve(
-                        new Point(36.000, 65.000, Point.CARTESIAN),
-                        new Point(14.199, 59.162, Point.CARTESIAN),
-                        new Point(13.000, 11.000, Point.CARTESIAN)
-                )
-        );
-        fourth_hang_back.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0));
-        fourth_hang_back.setZeroPowerAccelerationMultiplier(1.5);
-
-         */
-        park = new Path(
-                new BezierLine(
-                        new Point(36.000, 62.000, Point.CARTESIAN),
-                        new Point(13.703, 20.673, Point.CARTESIAN)
-                )
-        );
-        park.setConstantHeadingInterpolation(0);
 
         pickup1 = new Path (
-                new BezierCurve(
+                // Line 3
+                new BezierLine(
                         new Point(readyPose1),
                         new Point(pickupPose1)
                 )
@@ -276,12 +201,108 @@ public class right_auto extends OpMode {
         pickup1.setConstantHeadingInterpolation(Math.toRadians(180));;
         pickup1.setZeroPowerAccelerationMultiplier(1.5);
 
+        pickup1_back = new Path(
+                        // Line 4
+                        new BezierLine(
+                                new Point(pickupPose1),
+                                new Point(readyPose1)
+                        )
+                );
+        pickup1_back.setConstantHeadingInterpolation(Math.toRadians(180));
+        pickup1_back.setZeroPowerAccelerationMultiplier(1.25);
+
+        /// Turn 180 here
+
+
+        first_hang = new Path(
+                        // Line 5
+                        new BezierCurve(
+                                new Point(pickupDone1),
+                                new Point(15.357, 64.144, Point.CARTESIAN),
+                                new Point(firsthangPose)
+                        )
+                );
+        first_hang.setConstantHeadingInterpolation(Math.toRadians(0));
+        first_hang.setZeroPowerAccelerationMultiplier(1.25);
+        first_hang_back = new Path( // strafe to secondary pick pose
+                        // Line 6
+                        new BezierLine(
+                                new Point(firsthangPose),
+                                new Point(before_ready)
+                        )
+                );
+        first_hang_back.setConstantHeadingInterpolation(Math.toRadians(0));
+        first_hang_back.setZeroPowerAccelerationMultiplier(1.25);
+
+        /// turn 180
+
+        pickup = new Path( // Will be referenced for each pick up
+                        // Line 7
+                        new BezierLine(
+                                new Point(readyPose),
+                                new Point(pickupPose)
+                        )
+                );
+        pickup.setConstantHeadingInterpolation(Math.toRadians(180));
+        pickup.setZeroPowerAccelerationMultiplier(1.25);
+        pickup_back = new Path( // Referenced after each pick up
+                        // Line 8
+                        new BezierLine(
+                                new Point(pickupPose),
+                                new Point(readyPose)
+                        )
+                );
+        pickup_back.setConstantHeadingInterpolation(Math.toRadians(180));
+        pickup_back.setZeroPowerAccelerationMultiplier(1.25);
+
+        /// Turn 180 here
+
+        second_hang = new Path(
+                        // Line 9
+                        new BezierCurve(
+                                new Point(before_ready),
+                                new Point(15.711, 59.774, Point.CARTESIAN),
+                                new Point(secondhangPose)
+                        )
+                );
+        second_hang.setConstantHeadingInterpolation(Math.toRadians(0));
+        second_hang.setZeroPowerAccelerationMultiplier(1.25);
+        second_hang_back = new Path(
+                        // Line 10
+                        new BezierLine(
+                                new Point(secondhangPose),
+                                new Point(before_ready)
+                        )
+                );
+        second_hang_back.setConstantHeadingInterpolation(Math.toRadians(0));
+        second_hang_back.setZeroPowerAccelerationMultiplier(1.25);
+        // Turn 180 here
+
+        /// Run pickup, and pickup_back
+
+        // Turn 180 again
+
+        third_hang = new Path(
+                        // Line 13
+                        new BezierCurve(
+                                new Point(before_ready),
+                                new Point(16.774, 55.639, Point.CARTESIAN),
+                                new Point(thirdhangPose)
+                        )
+                );
+        third_hang.setConstantHeadingInterpolation(Math.toRadians(0));
+        third_hang.setZeroPowerAccelerationMultiplier(1.25);
+        park = new Path(
+                        // Line 14
+                        new BezierLine(
+                                new Point(thirdhangPose),
+                                new Point(parkPose)
+                        )
+                );
+        park.setTangentHeadingInterpolation();
 
     }
 
-    /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
-     * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() function on line 193)
-     * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 2: //go to hang
@@ -335,24 +356,14 @@ public class right_auto extends OpMode {
                     setPathState(12); //skip pushing third one to save time (very sad)
                 }
                 break; // BREAK
-            // skipped case 10 cuz there was some stuff
-            /*case 12:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals((endPush))) { // calls in once its at the end of push stage following push all 5
-                    /*follower.followPath(ready_pickup);
-                    setPathState(13);
-                    setoutClawState(3);
+// Turn here
+            case 10:
+                if(!follower.isBusy() || follower.getPose().roughlyEquals(endPush, 1)) {
+                    follower.holdPoint(readyPose1);
+                    setPathState(11);
                 }
-                break; // BREAK
 
-            case 13:
-                if (!follower.isBusy() || follower.getPose().roughlyEquals((readyPose))) {
-                    follower.followPath(pickup);
-                    setPathState(14);
-                }
-                break; // BREAK
-
-                     */
-            case 12:
+            case 11:
                 if(!follower.isBusy() || follower.getPose().roughlyEquals(endPush, 1)) {
                     follower.holdPoint(readyPose1);
                     setPathState(13);
@@ -426,7 +437,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 166:
-                if (pathTimer.getElapsedTime() > (0.7*Math.pow(10,9))) {// time for relase
+                if (pathTimer.getElapsedTime() > (0.7*Math.pow(10,9))) {// time for release
                     setPathState(17);
                 }
                 break;
@@ -469,7 +480,7 @@ public class right_auto extends OpMode {
                 }
                 break;
             case 19:
-                follower.followPath(third_hang_back);
+                follower.followPath(park);
                 setPathState(22);
                 break;
             case 22:
@@ -478,31 +489,6 @@ public class right_auto extends OpMode {
         }
     }
 
-
-
-    /* back_park = follower.pathBuilder()
-            .addPath(
-            // Line 1
-                        new BezierLine(
-                    new Point(startPose),
-                                new Point(59.660, 84.873, Point.CARTESIAN)
-                        )
-                                )
-                                .setTangentHeadingInterpolation()
-                .addPath(
-            // Line 2
-                        new BezierLine(
-                    new Point(59.660, 84.873, Point.CARTESIAN),
-                                new Point(10.121, 85.051, Point.CARTESIAN)
-                        )
-                                )
-                                .setConstantHeadingInterpolation(Math.toRadians(0))
-            .build();
-
-     */
-
-    /** This switch is called continuously and runs the necessary actions, when finished, it will set the state to -1.
-     * (Therefore, it will not run the action continuously) **/
     public void autonomousActionUpdate() {
         switch (armState) {
             case -1:
