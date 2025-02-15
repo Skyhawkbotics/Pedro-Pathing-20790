@@ -1,4 +1,8 @@
-# Pedro Pathing repo for 20790 Hawkbot1cs!!
+# USE https://github.com/Skyhawkbotics/20790-pp instead!
+
+
+## Pedro Pathing repo for 20790 Hawkbot1cs!!
+
 yay no more roadrunner
 
 
